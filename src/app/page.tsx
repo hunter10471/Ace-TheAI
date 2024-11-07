@@ -1,8 +1,10 @@
 import Hero from "@/components/big/Hero/Hero";
 import Feature from "@/components/medium/Feature/Feature";
 import Footer from "@/components/medium/Footer/Footer";
+import LoginModal from "@/components/medium/LoginModal/LoginModal";
 import ProcessStep from "@/components/medium/ProcessStep/ProcessStep";
 import ReadyBanner from "@/components/medium/ReadyBanner/ReadyBanner";
+import RegisterModal from "@/components/medium/RegisterModal/RegisterModal";
 import ReviewSlider from "@/components/medium/ReviewSlider/ReviewSlider";
 import Button from "@/components/small/Button/Button";
 import Heading from "@/components/small/Heading/Heading";
@@ -18,7 +20,7 @@ export default function Home() {
       <div className="absolute w-screen h-screen bg-heroPattern top-0 right-0 opacity-5 z-[-1]"></div>
       <div className="flex flex-col items-center justify-center gap-0 lg:gap-4 max-w-[500px] mx-auto text-center">
         <h1
-          className={`text-[42px] lg:text-[54px] leading-[64px] lg:leading-[54px] text-primary font-bold  ${roboto.className}`}
+          className={`text-[42px] lg:text-[54px] leading-[30px] lg:leading-[54px] text-primary font-bold  ${roboto.className}`}
         >
           Ace The AI
         </h1>
@@ -31,9 +33,13 @@ export default function Home() {
           Empowering Your Interview Success with AI-Driven Insights and
           Personalized Coaching
         </p>
-        <div className="flex gap-4 mt-2">
-          <Button text="Get Started" type="primary" />
-          <Button text="Learn More" type="black-outline" />
+        <div className="flex gap-4 mt-5">
+          <Button htmlButtonType="button" text="Get Started" type="primary" />
+          <Button
+            htmlButtonType="button"
+            text="Learn More"
+            type="black-outline"
+          />
         </div>
       </div>
       <Hero />
@@ -60,6 +66,8 @@ export default function Home() {
       <ReviewSlider />
       <ReadyBanner />
       <Footer />
+      <RegisterModal />
+      <LoginModal />
     </main>
   );
 }
