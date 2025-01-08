@@ -8,14 +8,16 @@ import Button from "../../small/Button/Button";
 import { MdMenu } from "react-icons/md";
 import NavMenu from "../../medium/NavMenu/NavMenu";
 import { useModalStore } from "@/lib/store";
+import { useRouter } from "next/navigation";
 
 interface NavbarProps {}
 
 const Navbar: React.FC<NavbarProps> = ({}) => {
   const [scroll, setScroll] = useState(false);
   const [open, setOpen] = useState(false);
+  const navigate = useRouter();
   const { openRegisterModal, openLoginModal } = useModalStore();
-
+  const user = true;
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -27,6 +29,11 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [scroll]);
+
+  const navigateToDashboard = () => {
+    navigate.push("/dashboard");
+  };
+
   return (
     <div
       className={`fixed z-[99] bg-secondary top-0 w-screen overflow-hidden flex items-center justify-center transition-all h-[70px] ${
@@ -41,18 +48,30 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
           ))}
         </div>
         <div className="hidden md:flex gap-2 lg:gap-5">
-          <Button
-            htmlButtonType="button"
-            text="Signup"
-            action={openRegisterModal}
-            type="primary"
-          />
-          <Button
-            htmlButtonType="button"
-            text="Login"
-            action={openLoginModal}
-            type="outline"
-          />
+          {user ? (
+            <Button
+              htmlButtonType="button"
+              text="Dashboard"
+              action={navigateToDashboard}
+              type="primary"
+            />
+          ) : (
+            <>
+              {" "}
+              <Button
+                htmlButtonType="button"
+                text="Signup"
+                action={openRegisterModal}
+                type="primary"
+              />
+              <Button
+                htmlButtonType="button"
+                text="Login"
+                action={openLoginModal}
+                type="outline"
+              />{" "}
+            </>
+          )}
         </div>
         <button onClick={() => setOpen(true)} className="flex md:hidden">
           <MdMenu size={25} />

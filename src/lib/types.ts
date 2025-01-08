@@ -1,3 +1,5 @@
+import { IconType } from "react-icons";
+
 export interface NavLink {
   route: string;
   name: string;
@@ -14,4 +16,10 @@ export interface ProcessStep {
   image: string;
   title: string;
   description: string;
+}
+
+export interface SidebarLink {
+  label: string;
+  url?: string;
+  icon?: IconType;
 }

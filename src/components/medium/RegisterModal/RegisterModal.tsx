@@ -6,28 +6,11 @@ import Image from "next/image";
 import Input from "@/components/small/Input/Input";
 import { CiUser } from "react-icons/ci";
 import { Form, Formik } from "formik";
-import * as Yup from "yup";
 import Button from "@/components/small/Button/Button";
 import { CiMail } from "react-icons/ci";
 import { CiLock } from "react-icons/ci";
 import { FcGoogle } from "react-icons/fc";
-
-const validationSchema = Yup.object().shape({
-  username: Yup.string().required("Full name is required"),
-  email: Yup.string()
-    .email("Invalid email address")
-    .required("Email is required"),
-  password: Yup.string()
-    .min(8, "Password must be at least 8 characters long")
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-      "Password must contain one uppercase letter, one number, and one special character"
-    )
-    .required("Password is required"),
-  "confirm-password": Yup.string()
-    .oneOf([Yup.ref("password"), undefined], "Passwords must match")
-    .required("Confirm password is required"),
-});
+import { SignupValidationSchema } from "@/lib/definitions";
 
 const RegisterModal = () => {
   const { closeRegisterModal, openLoginModal, isRegisterModalOpen } =
@@ -50,7 +33,7 @@ const RegisterModal = () => {
       <div className="w-full">
         <Formik
           initialValues={{ username: "" }}
-          validationSchema={validationSchema}
+          validationSchema={SignupValidationSchema}
           onSubmit={(values) => console.log(values)}
           validateOnBlur={false}
         >

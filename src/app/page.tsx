@@ -1,3 +1,4 @@
+import Container from "@/components/big/Container/Container";
 import Hero from "@/components/big/Hero/Hero";
 import Feature from "@/components/medium/Feature/Feature";
 import Footer from "@/components/medium/Footer/Footer";
@@ -16,7 +17,7 @@ const roboto = Roboto({ subsets: ["latin"], weight: ["700"] });
 
 export default function Home() {
   return (
-    <main>
+    <Container>
       <div className="absolute w-screen h-screen bg-heroPattern top-0 right-0 opacity-5 z-[-1]"></div>
       <div className="flex flex-col items-center justify-center gap-0 lg:gap-4 max-w-[500px] mx-auto text-center">
         <h1
@@ -68,6 +69,6 @@ export default function Home() {
       <Footer />
       <RegisterModal />
       <LoginModal />
-    </main>
+    </Container>
   );
 }

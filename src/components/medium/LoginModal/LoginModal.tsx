@@ -7,16 +7,9 @@ import Input from "@/components/small/Input/Input";
 import { CiMail } from "react-icons/ci";
 import { CiLock } from "react-icons/ci";
 import { Form, Formik } from "formik";
-import * as Yup from "yup";
 import Button from "@/components/small/Button/Button";
 import { FcGoogle } from "react-icons/fc";
-
-const validationSchema = Yup.object().shape({
-  email: Yup.string()
-    .email("Invalid email address")
-    .required("Email is required"),
-  password: Yup.string().required("Password is required"),
-});
+import { LoginValidationSchema } from "@/lib/definitions";
 
 const LoginModal = () => {
   const { closeLoginModal, openRegisterModal, isLoginModalOpen } =
@@ -39,7 +32,7 @@ const LoginModal = () => {
       <div className="w-full">
         <Formik
           initialValues={{ email: "", password: "" }}
-          validationSchema={validationSchema}
+          validationSchema={LoginValidationSchema}
           onSubmit={(values) => console.log(values)}
           validateOnBlur={false}
         >

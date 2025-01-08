@@ -1,4 +1,10 @@
-import { Feature, NavLink, ProcessStep } from "./types";
+import { FaRegEdit, FaRegUser } from "react-icons/fa";
+import { Feature, NavLink, ProcessStep, SidebarLink } from "./types";
+import { RiHistoryLine, RiHomeLine } from "react-icons/ri";
+import { GrCopy } from "react-icons/gr";
+import { MdBarChart } from "react-icons/md";
+import { LuSettings } from "react-icons/lu";
+import { IoLogOutOutline } from "react-icons/io5";
 
 export const navLinks: NavLink[] = [
   { name: "home", route: "/" },
@@ -73,4 +79,27 @@ export const processSteps: ProcessStep[] = [
     description:
       "Gain the confidence and skills to ace your next interview and land your dream job!",
   },
+];
+
+export const sidebarLinks: SidebarLink[] = [
+  { label: "Dashboard" },
+  { label: "Home", url: "/dashboard", icon: RiHomeLine },
+  { label: "Profile", url: "/dashboard/profile", icon: FaRegUser },
+  { label: "Preparation" },
+  {
+    label: "Practice Interviews",
+    url: "/dashboard/practice-interviews",
+    icon: FaRegEdit,
+  },
+  { label: "Question Bank", url: "/dashboard/question-bank", icon: GrCopy },
+  {
+    label: "Feedback History",
+    url: "/dashboard/feedback-history",
+    icon: RiHistoryLine,
+  },
+  { label: "Analytics" },
+  { label: "Performance", url: "/dashboard/performance", icon: MdBarChart },
+  { label: "Account" },
+  { label: "Settings", url: "/dashboard/settings", icon: LuSettings },
+  { label: "Logout", url: "/dashboard/logout", icon: IoLogOutOutline },
 ];
