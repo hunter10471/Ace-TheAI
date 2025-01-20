@@ -2,6 +2,7 @@
 import clsx from "clsx";
 import { Roboto } from "next/font/google";
 import React from "react";
+import { Oval } from "react-loader-spinner";
 
 interface ButtonProps {
   text: string;
@@ -9,6 +10,7 @@ interface ButtonProps {
   htmlButtonType: "submit" | "reset" | "button";
   action?: () => void;
   className?: string;
+  isLoading?: boolean;
 }
 
 const roboto = Roboto({ subsets: ["latin"], weight: ["500"] });
@@ -19,11 +21,13 @@ const Button: React.FC<ButtonProps> = ({
   action,
   className,
   htmlButtonType,
+  isLoading
 }) => {
   return (
     <button
       onClick={action}
       type={htmlButtonType}
+      disabled={isLoading}
       className={clsx(
         `lg:px-6 px-4 py-2 min-w-[100px] text-sm transition-all rounded-md border hover:shadow-md ${className} ${roboto.className}`,
         {
@@ -33,10 +37,11 @@ const Button: React.FC<ButtonProps> = ({
             type === "outline",
           "border-transparent": type === "text",
           " border-text": type === "black-outline",
+          "flex items-center justify-center": isLoading,
         }
       )}
     >
-      {text}
+      {isLoading ? <Oval color="#fff" height={20} width={20} /> : text}
     </button>
   );
 };

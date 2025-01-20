@@ -12,12 +12,14 @@ import Heading from "@/components/small/Heading/Heading";
 import { features, processSteps } from "@/lib/data";
 import { nanoid } from "nanoid";
 import { Roboto } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 
 const roboto = Roboto({ subsets: ["latin"], weight: ["700"] });
 
 export default function Home() {
   return (
     <Container>
+      <Toaster position="bottom-center" />
       <div className="absolute w-screen h-screen bg-heroPattern top-0 right-0 opacity-5 z-[-1]"></div>
       <div className="flex flex-col items-center justify-center gap-0 lg:gap-4 max-w-[500px] mx-auto text-center">
         <h1

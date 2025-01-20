@@ -1,7 +1,8 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Modal from "../Modal/Modal";
 import { useModalStore } from "@/lib/store";
+import toast, { Toaster } from 'react-hot-toast';
 import Image from "next/image";
 import Input from "@/components/small/Input/Input";
 import { CiMail } from "react-icons/ci";
@@ -9,11 +10,25 @@ import { CiLock } from "react-icons/ci";
 import { Form, Formik } from "formik";
 import Button from "@/components/small/Button/Button";
 import { FcGoogle } from "react-icons/fc";
-import { LoginValidationSchema } from "@/lib/definitions";
+import { LoginValidationSchema } from "@/lib/validation-schemas";
+import { signIn } from "next-auth/react";
 
 const LoginModal = () => {
   const { closeLoginModal, openRegisterModal, isLoginModalOpen } =
     useModalStore();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (values: { email: string, password: string }) => {
+    try {
+      setIsLoading(true);
+      await signIn("credentials", {redirect: false, ...values});
+      toast.success("Logged in successfully!");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   const LoginBody = (
     <div className="max-w-[320px] mx-auto flex flex-col gap-5 items-center">
@@ -33,7 +48,7 @@ const LoginModal = () => {
         <Formik
           initialValues={{ email: "", password: "" }}
           validationSchema={LoginValidationSchema}
-          onSubmit={(values) => console.log(values)}
+          onSubmit={handleSubmit}
           validateOnBlur={false}
         >
           <Form>
@@ -56,6 +71,7 @@ const LoginModal = () => {
               htmlButtonType="submit"
               text="Log In"
               type="primary"
+              isLoading={isLoading}
             />
             <span className="text-center text-xs block my-1">OR</span>
             <button className="relative w-full text-sm font-medium py-2 px-4 hover:bg-text hover:text-white transition-all border border-text rounded-lg">

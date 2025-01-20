@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import Modal from "../Modal/Modal";
+import React, { useState } from "react";
 import { useModalStore } from "@/lib/store";
 import Image from "next/image";
 import Input from "@/components/small/Input/Input";
@@ -10,11 +9,28 @@ import Button from "@/components/small/Button/Button";
 import { CiMail } from "react-icons/ci";
 import { CiLock } from "react-icons/ci";
 import { FcGoogle } from "react-icons/fc";
-import { SignupValidationSchema } from "@/lib/definitions";
+import { SignupValidationSchema } from "@/lib/validation-schemas";
+import { signup } from "@/app/actions/auth";
+import { UserFormData } from "@/lib/types";
+import toast from 'react-hot-toast';
+import Modal from "../Modal/Modal";
 
 const RegisterModal = () => {
   const { closeRegisterModal, openLoginModal, isRegisterModalOpen } =
     useModalStore();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (values: UserFormData) => {
+    try {
+      setIsLoading(true);
+      await signup(values);
+      toast.success("Account created successfully!");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   const RegisterBody = (
     <div className="max-w-[320px] mx-auto flex flex-col gap-5 items-center">
@@ -32,15 +48,15 @@ const RegisterModal = () => {
       </div>
       <div className="w-full">
         <Formik
-          initialValues={{ username: "" }}
+          initialValues={{ name: "", email: "", password: "" }}
           validationSchema={SignupValidationSchema}
-          onSubmit={(values) => console.log(values)}
+          onSubmit={handleSubmit}
           validateOnBlur={false}
         >
           <Form>
             <Input
               label="Full Name"
-              name="username"
+              name="name"
               placeholder="Enter your full name"
               type="text"
               icon={<CiUser size={20} />}
@@ -71,6 +87,7 @@ const RegisterModal = () => {
               htmlButtonType="submit"
               text="Sign Up"
               type="primary"
+              isLoading={isLoading}
             />
             <span className="text-center text-xs block my-1">OR</span>
             <button className="relative w-full text-sm font-medium py-2 px-4 hover:bg-text hover:text-white transition-all border border-text rounded-lg">

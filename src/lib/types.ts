@@ -23,3 +23,16 @@ export interface SidebarLink {
   url?: string;
   icon?: IconType;
 }
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface UserFormData {
+  name: string;
+  email: string;
+  password: string;
+}

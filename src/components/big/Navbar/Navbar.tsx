@@ -17,7 +17,7 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
   const [open, setOpen] = useState(false);
   const navigate = useRouter();
   const { openRegisterModal, openLoginModal } = useModalStore();
-  const user = true;
+  const user = false;
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {

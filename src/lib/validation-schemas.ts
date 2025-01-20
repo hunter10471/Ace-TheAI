@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 
 export const SignupValidationSchema = Yup.object().shape({
-  username: Yup.string().required("Full name is required"),
+  name: Yup.string().required("Full name is required"),
   email: Yup.string()
     .email("Invalid email address")
     .required("Email is required"),
