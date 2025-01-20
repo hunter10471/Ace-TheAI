@@ -12,17 +12,26 @@ import Button from "@/components/small/Button/Button";
 import { FcGoogle } from "react-icons/fc";
 import { LoginValidationSchema } from "@/lib/validation-schemas";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { authenticate } from "@/app/actions/actions";
 
 const LoginModal = () => {
   const { closeLoginModal, openRegisterModal, isLoginModalOpen } =
     useModalStore();
   const [isLoading, setIsLoading] = useState(false);
-
+  const router = useRouter();
+  
   const handleSubmit = async (values: { email: string, password: string }) => {
     try {
       setIsLoading(true);
-      await signIn("credentials", {redirect: false, ...values});
+      const result = await authenticate(values.email, values.password);
+      if (result?.error) {
+        throw new Error(result.error); 
+      }
       toast.success("Logged in successfully!");
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 3000);
     } catch (error: any) {
       toast.error(error.message);
     } finally {

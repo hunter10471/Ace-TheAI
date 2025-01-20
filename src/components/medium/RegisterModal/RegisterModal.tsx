@@ -10,10 +10,10 @@ import { CiMail } from "react-icons/ci";
 import { CiLock } from "react-icons/ci";
 import { FcGoogle } from "react-icons/fc";
 import { SignupValidationSchema } from "@/lib/validation-schemas";
-import { signup } from "@/app/actions/auth";
 import { UserFormData } from "@/lib/types";
 import toast from 'react-hot-toast';
 import Modal from "../Modal/Modal";
+import { signup } from "@/app/actions/actions";
 
 const RegisterModal = () => {
   const { closeRegisterModal, openLoginModal, isRegisterModalOpen } =
@@ -25,6 +25,8 @@ const RegisterModal = () => {
       setIsLoading(true);
       await signup(values);
       toast.success("Account created successfully!");
+      closeRegisterModal();
+      openLoginModal();
     } catch (error: any) {
       toast.error(error.message);
     } finally {
