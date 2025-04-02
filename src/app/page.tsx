@@ -14,7 +14,10 @@ import { nanoid } from "nanoid";
 import { Roboto } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 
-const roboto = Roboto({ subsets: ["latin"], weight: ["700"] });
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["100", "300", "400", "500", "700"],
+});
 
 export default function Home() {
   return (

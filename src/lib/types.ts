@@ -36,3 +36,9 @@ export interface UserFormData {
   email: string;
   password: string;
 }
+
+export enum DashboardStatsCardType {
+  PracticeSessions = "practice-sessions",
+  InterviewSuccess = "interview-success",
+  InterviewThisWeek = "interview-this-week",
+}

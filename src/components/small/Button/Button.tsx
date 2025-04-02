@@ -41,7 +41,7 @@ const Button: React.FC<ButtonProps> = ({
         }
       )}
     >
-      {isLoading ? <Oval color="#fff" height={20} width={20} /> : text}
+      {isLoading ? <Oval color="#ff6f61" secondaryColor="#fff" strokeWidth={5} height={20} width={20} /> : text}
     </button>
   );
 };

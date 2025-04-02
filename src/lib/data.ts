@@ -103,3 +103,86 @@ export const sidebarLinks: SidebarLink[] = [
   { label: "Settings", url: "/dashboard/settings", icon: LuSettings },
   { label: "Logout", url: "/dashboard/logout", icon: IoLogOutOutline },
 ];
+
+export const interviewSuccessRateChartData = [
+  {
+    date: "2023-10-01",
+    score: Math.floor(Math.random() * 101),
+    name: "Interview A",
+  },
+  {
+    date: "2023-10-02",
+    score: Math.floor(Math.random() * 101),
+    name: "Interview B",
+  },
+  {
+    date: "2023-10-03",
+    score: Math.floor(Math.random() * 101),
+    name: "Interview C",
+  },
+  {
+    date: "2023-10-04",
+    score: Math.floor(Math.random() * 101),
+    name: "Interview D",
+  },
+  {
+    date: "2023-10-05",
+    score: Math.floor(Math.random() * 101),
+    name: "Interview E",
+  },
+  {
+    date: "2023-10-06",
+    score: Math.floor(Math.random() * 101),
+    name: "Interview F",
+  },
+  {
+    date: "2023-10-07",
+    score: Math.floor(Math.random() * 101),
+    name: "Interview G",
+  },
+  {
+    date: "2023-10-05",
+    score: Math.floor(Math.random() * 101),
+    name: "Interview H",
+  },
+  {
+    date: "2023-10-06",
+    score: Math.floor(Math.random() * 101),
+    name: "Interview F",
+  },
+  {
+    date: "2023-10-07",
+    score: Math.floor(Math.random() * 101),
+    name: "Interview G",
+  },
+  {
+    date: "2023-10-05",
+    score: Math.floor(Math.random() * 101),
+    name: "Interview E",
+  },
+  {
+    date: "2023-10-06",
+    score: Math.floor(Math.random() * 101),
+    name: "Interview F",
+  },
+  {
+    date: "2023-10-07",
+    score: Math.floor(Math.random() * 101),
+    name: "Interview G",
+  },
+  {
+    date: "2023-10-05",
+    score: Math.floor(Math.random() * 101),
+    name: "Interview E",
+  },
+  {
+    date: "2023-10-06",
+    score: Math.floor(Math.random() * 101),
+    name: "Interview F",
+  },
+  {
+    date: "2023-10-07",
+    score: Math.floor(Math.random() * 101),
+    name: "Interview G",
+  },
+];
