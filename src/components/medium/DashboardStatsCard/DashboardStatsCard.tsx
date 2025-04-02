@@ -81,7 +81,7 @@ const DashboardStatsCard: React.FC<DashboardStatsCardProps> = ({
                       style={{backgroundColor: hasInterview || isToday ? darkColor : 'transparent'}}
                       key={i}
                       className={`
-                        text-xs rounded-full w-6 h-6 mx-auto flex items-center justify-center`}
+                        text-xs rounded-full w-5 h-5 mx-auto flex items-center justify-center`}
                     >
                       {currentDay.date()}
                     </div>
@@ -96,9 +96,9 @@ const DashboardStatsCard: React.FC<DashboardStatsCardProps> = ({
     }
   };
   return (
-    <div style={{ backgroundColor: color }} className={`rounded-2xl py-2 h-[285px] overflow-hidden`}>
-      <div className="bg-white rounded-2xl w-fit mx-3">
-        <div className="relative w-[200px] h-[130px]">
+    <div style={{ backgroundColor: color }} className={`rounded-2xl py-2 w-[200px] h-[270px] overflow-hidden`}>
+      <div className="bg-white rounded-2xl w-fit mx-auto">
+        <div className="relative w-[180px] h-[120px]">
           <Image
             src={imageSrc}
             alt="Dashboard Stats Card"

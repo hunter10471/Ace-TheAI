@@ -3,8 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { SignupValidationSchema } from "@/lib/validation-schemas";
 import { hashPassword } from "@/lib/utils";
 import * as Yup from "yup";
-import { UserFormData } from "@/lib/types";
-import { signIn } from "@/auth";
+import { User, UserFormData } from "@/lib/types";
+import { auth, signIn } from "@/auth";
 
 export const signup = async (formData: UserFormData) => {
     try {
@@ -44,3 +44,24 @@ export async function authenticate(email: string, password: string) {
         }
     }
 }
+
+
+export async function getUser(): Promise<User> {
+    try {
+        const session = await auth();
+        const supabase = await createClient();
+        const {data, error} = await supabase.from("users").select("*").eq("email", session?.user?.email);
+        if(!data){
+            throw new Error("User not found!");
+        }
+        if(error){
+            throw new Error(error);
+        }
+        const {password, ...user} = data[0];
+        return user;
+    } catch (error: any) {
+        throw new Error(error);
+    }
+}
+
+
