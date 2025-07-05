@@ -48,8 +48,8 @@ const LoginModal = () => {
           width={100}
           height={100}
         />
-        <h1 className="text-xl lg:text-2xl font-bold">Welcome Back!</h1>
-        <span className="text-xs lg:text-sm text-gray-400">
+        <h1 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">Welcome Back!</h1>
+        <span className="text-xs lg:text-sm text-gray-400 dark:text-gray-500">
           Enter your details to log in
         </span>
       </div>
@@ -82,12 +82,12 @@ const LoginModal = () => {
               type="primary"
               isLoading={isLoading}
             />
-            <span className="text-center text-xs block my-1">OR</span>
-            <button className="relative w-full text-sm font-medium py-2 px-4 hover:bg-text hover:text-white transition-all border border-text rounded-lg">
+            <span className="text-center text-xs block my-1 text-gray-500 dark:text-gray-400">OR</span>
+            <button className="relative w-full text-sm font-medium py-2 px-4 hover:bg-text hover:text-white dark:hover:bg-gray-700 transition-all border border-text dark:border-gray-600 rounded-lg text-gray-900 dark:text-white">
               <FcGoogle size={25} className="absolute bottom-[5px] left-14" />{" "}
               Sign in with Google
             </button>
-            <span className="block text-center text-xs mt-4">
+            <span className="block text-center text-xs mt-4 text-gray-600 dark:text-gray-400">
               Don't have an account?{" "}
               <button
                 onClick={() => {

@@ -2,12 +2,12 @@ import Container from "@/components/big/Container/Container";
 import Hero from "@/components/big/Hero/Hero";
 import Feature from "@/components/medium/Feature/Feature";
 import Footer from "@/components/medium/Footer/Footer";
+import HeroButtons from "@/components/medium/HeroButtons/HeroButtons";
 import LoginModal from "@/components/medium/LoginModal/LoginModal";
 import ProcessStep from "@/components/medium/ProcessStep/ProcessStep";
 import ReadyBanner from "@/components/medium/ReadyBanner/ReadyBanner";
 import RegisterModal from "@/components/medium/RegisterModal/RegisterModal";
 import ReviewSlider from "@/components/medium/ReviewSlider/ReviewSlider";
-import Button from "@/components/small/Button/Button";
 import Heading from "@/components/small/Heading/Heading";
 import { features, processSteps } from "@/lib/data";
 import { nanoid } from "nanoid";
@@ -23,7 +23,7 @@ export default function Home() {
   return (
     <Container>
       <Toaster position="bottom-center" />
-      <div className="absolute w-screen h-screen bg-heroPattern top-0 right-0 opacity-5 z-[-1]"></div>
+      <div className="absolute w-screen h-screen bg-heroPattern top-0 right-0 opacity-5 dark:opacity-3 z-[-1]"></div>
       <div className="flex flex-col items-center justify-center gap-0 lg:gap-4 max-w-[500px] mx-auto text-center">
         <h1
           className={`text-[42px] lg:text-[54px] leading-[30px] lg:leading-[54px] text-primary font-bold  ${roboto.className}`}
@@ -31,33 +31,28 @@ export default function Home() {
           Ace The AI
         </h1>
         <h1
-          className={`text-[42px] lg:text-[54px] leading-[64px] lg:leading-[54px] font-bold ${roboto.className}`}
+          className={`text-[42px] lg:text-[54px] leading-[64px] lg:leading-[54px] font-bold text-text dark:text-gray-100 ${roboto.className}`}
         >
           Interview Coach
         </h1>
-        <p className="text-base lg:text-lg">
+        <p className="text-base lg:text-lg text-gray-600 dark:text-gray-400">
           Empowering Your Interview Success with AI-Driven Insights and
           Personalized Coaching
         </p>
-        <div className="flex gap-4 mt-5">
-          <Button htmlButtonType="button" text="Get Started" type="primary" />
-          <Button
-            htmlButtonType="button"
-            text="Learn More"
-            type="black-outline"
-          />
-        </div>
+        <HeroButtons />
       </div>
       <Hero />
-      <Heading
-        className="max-w-[400px] mx-auto text-center"
-        text="Experience the Future of Interview Preparation"
-        preTitle="our features"
-      />
-      <div className="flex flex-col my-10 gap-16">
-        {features.map((feature, index) => (
-          <Feature index={index} key={nanoid()} {...feature} />
-        ))}
+      <div data-section="features">
+        <Heading
+          className="max-w-[400px] mx-auto text-center"
+          text="Experience the Future of Interview Preparation"
+          preTitle="our features"
+        />
+        <div className="flex flex-col my-10 gap-16">
+          {features.map((feature, index) => (
+            <Feature index={index} key={nanoid()} {...feature} />
+          ))}
+        </div>
       </div>
       <Heading
         className="max-w-[400px] mt-20 mx-auto text-center"

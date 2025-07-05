@@ -2,6 +2,7 @@
 import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import React from "react";
 import { interviewSuccessRateChartData } from "@/lib/data";
+import { useThemeStore } from "@/lib/store";
 
 interface DashboardStatsChartProps {
   strokeColor: string;
@@ -12,6 +13,8 @@ const DashboardStatsChart: React.FC<DashboardStatsChartProps> = ({
   strokeColor,
   chartData = interviewSuccessRateChartData,
 }) => {
+  const { isDarkMode } = useThemeStore();
+  
   return (
     <ResponsiveContainer width="100%" height={50}>
       <AreaChart
@@ -38,15 +41,15 @@ const DashboardStatsChart: React.FC<DashboardStatsChartProps> = ({
         <XAxis dataKey="date" hide={true} />
         <Tooltip
           contentStyle={{
-            background: "rgba(255,255,255,0.9)",
+            background: isDarkMode ? "rgba(31, 41, 55, 0.95)" : "rgba(255,255,255,0.9)",
             border: "none",
             borderRadius: "8px",
             boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
             fontSize: "12px",
             padding: "4px 10px"
           }}
-          labelStyle={{ color: "#333", fontWeight: "lighter" }}
-          itemStyle={{ fontWeight: "bold" }}
+          labelStyle={{ color: isDarkMode ? "#e5e7eb" : "#333", fontWeight: "lighter" }}
+          itemStyle={{ fontWeight: "bold", color: isDarkMode ? "#fff" : "#333" }}
         />
         <Area
           type="monotone"

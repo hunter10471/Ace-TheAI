@@ -28,12 +28,12 @@ const Input: React.FC<InputProps> = ({
     <div className="mb-2 lg:mb-3">
       <label
         htmlFor={name}
-        className="block font-medium mb-2 text-xs lg:text-sm"
+        className="block font-medium mb-2 text-xs lg:text-sm text-gray-700 dark:text-gray-300"
       >
         {label}
       </label>
       <div className="relative">
-        <div className="absolute text-gray-500 inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <div className="absolute text-gray-500 dark:text-gray-400 inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           {icon}
         </div>
         <input
@@ -41,20 +41,20 @@ const Input: React.FC<InputProps> = ({
           id={name}
           {...field}
           placeholder={placeholder}
-          className={`shadow-sm block focus:outline-text w-full pl-10 pr-12 py-2 text-sm border-gray-300 rounded-md`}
+          className={`shadow-sm block focus:outline-text dark:focus:outline-gray-400 w-full pl-10 pr-12 py-2 text-sm border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400`}
         />
         {type === "password" && (
           <div className="absolute inset-y-0 right-3 flex items-center cursor-pointer">
             {showPassword ? (
               <FaEyeSlash
                 size={18}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                 onClick={togglePasswordVisibility}
               />
             ) : (
               <FaEye
                 size={18}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                 onClick={togglePasswordVisibility}
               />
             )}
@@ -62,12 +62,12 @@ const Input: React.FC<InputProps> = ({
         )}
       </div>
       {name === "password" && (
-        <span className="text-[10px] text-gray-400">
+        <span className="text-[10px] text-gray-400 dark:text-gray-500">
           Must contain 1 uppercase letter, 1 number, min. 8 characters
         </span>
       )}
       {meta.error && meta.touched && (
-        <div className="text-red-500 text-sm mt-1">{meta.error}</div>
+        <div className="text-red-500 dark:text-red-400 text-sm mt-1">{meta.error}</div>
       )}
     </div>
   );

@@ -16,7 +16,7 @@ const Sidebar: React.FC<SidebarProps> = ({}) => {
   return (
     <div className="fixed left-0 top-0 h-full z-[99] flex">
       <div
-        className={`bg-text h-full transition-all duration-300 ease-in-out overflow-hidden ${
+        className={`bg-text dark:bg-gray-900 h-full transition-all duration-300 ease-in-out overflow-hidden ${
           open ? "w-[180px] lg:w-[250px]" : "w-0"
         }`}
       >
@@ -35,8 +35,8 @@ const Sidebar: React.FC<SidebarProps> = ({}) => {
                   key={index}
                   className={`flex whitespace-nowrap items-center gap-2 text-xs lg:text-sm px-2 lg:px-4 py-1.5 border border-transparent transition-all mt-2 lg:mt-3 rounded-lg ${
                     path === link.url
-                      ? "bg-primary text-offWhite"
-                      : "text-offWhite/50 hover:border-primary hover:text-offWhite"
+                      ? "bg-primary text-offWhite dark:text-white"
+                      : "text-offWhite/50 dark:text-gray-400 hover:border-primary hover:text-offWhite dark:hover:text-gray-200"
                   }`}
                   href={link.url}
                 >
@@ -48,7 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({}) => {
               ) : (
                 <h3
                   key={index}
-                  className="text-offWhite/50 uppercase text-[10px] lg:text-xs mt-6 lg:mt-8 px-2 lg:px-4"
+                  className="text-offWhite/50 dark:text-gray-500 uppercase text-[10px] lg:text-xs mt-6 lg:mt-8 px-2 lg:px-4"
                 >
                   {link.label}
                 </h3>
@@ -59,7 +59,7 @@ const Sidebar: React.FC<SidebarProps> = ({}) => {
       </div>
       <button
         onClick={() => setOpen(!open)}
-        className={`flex items-center justify-center h-10 w-10 bg-text transition-colors rounded-tr-lg rounded-br-lg mt-4 text-white ${
+        className={`flex items-center justify-center h-10 w-10 bg-text dark:bg-gray-900 transition-colors rounded-tr-lg rounded-br-lg mt-4 text-white dark:text-gray-200 ${
           open ? "-mr-10" : "ml-0"
         }`}
       >

@@ -33,10 +33,12 @@ const Button: React.FC<ButtonProps> = ({
         {
           "bg-primary text-secondary hover:bg-primaryDark hover:border-primaryDark border-primary":
             type === "primary",
-          "text-primary border-primary hover:text-primaryDark hover:border-primaryDark ":
+          "text-primary border-primary hover:text-primaryDark hover:border-primaryDark bg-transparent":
             type === "outline",
-          "border-transparent": type === "text",
-          " border-text": type === "black-outline",
+          "border-transparent text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100": 
+            type === "text",
+          "border-text dark:border-gray-300 text-text dark:text-gray-300 hover:border-gray-600 dark:hover:border-gray-400 bg-transparent":
+            type === "black-outline",
           "flex items-center justify-center": isLoading,
         }
       )}

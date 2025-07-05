@@ -5,9 +5,9 @@ import { navLinks } from "@/lib/data";
 import NavLink from "../../small/NavLink/NavLink";
 import { nanoid } from "nanoid";
 import Button from "../../small/Button/Button";
-import { MdMenu } from "react-icons/md";
+import { MdMenu, MdDarkMode, MdLightMode } from "react-icons/md";
 import NavMenu from "../../medium/NavMenu/NavMenu";
-import { useModalStore } from "@/lib/store";
+import { useModalStore, useThemeStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
 
 interface NavbarProps {}
@@ -17,7 +17,9 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
   const [open, setOpen] = useState(false);
   const navigate = useRouter();
   const { openRegisterModal, openLoginModal } = useModalStore();
+  const { isDarkMode, toggleDarkMode } = useThemeStore();
   const user = false;
+  
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -36,18 +38,29 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
 
   return (
     <div
-      className={`fixed z-[99] bg-secondary top-0 w-screen overflow-hidden flex items-center justify-center transition-all h-[70px] ${
-        scroll ? "shadow-lg bg-white" : "shadow-none bg-transparent"
+      className={`fixed z-[99] top-0 w-screen overflow-hidden flex items-center justify-center transition-all h-[70px] ${
+        scroll ? "shadow-lg bg-white dark:bg-gray-900" : "shadow-none bg-transparent"
       }`}
     >
       <div className="w-full max-w-screen-xl p-4 lg:p-6 flex items-center justify-between">
-        <Logo type="dark" />
+        <Logo type={isDarkMode ? "light" : "dark"} />
         <div className="hidden md:flex gap-5">
           {navLinks.map((link) => (
             <NavLink key={nanoid()} {...link} />
           ))}
         </div>
-        <div className="hidden md:flex gap-2 lg:gap-5">
+        <div className="hidden md:flex gap-2 lg:gap-5 items-center">
+          <button
+            onClick={toggleDarkMode}
+            className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            aria-label="Toggle dark mode"
+          >
+            {isDarkMode ? (
+              <MdLightMode size={20} className="text-gray-600 dark:text-gray-300" />
+            ) : (
+              <MdDarkMode size={20} className="text-gray-600 dark:text-gray-300" />
+            )}
+          </button>
           {user ? (
             <Button
               htmlButtonType="button"
@@ -57,7 +70,6 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
             />
           ) : (
             <>
-              {" "}
               <Button
                 htmlButtonType="button"
                 text="Signup"
@@ -69,13 +81,26 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
                 text="Login"
                 action={openLoginModal}
                 type="outline"
-              />{" "}
+              />
             </>
           )}
         </div>
-        <button onClick={() => setOpen(true)} className="flex md:hidden">
-          <MdMenu size={25} />
-        </button>
+        <div className="flex md:hidden items-center gap-2">
+          <button
+            onClick={toggleDarkMode}
+            className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            aria-label="Toggle dark mode"
+          >
+            {isDarkMode ? (
+              <MdLightMode size={20} className="text-gray-600 dark:text-gray-300" />
+            ) : (
+              <MdDarkMode size={20} className="text-gray-600 dark:text-gray-300" />
+            )}
+          </button>
+          <button onClick={() => setOpen(true)} className="text-gray-600 dark:text-gray-300">
+            <MdMenu size={25} />
+          </button>
+        </div>
       </div>
       <NavMenu open={open} setOpen={setOpen} />
     </div>

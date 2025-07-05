@@ -23,10 +23,10 @@ const ActionCard: React.FC<ActionCardProps> = ({
     <div className="w-[200px] h-[160px]">
       <div className="flex flex-col h-full">
         <div className="flex gap-3 mb-1">
-          <h3 className="font-bold text-lg">{title}</h3>
+          <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100">{title}</h3>
           {icon}
         </div>
-        <p className="text-sm text-gray-600 mb-2 flex-grow max-w-[80%]">
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 flex-grow max-w-[80%]">
           {description}
         </p>
         <Button

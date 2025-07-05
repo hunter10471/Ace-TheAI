@@ -9,6 +9,12 @@ interface ModalState {
   closeRegisterModal: () => void;
 }
 
+interface ThemeState {
+  isDarkMode: boolean;
+  toggleDarkMode: () => void;
+  setDarkMode: (isDark: boolean) => void;
+}
+
 export const useModalStore = create<ModalState>(
   (set): ModalState => ({
     isLoginModalOpen: false,
@@ -17,5 +23,36 @@ export const useModalStore = create<ModalState>(
     closeLoginModal: () => set({ isLoginModalOpen: false }),
     openRegisterModal: () => set({ isRegisterModalOpen: true }),
     closeRegisterModal: () => set({ isRegisterModalOpen: false }),
+  })
+);
+
+export const useThemeStore = create<ThemeState>(
+  (set, get): ThemeState => ({
+    isDarkMode: false,
+    toggleDarkMode: () => {
+      const newMode = !get().isDarkMode;
+      set({ isDarkMode: newMode });
+      if (typeof window !== 'undefined') {
+        if (newMode) {
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('darkMode', 'true');
+        } else {
+          document.documentElement.classList.remove('dark');
+          localStorage.setItem('darkMode', 'false');
+        }
+      }
+    },
+    setDarkMode: (isDark: boolean) => {
+      set({ isDarkMode: isDark });
+      if (typeof window !== 'undefined') {
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('darkMode', 'true');
+        } else {
+          document.documentElement.classList.remove('dark');
+          localStorage.setItem('darkMode', 'false');
+        }
+      }
+    }
   })
 );

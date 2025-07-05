@@ -7,9 +7,21 @@ interface LogoProps {
 }
 
 const Logo: React.FC<LogoProps> = ({ type }) => {
+	const getLogoSrc = () => {
+		switch (type) {
+			case "light":
+				return "/assets/logo_light.png";
+			case "primary":
+				return "/assets/logo_primary.png";
+			case "dark":
+			default:
+				return "/assets/logo_dark.png";
+		}
+	};
+
 	return (
 		<Link href={"/"} className="relative h-10 w-24">
-			<Image alt="ace-logo" src={"/assets/logo_dark.png"} fill />
+			<Image alt="ace-logo" src={getLogoSrc()} fill />
 		</Link>
 	);
 };

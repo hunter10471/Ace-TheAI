@@ -44,11 +44,11 @@ export default async function page() {
     <div>
       <div className="flex justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-3xl -mb-1">
+          <h1 className="flex items-center gap-2 text-3xl -mb-1 text-gray-900 dark:text-gray-100">
             Welcome back, {user.name.split(" ")[0]}
             <PiHandWavingFill size={40} className="text-amber-400" />
           </h1>
-          <span className="text-gray-500 text-sm">
+          <span className="text-gray-500 dark:text-gray-400 text-sm">
             Prepare, Practice, Perform!
           </span>
         </div>
@@ -61,8 +61,8 @@ export default async function page() {
             className="rounded-full"
           />
           <div className="flex flex-col">
-            <span className="text-sm font-semibold">{user.name}</span>
-            <span className="text-xs text-gray-500">{user.email}</span>
+            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{user.name}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">{user.email}</span>
           </div>
         </div>
       </div>
@@ -104,7 +104,7 @@ export default async function page() {
         </div>
         <Calendar highlightDates={highlightDates} />
       </div>
-      <h1 className="text-2xl mb-4">What's Next?</h1>
+      <h1 className="text-2xl mb-4 text-gray-900 dark:text-gray-100">What's Next?</h1>
       <div className="flex gap-7">
         <div className="flex gap-4">
           <ActionCard

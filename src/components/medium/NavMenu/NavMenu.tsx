@@ -3,8 +3,8 @@ import NavLink from "../../small/NavLink/NavLink";
 import Button from "../../small/Button/Button";
 import { navLinks } from "@/lib/data";
 import { nanoid } from "nanoid";
-import { MdClose } from "react-icons/md";
-import { useModalStore } from "@/lib/store";
+import { MdClose, MdDarkMode, MdLightMode } from "react-icons/md";
+import { useModalStore, useThemeStore } from "@/lib/store";
 
 interface NavMenuProps {
   open: boolean;
@@ -13,6 +13,7 @@ interface NavMenuProps {
 
 const NavMenu: React.FC<NavMenuProps> = ({ open, setOpen }) => {
   const { openRegisterModal, openLoginModal } = useModalStore();
+  const { isDarkMode, toggleDarkMode } = useThemeStore();
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -36,11 +37,11 @@ const NavMenu: React.FC<NavMenuProps> = ({ open, setOpen }) => {
       ref={sidebarRef}
       className={`fixed flex flex-col justify-center top-0 right-0 md:hidden h-screen w-[200px] transition-all ease-out duration-500 ${
         open ? "translate-x-[0%] opacity-100" : "translate-x-[100%] opacity-0"
-      } bg-text py-6 px-4`}
+      } bg-text dark:bg-gray-800 py-6 px-4`}
     >
       <button
         onClick={() => setOpen(false)}
-        className="text-secondary absolute top-5 right-5"
+        className="text-secondary dark:text-gray-200 absolute top-5 right-5"
       >
         <MdClose size={25} />
       </button>
@@ -48,6 +49,17 @@ const NavMenu: React.FC<NavMenuProps> = ({ open, setOpen }) => {
         {navLinks.map((link) => (
           <NavLink isNavMenu={true} key={nanoid()} {...link} />
         ))}
+        <button
+          onClick={toggleDarkMode}
+          className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+          aria-label="Toggle dark mode"
+        >
+          {isDarkMode ? (
+            <MdLightMode size={20} className="text-gray-600 dark:text-gray-300" />
+          ) : (
+            <MdDarkMode size={20} className="text-gray-600 dark:text-gray-300" />
+          )}
+        </button>
         <Button
           htmlButtonType="button"
           text="Signup"

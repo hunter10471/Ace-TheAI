@@ -20,7 +20,7 @@ const Heading: React.FC<HeadingProps> = ({ text, preTitle, className }) => {
 			)}
 			<h1
 				className={clsx(
-					`${roboto.className} font-bold leading-tight text-[24px] md:text-[32px]`
+					`${roboto.className} font-bold leading-tight text-[24px] md:text-[32px] text-text dark:text-gray-100`
 				)}
 			>
 				{text}

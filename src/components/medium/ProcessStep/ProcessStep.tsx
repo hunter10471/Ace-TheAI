@@ -18,10 +18,10 @@ const ProcessStep: React.FC<ProcessStepProps> = ({
       <div className="relative w-[80px] md:w-[180px] h-[80px] md:h-[180px]">
         <Image fill src={image} alt="Process Step" className="object-cover" />
       </div>
-      <h2 className="text-base md:text-2xl font-bold">
+      <h2 className="text-base md:text-2xl font-bold text-text dark:text-gray-100">
         Step {index}: {title}
       </h2>
-      <p className="md:text-base text-xs">{description}</p>
+      <p className="md:text-base text-xs text-gray-600 dark:text-gray-400">{description}</p>
     </div>
   );
 };

@@ -16,7 +16,7 @@ const NavLink: React.FC<NavLinkProps> = ({ route, name, isNavMenu }) => {
 		<Link
 			href={route}
 			className={`capitalize hover:border-primary border-transparent border-b-2 transition-all px-2 lg:px-6 py-[2px] ${
-				isNavMenu ? "text-secondary" : "text-text"
+				isNavMenu ? "text-secondary dark:text-gray-200" : "text-text dark:text-gray-200"
 			} ${roboto.className}`}
 		>
 			{name}

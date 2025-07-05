@@ -29,13 +29,13 @@ const Feature: React.FC<FeatureProps> = ({
 				</div>
 			</div>
 			<div className="flex flex-col gap-4">
-				<span className="flex items-center justify-center h-8 w-8 font-bold text-xs bg-primary/50 rounded-full text-text/50">
+				<span className="flex items-center justify-center h-8 w-8 font-bold text-xs bg-primary/50 rounded-full text-text/50 dark:text-gray-400">
 					{index + 1}
 				</span>
-				<h2 className={`${roboto.className} text-2xl  max-w-[300px]`}>
+				<h2 className={`${roboto.className} text-2xl max-w-[300px] text-text dark:text-gray-100`}>
 					{heading}
 				</h2>
-				<p className="text-text/80 text-sm max-w-[500px]">{desc}</p>
+				<p className="text-text/80 dark:text-gray-400 text-sm max-w-[500px]">{desc}</p>
 			</div>
 		</div>
 	);
