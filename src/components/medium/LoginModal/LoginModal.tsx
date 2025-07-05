@@ -34,8 +34,6 @@ const LoginModal = () => {
       }, 3000);
     } catch (error: any) {
       toast.error(error.message);
-    } finally {
-      setIsLoading(false);
     }
   }
 

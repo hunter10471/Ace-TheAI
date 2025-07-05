@@ -11,6 +11,7 @@ interface ButtonProps {
   action?: () => void;
   className?: string;
   isLoading?: boolean;
+  icon?: React.ReactNode;
 }
 
 const roboto = Roboto({ subsets: ["latin"], weight: ["500"] });
@@ -21,7 +22,8 @@ const Button: React.FC<ButtonProps> = ({
   action,
   className,
   htmlButtonType,
-  isLoading
+  isLoading,
+  icon
 }) => {
   return (
     <button
@@ -43,6 +45,7 @@ const Button: React.FC<ButtonProps> = ({
         }
       )}
     >
+      {!isLoading && icon}
       {isLoading ? <Oval color="#ff6f61" secondaryColor="#fff" strokeWidth={5} height={20} width={20} /> : text}
     </button>
   );
