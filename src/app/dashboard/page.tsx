@@ -14,6 +14,8 @@ import { BsPatchQuestion } from "react-icons/bs";
 import { getUser } from "../actions/actions";
 import ActivityStats from "@/components/medium/ActivityStats/ActivityStats";
 
+export const dynamic = 'force-dynamic';
+
 export default async function page() {
   const user = await getUser();
 
