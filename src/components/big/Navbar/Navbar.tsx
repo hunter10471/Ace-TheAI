@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Logo from "../../small/Logo/Logo";
-import { navLinks } from "@/lib/data";
 import NavLink from "../../small/NavLink/NavLink";
 import { nanoid } from "nanoid";
 import Button from "../../small/Button/Button";
@@ -9,6 +8,7 @@ import { MdMenu, MdDarkMode, MdLightMode } from "react-icons/md";
 import NavMenu from "../../medium/NavMenu/NavMenu";
 import { useModalStore, useThemeStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
+import { navLinks } from "@/lib/data";
 
 interface NavbarProps {}
 

@@ -1,10 +1,10 @@
 import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import NavLink from "../../small/NavLink/NavLink";
 import Button from "../../small/Button/Button";
-import { navLinks } from "@/lib/data";
 import { nanoid } from "nanoid";
 import { MdClose, MdDarkMode, MdLightMode } from "react-icons/md";
 import { useModalStore, useThemeStore } from "@/lib/store";
+import { navLinks } from "@/lib/data";
 
 interface NavMenuProps {
   open: boolean;

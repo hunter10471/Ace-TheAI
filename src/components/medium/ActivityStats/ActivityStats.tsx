@@ -1,11 +1,6 @@
 "use client";
 
 import React from "react";
-import {
-  IoTimeOutline,
-  IoStatsChartOutline,
-  IoCalendarNumberOutline,
-} from "react-icons/io5";
 
 interface ActivityStat {
   value: string | number;

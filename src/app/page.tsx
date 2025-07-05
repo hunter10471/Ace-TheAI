@@ -9,10 +9,10 @@ import ReadyBanner from "@/components/medium/ReadyBanner/ReadyBanner";
 import RegisterModal from "@/components/medium/RegisterModal/RegisterModal";
 import ReviewSlider from "@/components/medium/ReviewSlider/ReviewSlider";
 import Heading from "@/components/small/Heading/Heading";
-import { features, processSteps } from "@/lib/data";
 import { nanoid } from "nanoid";
 import { Roboto } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+import { features, processSteps } from "@/lib/data";
 
 const roboto = Roboto({
   subsets: ["latin"],

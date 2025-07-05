@@ -1,19 +1,11 @@
 "use client"
 
 import type React from "react"
+import { weeklyData } from "@/lib/data"
 
 type WeeklyActivityProps = {}
 
 const WeeklyActivity: React.FC<WeeklyActivityProps> = () => {
-  const weeklyData = [
-    { day: "Mon", hours: 2.5, bgColor: "bg-[#FFD9D1]", borderColor: "border-[#FEA997]" },
-    { day: "Tue", hours: 3.2, bgColor: "bg-[#FFD9D1]", borderColor: "border-[#FEA997]" },
-    { day: "Wed", hours: 4.8, bgColor: "bg-[#FFFEAD]", borderColor: "border-[#CBC956]" },
-    { day: "Thu", hours: 5.2, bgColor: "bg-[#FFFEAD]", borderColor: "border-[#CBC956]" },
-    { day: "Fri", hours: 5.8, bgColor: "bg-[#C9E2FF]", borderColor: "border-[#63A8FD]" },
-    { day: "Sat", hours: 4.5, bgColor: "bg-[#C1FAFF]", borderColor: "border-[#77DAE3]" },
-    { day: "Sun", hours: 3.0, bgColor: "bg-[#F3DEF1]", borderColor: "border-[#E486E0]" },
-  ]
 
   const maxHours = 6
 

@@ -1,7 +1,6 @@
 "use client";
 
 import Button from "@/components/small/Button/Button";
-import { footerLinks } from "@/lib/data";
 import { useThemeStore } from "@/lib/store";
 import { nanoid } from "nanoid";
 import Image from "next/image";
@@ -10,7 +9,7 @@ import React from "react";
 import { LuUser2 } from "react-icons/lu";
 import { FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import { AiFillInstagram } from "react-icons/ai";
+import { footerLinks } from "@/lib/data";
 
 const Footer = () => {
   const { isDarkMode } = useThemeStore();

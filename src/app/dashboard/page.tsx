@@ -3,7 +3,7 @@ import ActionCard from "@/components/medium/ActionCard/ActionCard";
 import Calendar from "@/components/medium/Calendar/Calendar";
 import FeaturedContent from "@/components/medium/FeaturedContent/FeaturedContent";
 import WeeklyActivity from "@/components/medium/WeeklyActivity/WeeklyActivity";
-import { interviewSuccessRateChartData } from "@/lib/data";
+import { interviewSuccessRateChartData, highlightDates, activityStats } from "@/lib/data";
 import { DashboardStatsCardType } from "@/lib/types";
 import Image from "next/image";
 import React from "react";
@@ -12,35 +12,10 @@ import { MdOutlineEdit } from "react-icons/md";
 import { BsChatSquareQuote } from "react-icons/bs";
 import { BsPatchQuestion } from "react-icons/bs";
 import { getUser } from "../actions/actions";
-import { IoCalendarNumberOutline } from "react-icons/io5";
-import { IoStatsChartOutline } from "react-icons/io5";
-import { IoTimeOutline } from "react-icons/io5";
 import ActivityStats from "@/components/medium/ActivityStats/ActivityStats";
-import { LuPieChart } from "react-icons/lu";
 
 export default async function page() {
   const user = await getUser();
-  const highlightDates = [6, 13, 22];
-  const activityStats = [
-    {
-      value: "256",
-      label: "Learning hours",
-      icon: <IoTimeOutline size={22} />,
-      color: "bg-[#009EFA]",
-    },
-    {
-      value: "90/100",
-      label: "Average test result",
-      icon: <IoStatsChartOutline size={22} />,
-      color: "bg-[#00C9A7]",
-    },
-    {
-      value: "48",
-      label: "Interviews participated",
-      icon: <LuPieChart size={22} />,
-      color: "bg-[#C197FF]",
-    },
-  ];
 
   return (
     <div>
