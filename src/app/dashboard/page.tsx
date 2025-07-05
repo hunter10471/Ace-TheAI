@@ -1,6 +1,8 @@
 import DashboardStatsCard from "@/components/medium/DashboardStatsCard/DashboardStatsCard";
 import ActionCard from "@/components/medium/ActionCard/ActionCard";
 import Calendar from "@/components/medium/Calendar/Calendar";
+import FeaturedContent from "@/components/medium/FeaturedContent/FeaturedContent";
+import WeeklyActivity from "@/components/medium/WeeklyActivity/WeeklyActivity";
 import { interviewSuccessRateChartData } from "@/lib/data";
 import { DashboardStatsCardType } from "@/lib/types";
 import Image from "next/image";
@@ -105,28 +107,32 @@ export default async function page() {
         <Calendar highlightDates={highlightDates} />
       </div>
       <h1 className="text-2xl mb-4 text-gray-900 dark:text-gray-100">What's Next?</h1>
-      <div className="flex gap-7">
-        <div className="flex gap-4">
+      <div className="flex gap-4 justify-between">
+        <div className="flex gap-4 mb-8">
           <ActionCard
             title="Practice Today"
             description="Begin a new practice interview to sharpen your skills."
             buttonText="Start Practice"
             icon={<MdOutlineEdit size={30} className="text-primary" />}
-          />
+            />
           <ActionCard
             title="View Feedback"
             description="Check out the latest feedback to improve your performance."
             buttonText="View Feedback"
             icon={<BsChatSquareQuote size={30} className="text-primary" />}
-          />
+            />
           <ActionCard
             title="New Questions"
             description="Discover new questions added to the question bank."
             buttonText="Explore Questions"
             icon={<BsPatchQuestion size={30} className="text-primary" />}
-          />
+            />
         </div>
         <ActivityStats stats={activityStats} />
+      </div>
+      <div className="flex gap-6 justify-between">
+        <FeaturedContent />
+        <WeeklyActivity />
       </div>
     </div>
   );
