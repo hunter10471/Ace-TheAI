@@ -74,7 +74,7 @@ const ProfilePage = () => {
   const countryOptions = countryList().getData();
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-6">
       <div className="flex justify-between items-start mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Your Profile</h1>

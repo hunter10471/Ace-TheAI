@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import Button from "@/components/small/Button/Button";
 import { HiOutlineCubeTransparent } from "react-icons/hi2";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
@@ -25,6 +26,7 @@ interface DifficultyLevel {
 }
 
 const PracticeInterviewsPage = () => {
+  const router = useRouter();
   const [selectedArea, setSelectedArea] = useState<string>("technical");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("advanced");
   const [selectedTime, setSelectedTime] = useState<string>("5");
@@ -81,12 +83,14 @@ const PracticeInterviewsPage = () => {
   const timeOptions = ["5", "10", "15", "20", "25"];
 
   const handleStartInterview = () => {
-    console.log("Starting interview with:", {
+    const params = new URLSearchParams({
       area: selectedArea,
       difficulty: selectedDifficulty,
       time: selectedTime,
       jobTitle: targetJobTitle
     });
+    
+    router.push(`/dashboard/practice-interviews/interview?${params.toString()}`);
   };
 
   return (
@@ -122,7 +126,7 @@ const PracticeInterviewsPage = () => {
 
       <div className="w-full space-y-8">
         <div className="flex items-center gap-8 justify-between">
-            <div className="bg-gray-800 dark:bg-gray-900 text-white rounded-2xl p-6 flex items-center justify-between">
+            <div className="bg-[#2D2D2D] text-white rounded-2xl p-6 flex items-center justify-between">
             <div className="flex-1">
                 <h2 className="text-xl font-light mb-2">
                 Welcome to Practice Interviews! Select your{" "}
@@ -207,7 +211,7 @@ const PracticeInterviewsPage = () => {
                   key={level.id}
                   onClick={() => setSelectedDifficulty(level.id)}
                   className={`
-                    w-[180px] h-[150px] bg-gray-800 dark:bg-gray-900 rounded-lg cursor-pointer transition-all relative overflow-hidden
+                    w-[180px] h-[150px] bg-[#2D2D2D] rounded-lg cursor-pointer transition-all relative overflow-hidden
                     ${selectedDifficulty === level.id
                       ? "ring-2 ring-primary ring-offset-2 ring-offset-white dark:ring-offset-gray-900"
                       : "hover:ring-2 hover:ring-gray-400 hover:ring-offset-2 hover:ring-offset-white dark:hover:ring-offset-gray-900"
