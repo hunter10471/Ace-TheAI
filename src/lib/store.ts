@@ -1,5 +1,11 @@
 import { create } from "zustand";
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
 interface ModalState {
   isLoginModalOpen: boolean;
   isRegisterModalOpen: boolean;
@@ -13,6 +19,13 @@ interface ThemeState {
   isDarkMode: boolean;
   toggleDarkMode: () => void;
   setDarkMode: (isDark: boolean) => void;
+}
+
+interface UserState {
+  user: User | null;
+  setUser: (user: User | null) => void;
+  isAuthenticated: boolean;
+  setIsAuthenticated: (isAuth: boolean) => void;
 }
 
 export const useModalStore = create<ModalState>(
@@ -56,3 +69,10 @@ export const useThemeStore = create<ThemeState>(
     }
   })
 );
+
+export const useUserStore = create<UserState>((set) => ({
+  user: null,
+  setUser: (user) => set({ user, isAuthenticated: !!user }),
+  isAuthenticated: false,
+  setIsAuthenticated: (isAuth) => set({ isAuthenticated: isAuth }),
+}));

@@ -10,18 +10,19 @@ import { IoStatsChartOutline } from "react-icons/io5";
 import { LuPieChart } from "react-icons/lu";
 
 export const navLinks: NavLink[] = [
-  { name: "home", route: "/" },
-  { name: "features", route: "/features" },
-  { name: "about", route: "/about" },
-  { name: "contact", route: "/contact" },
+  { name: "home", route: "#home" },
+  { name: "features", route: "#features" },
+  { name: "how it works", route: "#how-it-works" },
+  { name: "reviews", route: "#reviews" },
+  { name: "contact", route: "#contact" },
 ];
 
 export const footerLinks: NavLink[] = [
-  { name: "features", route: "/features" },
-  { name: "how it works", route: "/" },
-  { name: "reviews", route: "/" },
-  { name: "contact", route: "/contact" },
-  { name: "terms & privacy", route: "/" },
+  { name: "features", route: "#features" },
+  { name: "how it works", route: "#how-it-works" },
+  { name: "reviews", route: "#reviews" },
+  { name: "contact", route: "#contact" },
+  { name: "terms & privacy", route: "#" },
 ];
 
 export const features: Feature[] = [

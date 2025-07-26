@@ -18,6 +18,7 @@ const Modal: React.FC<ModalProps> = ({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
+        isModalOpen &&
         modalRef.current &&
         !modalRef.current.contains(event.target as Node)
       ) {
@@ -28,7 +29,7 @@ const Modal: React.FC<ModalProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [closeModal]);
+  }, [closeModal, isModalOpen]);
 
   return (
     <div

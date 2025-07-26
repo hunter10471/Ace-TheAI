@@ -3,8 +3,9 @@ import NavLink from "../../small/NavLink/NavLink";
 import Button from "../../small/Button/Button";
 import { nanoid } from "nanoid";
 import { MdClose, MdDarkMode, MdLightMode } from "react-icons/md";
-import { useModalStore, useThemeStore } from "@/lib/store";
+import { useModalStore, useThemeStore, useUserStore } from "@/lib/store";
 import { navLinks } from "@/lib/data";
+import { useRouter } from "next/navigation";
 
 interface NavMenuProps {
   open: boolean;
@@ -14,6 +15,8 @@ interface NavMenuProps {
 const NavMenu: React.FC<NavMenuProps> = ({ open, setOpen }) => {
   const { openRegisterModal, openLoginModal } = useModalStore();
   const { isDarkMode, toggleDarkMode } = useThemeStore();
+  const { user, isAuthenticated, setUser } = useUserStore();
+  const router = useRouter();
   const sidebarRef = useRef<HTMLDivElement>(null);
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -47,7 +50,12 @@ const NavMenu: React.FC<NavMenuProps> = ({ open, setOpen }) => {
       </button>
       <div className="flex flex-col items-center gap-5">
         {navLinks.map((link) => (
-          <NavLink isNavMenu={true} key={nanoid()} {...link} />
+          <NavLink 
+            isNavMenu={true} 
+            key={nanoid()} 
+            {...link} 
+            onClick={() => setOpen(false)}
+          />
         ))}
         <button
           onClick={toggleDarkMode}
@@ -60,18 +68,44 @@ const NavMenu: React.FC<NavMenuProps> = ({ open, setOpen }) => {
             <MdDarkMode size={20} className="text-gray-600 dark:text-gray-300" />
           )}
         </button>
-        <Button
-          htmlButtonType="button"
-          text="Signup"
-          action={openRegisterModal}
-          type="primary"
-        />
-        <Button
-          htmlButtonType="button"
-          text="Login"
-          action={openLoginModal}
-          type="outline"
-        />
+        {isAuthenticated ? (
+          <>
+            <Button
+              htmlButtonType="button"
+              text="Dashboard"
+              action={() => {
+                setOpen(false);
+                router.push("/dashboard");
+              }}
+              type="primary"
+            />
+            <Button
+              htmlButtonType="button"
+              text="Logout"
+              action={() => {
+                setUser(null);
+                setOpen(false);
+                router.push("/");
+              }}
+              type="outline"
+            />
+          </>
+        ) : (
+          <>
+            <Button
+              htmlButtonType="button"
+              text="Signup"
+              action={openRegisterModal}
+              type="primary"
+            />
+            <Button
+              htmlButtonType="button"
+              text="Login"
+              action={openLoginModal}
+              type="outline"
+            />
+          </>
+        )}
       </div>
     </aside>
   );

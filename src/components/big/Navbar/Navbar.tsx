@@ -6,7 +6,7 @@ import { nanoid } from "nanoid";
 import Button from "../../small/Button/Button";
 import { MdMenu, MdDarkMode, MdLightMode } from "react-icons/md";
 import NavMenu from "../../medium/NavMenu/NavMenu";
-import { useModalStore, useThemeStore } from "@/lib/store";
+import { useModalStore, useThemeStore, useUserStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
 import { navLinks } from "@/lib/data";
 
@@ -18,7 +18,7 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
   const navigate = useRouter();
   const { openRegisterModal, openLoginModal } = useModalStore();
   const { isDarkMode, toggleDarkMode } = useThemeStore();
-  const user = false;
+  const { user, isAuthenticated, setUser } = useUserStore();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -36,9 +36,30 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
     navigate.push("/dashboard");
   };
 
+  const handleLogout = () => {
+    setUser(null);
+    navigate.push("/");
+  };
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/check');
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        }
+      } catch (error) {
+        console.log('Not authenticated');
+      }
+    };
+    
+    checkAuth();
+  }, [setUser]);
+
   return (
     <div
-      className={`fixed z-[99] top-0 w-screen overflow-hidden flex items-center justify-center transition-all h-[70px] ${
+      className={`fixed z-[99] top-0 w-screen flex items-center justify-center transition-all h-[70px] ${
         scroll ? "shadow-lg bg-white dark:bg-gray-900" : "shadow-none bg-transparent"
       }`}
     >
@@ -61,13 +82,21 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
               <MdDarkMode size={20} className="text-gray-600 dark:text-gray-300" />
             )}
           </button>
-          {user ? (
-            <Button
-              htmlButtonType="button"
-              text="Dashboard"
-              action={navigateToDashboard}
-              type="primary"
-            />
+          {isAuthenticated ? (
+            <>
+              <Button
+                htmlButtonType="button"
+                text="Dashboard"
+                action={navigateToDashboard}
+                type="primary"
+              />
+              <Button
+                htmlButtonType="button"
+                text="Logout"
+                action={handleLogout}
+                type="outline"
+              />
+            </>
           ) : (
             <>
               <Button

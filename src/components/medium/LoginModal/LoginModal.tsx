@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Modal from "../Modal/Modal";
-import { useModalStore } from "@/lib/store";
+import { useModalStore, useUserStore } from "@/lib/store";
 import toast, { Toaster } from 'react-hot-toast';
 import Image from "next/image";
 import Input from "@/components/small/Input/Input";
@@ -18,6 +18,7 @@ import { authenticate } from "@/app/actions/actions";
 const LoginModal = () => {
   const { closeLoginModal, openRegisterModal, isLoginModalOpen } =
     useModalStore();
+  const { setUser } = useUserStore();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   
@@ -28,12 +29,23 @@ const LoginModal = () => {
       if (result?.error) {
         throw new Error(result.error); 
       }
+      
+      // Get user data after successful login
+      const response = await fetch('/api/auth/check');
+      if (response.ok) {
+        const userData = await response.json();
+        setUser(userData);
+      }
+      
       toast.success("Logged in successfully!");
+      closeLoginModal();
       setTimeout(() => {
         router.push("/dashboard");
-      }, 3000);
+      }, 1000);
     } catch (error: any) {
       toast.error(error.message);
+    } finally {
+      setIsLoading(false);
     }
   }
 

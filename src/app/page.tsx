@@ -24,7 +24,7 @@ export default function Home() {
     <Container>
       <Toaster position="bottom-center" />
       <div className="absolute w-screen h-screen bg-heroPattern top-0 right-0 opacity-5 dark:opacity-3 z-[-1]"></div>
-      <div className="flex flex-col items-center justify-center gap-0 lg:gap-4 max-w-[500px] mx-auto text-center">
+      <div id="home" className="flex flex-col items-center justify-center gap-0 lg:gap-4 max-w-[500px] mx-auto text-center">
         <h1
           className={`text-[42px] lg:text-[54px] leading-[30px] lg:leading-[54px] text-primary font-bold  ${roboto.className}`}
         >
@@ -42,7 +42,7 @@ export default function Home() {
         <HeroButtons />
       </div>
       <Hero />
-      <div data-section="features">
+      <div id="features">
         <Heading
           className="max-w-[400px] mx-auto text-center"
           text="Experience the Future of Interview Preparation"
@@ -54,19 +54,25 @@ export default function Home() {
           ))}
         </div>
       </div>
-      <Heading
-        className="max-w-[400px] mt-20 mx-auto text-center"
-        text="How to get started and land your dream job"
-        preTitle="our process"
-      />
-      <div className="grid grid-cols-2 md:ml-0 ml-5 gap-5 md:gap-0 my-10 justify-between">
-        {processSteps.map((step, index) => (
-          <ProcessStep key={nanoid()} index={index + 1} {...step} />
-        ))}
+      <div id="how-it-works" className="mt-20">
+        <Heading
+          className="max-w-[400px] mx-auto text-center"
+          text="How to get started and land your dream job"
+          preTitle="our process"
+        />
+        <div className="grid grid-cols-2 md:ml-0 ml-5 gap-5 md:gap-0 my-10 justify-between">
+          {processSteps.map((step, index) => (
+            <ProcessStep key={nanoid()} index={index + 1} {...step} />
+          ))}
+        </div>
       </div>
-      <ReviewSlider />
-      <ReadyBanner />
-      <Footer />
+      <div id="reviews">
+        <ReviewSlider />
+      </div>
+      <div id="contact">
+        <ReadyBanner />
+        <Footer />
+      </div>
       <RegisterModal />
       <LoginModal />
     </Container>
