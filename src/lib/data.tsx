@@ -618,3 +618,106 @@ export const jobTitles = [
   "Landscaper",
   "Handyman"
 ];
+
+export interface Question {
+  id: number;
+  text: string;
+  category: "Technical" | "Behavioral" | "Situational";
+  difficulty: "Novice" | "Advanced" | "Hard";
+  isBookmarked: boolean;
+  explanation: string;
+  example: string;
+}
+
+export const questionBankData: Question[] = [
+  {
+    id: 1,
+    text: "What is a class in object-oriented programming?",
+    category: "Technical",
+    difficulty: "Novice",
+    isBookmarked: true,
+    explanation: "A class in object-oriented programming is a blueprint for creating objects (a particular data structure), providing initial values for state (member variables or properties), and implementations of behavior (member functions or methods).",
+    example: "For example, a Car class might have attributes like make, model, and year to describe the car, and methods like start_engine and drive to define its behaviors. An instance of the Car class, such as a specific Toyota Corolla from 2020, would have the attributes set to \"Toyota\", \"Corolla\", and \"2020\", respectively, and could perform the actions defined by its methods."
+  },
+  {
+    id: 2,
+    text: "Can you describe a time when you had to handle a difficult team member? How did you manage the situation?",
+    category: "Behavioral",
+    difficulty: "Advanced",
+    isBookmarked: false,
+    explanation: "This behavioral question assesses your conflict resolution skills, leadership abilities, and emotional intelligence. It's designed to understand how you handle interpersonal challenges in a professional setting.",
+    example: "A strong answer would follow the STAR method: Situation (describe the context), Task (explain your responsibility), Action (detail what you did), and Result (share the outcome). For instance, you might describe a situation where a team member was consistently missing deadlines, how you addressed it through one-on-one meetings and support, and how it ultimately improved team performance."
+  },
+  {
+    id: 3,
+    text: "Imagine you are leading a project with a tight deadline, and a key team member unexpectedly falls ill. How would you handle the situation?",
+    category: "Situational",
+    difficulty: "Novice",
+    isBookmarked: false,
+    explanation: "This situational question evaluates your problem-solving skills, adaptability, and project management abilities. It tests how you handle unexpected challenges while maintaining project momentum.",
+    example: "A comprehensive response would include: assessing the impact on the timeline, redistributing tasks among remaining team members, communicating with stakeholders about potential delays, and implementing contingency plans such as bringing in temporary support or adjusting project scope if necessary."
+  },
+  {
+    id: 4,
+    text: "How does a binary search tree work, and what are its advantages?",
+    category: "Technical",
+    difficulty: "Hard",
+    isBookmarked: false,
+    explanation: "A binary search tree (BST) is a hierarchical data structure where each node has at most two children, and the left subtree contains only nodes with values less than the parent node, while the right subtree contains only nodes with values greater than the parent node.",
+    example: "Consider a BST with values [8, 3, 10, 1, 6, 14, 4, 7, 13]. The root is 8, left subtree contains [3, 1, 6, 4, 7], and right subtree contains [10, 14, 13]. This structure enables efficient search operations with O(log n) time complexity in balanced trees, making it ideal for applications requiring frequent search operations."
+  },
+  {
+    id: 5,
+    text: "Describe a project where you had to make a critical decision without having all the necessary information. What was the outcome?",
+    category: "Technical",
+    difficulty: "Hard",
+    isBookmarked: false,
+    explanation: "This question assesses your decision-making process under uncertainty, risk management skills, and ability to work with incomplete information. It's common in technical roles where requirements may be unclear or evolving.",
+    example: "A good response might involve choosing a technology stack for a new project with limited requirements, explaining how you researched alternatives, consulted with stakeholders, made an informed decision based on available information, and how you adapted when new requirements emerged during development."
+  },
+  {
+    id: 6,
+    text: "Explain the concept of dependency injection and its benefits in software development.",
+    category: "Technical",
+    difficulty: "Advanced",
+    isBookmarked: false,
+    explanation: "Dependency injection is a design pattern where dependencies (objects that a class needs) are provided to the class from the outside rather than being created within the class itself. This promotes loose coupling and makes code more testable and maintainable.",
+    example: "Instead of a UserService creating its own DatabaseConnection, the DatabaseConnection is injected through the constructor. This allows for easy testing by injecting mock objects and makes the code more modular and flexible."
+  },
+  {
+    id: 7,
+    text: "Tell me about a time when you had to learn a new technology quickly to complete a project.",
+    category: "Behavioral",
+    difficulty: "Advanced",
+    isBookmarked: false,
+    explanation: "This question evaluates your learning ability, adaptability, and how you handle pressure when faced with new challenges. It's particularly relevant in fast-paced technical environments.",
+    example: "Describe a situation where you needed to learn a new framework or tool, explain your learning approach (documentation, tutorials, peer learning), how you applied it to the project, and the successful outcome achieved."
+  },
+  {
+    id: 8,
+    text: "How would you approach debugging a production issue that's affecting multiple users?",
+    category: "Situational",
+    difficulty: "Advanced",
+    isBookmarked: false,
+    explanation: "This situational question tests your problem-solving methodology, prioritization skills, and ability to work under pressure. It assesses how you handle critical issues that impact business operations.",
+    example: "A systematic approach would include: immediately assessing the scope and impact, implementing temporary workarounds if possible, gathering logs and error reports, reproducing the issue in a controlled environment, identifying the root cause, implementing a fix, testing thoroughly, and communicating updates to stakeholders."
+  },
+  {
+    id: 9,
+    text: "What is the difference between synchronous and asynchronous programming?",
+    category: "Technical",
+    difficulty: "Novice",
+    isBookmarked: false,
+    explanation: "Synchronous programming executes code sequentially, where each operation must complete before the next one begins. Asynchronous programming allows operations to run in the background without blocking the execution of subsequent code.",
+    example: "In synchronous code, if you're reading a file, the program waits until the file is completely read before moving to the next line. In asynchronous code, you can start reading the file and continue with other operations while the file is being read in the background."
+  },
+  {
+    id: 10,
+    text: "Describe a situation where you had to work with a team member who had a different working style than yours.",
+    category: "Behavioral",
+    difficulty: "Novice",
+    isBookmarked: false,
+    explanation: "This question assesses your interpersonal skills, adaptability, and ability to work effectively in diverse teams. It evaluates how you handle differences and collaborate with various personality types.",
+    example: "You might describe working with someone who prefers detailed planning while you're more spontaneous, how you found common ground, adapted your communication style, and ultimately delivered successful results together."
+  }
+];

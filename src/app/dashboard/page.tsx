@@ -13,6 +13,7 @@ import { BsChatSquareQuote } from "react-icons/bs";
 import { BsPatchQuestion } from "react-icons/bs";
 import { getUser } from "../actions/actions";
 import ActivityStats from "@/components/medium/ActivityStats/ActivityStats";
+import PageHeader from "@/components/big/PageHeader/PageHeader";
 
 export const dynamic = 'force-dynamic';
 
@@ -21,30 +22,12 @@ export default async function page() {
 
   return (
     <div>
-      <div className="flex justify-between">
-        <div>
-          <h1 className="flex items-center gap-2 text-3xl -mb-1 text-gray-900 dark:text-gray-100">
-            Welcome back, {user.name.split(" ")[0]}
-            <PiHandWavingFill size={40} className="text-amber-400" />
-          </h1>
-          <span className="text-gray-500 dark:text-gray-400 text-sm">
-            Prepare, Practice, Perform!
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Image
-            src={"/assets/avatar.jpg"}
-            alt="avatar"
-            width={42}
-            height={42}
-            className="rounded-full"
-          />
-          <div className="flex flex-col">
-            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{user.name}</span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">{user.email}</span>
-          </div>
-        </div>
-      </div>
+      <PageHeader 
+        title={`Welcome back, ${user.name.split(" ")[0]}`}
+        subtitle="Prepare, Practice, Perform!"
+        userName={user.name}
+        userEmail={user.email}
+      />
       <div className="flex justify-between">
         <div className="flex my-6 gap-4">
           <DashboardStatsCard

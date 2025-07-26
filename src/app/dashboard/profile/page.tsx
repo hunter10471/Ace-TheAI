@@ -10,6 +10,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import SkillsSelector from "@/components/medium/SkillsSelector/SkillsSelector";
 import { jobTitles } from "@/lib/data";
+import PageHeader from "@/components/big/PageHeader/PageHeader";
 // @ts-ignore
 import countryList from 'react-select-country-list'
 
@@ -75,27 +76,11 @@ const ProfilePage = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-6">
-      <div className="flex justify-between items-start mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Your Profile</h1>
-          <p className="text-gray-600 dark:text-gray-400">Last Edit on 12th February 2024</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <p className="font-semibold text-gray-900 dark:text-white">Rafay Zia</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">rafay.zia@gmail.com</p>
-          </div>
-          <div className="w-12 h-12 rounded-full overflow-hidden">
-            <Image
-              src="/assets/avatar.jpg"
-              alt="Profile Avatar"
-              width={48}
-              height={48}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-      </div>
+      <PageHeader 
+        title="Your Profile"
+        subtitle="Last Edit on 12th February 2024"
+        userEmail="rafay.zia@gmail.com"
+      />
 
       <div className="flex items-center gap-4 mb-8">
         <div className="w-20 h-20 rounded-full overflow-hidden">
