@@ -211,10 +211,10 @@ const PracticeInterviewsPage = () => {
                   key={level.id}
                   onClick={() => setSelectedDifficulty(level.id)}
                   className={`
-                    w-[180px] h-[150px] bg-[#2D2D2D] rounded-lg cursor-pointer transition-all relative overflow-hidden
+                    w-[180px] h-[150px] rounded-lg cursor-pointer transition-all relative overflow-hidden border-2
                     ${selectedDifficulty === level.id
-                      ? "ring-2 ring-primary ring-offset-2 ring-offset-white dark:ring-offset-gray-900"
-                      : "hover:ring-2 hover:ring-gray-400 hover:ring-offset-2 hover:ring-offset-white dark:hover:ring-offset-gray-900"
+                      ? "border-primary bg-primary/10 dark:bg-primary/20"
+                      : "border-gray-200 dark:border-gray-700 bg-[#2D2D2D] hover:border-gray-300 dark:hover:border-gray-600"
                     }
                   `}
                 >
@@ -227,10 +227,18 @@ const PracticeInterviewsPage = () => {
                         className="object-contain"
                       />
                     </div>
-                    <h4 className="font-semibold text-white text-lg">
+                    <h4 className={`font-semibold text-lg ${
+                      selectedDifficulty === level.id 
+                        ? "text-gray-900 dark:text-white" 
+                        : "text-white"
+                    }`}>
                       {level.title}
                     </h4>
-                    <p className="text-xs text-gray-300 leading-tight">
+                    <p className={`text-xs leading-tight ${
+                      selectedDifficulty === level.id 
+                        ? "text-gray-700 dark:text-gray-300" 
+                        : "text-gray-300"
+                    }`}>
                       {level.description}
                     </p>
                   </div>

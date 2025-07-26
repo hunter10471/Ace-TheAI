@@ -33,8 +33,8 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div
-      className={`fixed overflow-hidden top-0 left-0 z-[999] bg-black dark:bg-gray-900 transition-all duration-500 ${
-        isModalOpen ? "bg-opacity-50 dark:bg-opacity-70" : "bg-opacity-0 dark:bg-opacity-0 pointer-events-none"
+      className={`fixed overflow-hidden top-0 left-0 z-[999]  transition-all duration-500 ${
+        isModalOpen ? "bg-opacity-50 dark:bg-opacity-70 backdrop-blur-sm bg-black/50 dark:bg-gray-900/50" : "bg-opacity-0 dark:bg-opacity-0 pointer-events-none"
       } w-screen h-screen`}
     >
       <div
@@ -42,10 +42,10 @@ const Modal: React.FC<ModalProps> = ({
           isModalOpen
             ? "translate-y-[0vh] opacity-100"
             : "translate-y-[100vh] opacity-0"
-        } p-6 bg-offWhite dark:bg-gray-800 rounded-xl`}
+        } p-4 bg-offWhite dark:bg-gray-800 rounded-xl`}
         ref={modalRef}
       >
-        <button onClick={closeModal} className="absolute right-4 top-4 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
+        <button onClick={closeModal} className="absolute right-3 top-3 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
           <IoMdClose size={20} />
         </button>
         {modalBody}

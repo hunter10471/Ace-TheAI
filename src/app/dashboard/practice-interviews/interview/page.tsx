@@ -8,6 +8,9 @@ import { FiSend } from "react-icons/fi";
 import { BsClock } from "react-icons/bs";
 import { FaCheck, FaTimes, FaStar } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import InterviewResultModal from '@/components/medium/InterviewResultModal/InterviewResultModal';
+import EndInterviewModal from '@/components/medium/EndInterviewModal/EndInterviewModal';
+import ReportIssueModal from '@/components/medium/ReportIssueModal/ReportIssueModal';
 
 interface Message {
   id: number;
@@ -22,6 +25,8 @@ const InterviewPage = () => {
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [showResultsModal, setShowResultsModal] = useState(false);
+  const [showEndInterviewModal, setShowEndInterviewModal] = useState(false);
+  const [showReportIssueModal, setShowReportIssueModal] = useState(false);
   const [counters, setCounters] = useState({
     counter1: 0,
     counter2: 4,
@@ -76,6 +81,18 @@ const InterviewPage = () => {
     if (e.key === 'Enter') {
       handleSendMessage();
     }
+  };
+
+  const handleEndInterview = () => {
+    setShowEndInterviewModal(false);
+    setShowResultsModal(true);
+  };
+
+  const handleReportIssue = (email: string, message: string) => {
+    // TODO: Implement report submission logic
+    console.log('Report submitted:', { email, message });
+    setShowReportIssueModal(false);
+    // You could show a success message here
   };
 
   return (
@@ -157,12 +174,15 @@ const InterviewPage = () => {
               </div>
             </div>
             <div className="flex items-center gap-2 justify-end">
-              <button className="flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
+              <button 
+                onClick={() => setShowReportIssueModal(true)}
+                className="flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+              >
                 <MdOutlineReportProblem size={16} />
                 <span className="text-sm">Report an issue</span>
               </button>
                               <button 
-                  onClick={() => setShowResultsModal(true)}
+                  onClick={() => setShowEndInterviewModal(true)}
                   className="flex items-center gap-1 text-red-600 hover:text-red-800"
                 >
                   <IoClose size={16} />
@@ -241,124 +261,38 @@ const InterviewPage = () => {
           </div>
         </div>
 
-      {showResultsModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full mx-4 relative">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                Interview Results
-              </h2>
-              
-              <div className="relative w-24 h-24 mx-auto mb-6">
-                <div className="absolute inset-0 rounded-full border-8 border-gray-200 dark:border-gray-700"></div>
-                <div className="absolute inset-0 rounded-full border-8 border-transparent border-t-red-500 border-r-red-500 transform rotate-[270deg]"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-900 dark:text-white">15</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">/20</div>
-                  </div>
-                </div>
-              </div>
+      <ReportIssueModal
+        isOpen={showReportIssueModal}
+        onClose={() => setShowReportIssueModal(false)}
+        onSubmit={handleReportIssue}
+      />
 
-              <div className="flex justify-center gap-1 mb-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <FaStar 
-                    key={star} 
-                    className={`w-5 h-5 ${star <= 4 ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`}
-                  />
-                ))}
-              </div>
-              
-              <div className="flex items-center justify-center gap-2 mb-6">
-                <span className="text-gray-600 dark:text-gray-400">Rating:</span>
-                <span className="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">
-                  4
-                </span>
-              </div>
+      <EndInterviewModal
+        isOpen={showEndInterviewModal}
+        onClose={() => setShowEndInterviewModal(false)}
+        onConfirm={handleEndInterview}
+      />
 
-              <div className="bg-[#2D2D2D] dark:bg-gray-700 rounded-lg p-4 mb-6">
-                <div className="flex items-center gap-3">
-                  <BsClock className="text-red-500 w-6 h-6" />
-                  <div className="text-left">
-                    <div className="text-white font-semibold">Response Time</div>
-                    <div className="text-gray-300 text-sm">
-                      Your average response time was <span className="text-green-400 font-semibold">45 seconds</span> per question.
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Strengths</h3>
-                  <div className="space-y-2">
-                    <div className="flex items-start gap-2">
-                      <FaCheck className="text-green-500 w-4 h-4 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400 text-left">
-                        Strong technical knowledge
-                      </span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <FaCheck className="text-green-500 w-4 h-4 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400 text-left">
-                        Excellent problem-solving skills
-                      </span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <FaCheck className="text-green-500 w-4 h-4 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400 text-left">
-                        Good examples and answers.
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Weaknesses</h3>
-                  <div className="space-y-2">
-                    <div className="flex items-start gap-2">
-                      <FaTimes className="text-red-500 w-4 h-4 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400 text-left">
-                        Improve communication clarity
-                      </span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <FaTimes className="text-red-500 w-4 h-4 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400 text-left">
-                        Work on time management
-                      </span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <FaTimes className="text-red-500 w-4 h-4 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400 text-left">
-                        Politeness needs to be worked on.
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    setShowResultsModal(false);
-                    router.push('/dashboard');
-                  }}
-                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                >
-                  Return to Dashboard
-                </button>
-                <button
-                  onClick={() => setShowResultsModal(false)}
-                  className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-                >
-                  View detailed report
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <InterviewResultModal
+        isOpen={showResultsModal}
+        onClose={() => setShowResultsModal(false)}
+        score={15} // TODO: Replace with dynamic value
+        maxScore={20} // TODO: Replace with dynamic value
+        rating={4} // TODO: Replace with dynamic value
+        avgResponseTime={45} // TODO: Replace with dynamic value
+        strengths={[
+          'Strong technical knowledge',
+          'Excellent problem-solving skills',
+          'Good examples and answers.'
+        ]} // TODO: Replace with dynamic value
+        weaknesses={[
+          'Improve communication clarity',
+          'Work on time management',
+          'Politeness needs to be worked on.'
+        ]} // TODO: Replace with dynamic value
+        onReturn={() => {/* TODO: Implement navigation to dashboard */}}
+        onViewReport={() => {/* TODO: Implement view detailed report */}}
+      />
     </div>
   );
 };
