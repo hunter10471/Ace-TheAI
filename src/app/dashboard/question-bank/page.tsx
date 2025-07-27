@@ -6,6 +6,7 @@ import { FaBookmark, FaExternalLinkAlt, FaCheck } from "react-icons/fa";
 import { LuSettings2, LuLeaf, LuWrench, LuTrophy, LuCog, LuUsers, LuUser } from "react-icons/lu";
 import { TbUserExclamation } from "react-icons/tb";
 import PageHeader from "@/components/big/PageHeader/PageHeader";
+import TagPill from "@/components/small/TagPill/TagPill";
 
 export default function QuestionBankPage() {
   const [selectedQuestion, setSelectedQuestion] = useState<Question>(questionBankData[0]);
@@ -46,23 +47,7 @@ export default function QuestionBankPage() {
     }
   };
 
-  const getTagColor = (type: string, value: string) => {
-    if (type === "category") {
-      switch (value) {
-        case "Technical": return "bg-yellow-100 text-yellow-800";
-        case "Behavioral": return "bg-blue-100 text-blue-800";
-        case "Situational": return "bg-orange-100 text-orange-800";
-        default: return "bg-gray-100 text-gray-800";
-      }
-    } else {
-      switch (value) {
-        case "Novice": return "bg-green-100 text-green-800";
-        case "Advanced": return "bg-purple-100 text-purple-800";
-        case "Hard": return "bg-pink-100 text-pink-800";
-        default: return "bg-gray-100 text-gray-800";
-      }
-    }
-  };
+
 
       return (
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -156,12 +141,8 @@ export default function QuestionBankPage() {
                           </h3>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-2">
-                                    <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${getTagColor("category", question.category)}`}>
-                                    {question.category}
-                                    </span>
-                                    <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${getTagColor("difficulty", question.difficulty)}`}>
-                                    {question.difficulty}
-                                    </span>
+                                    <TagPill type="category" value={question.category} className="text-xs px-1.5 py-0.5" />
+                                    <TagPill type="difficulty" value={question.difficulty} className="text-xs px-1.5 py-0.5" />
                                 </div>
                                 <button 
                                     onClick={() => setSelectedQuestion(question)}

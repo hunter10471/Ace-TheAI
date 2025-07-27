@@ -629,6 +629,140 @@ export interface Question {
   example: string;
 }
 
+export interface FeedbackEntry {
+  id: number;
+  date: string;
+  title: string;
+  category: "Technical" | "Behavioral" | "Situational" | "Mock";
+  rating: number;
+  summary: string;
+  explanation?: string;
+  example?: string;
+}
+
+export const feedbackHistoryData: FeedbackEntry[] = [
+  {
+    id: 1,
+    date: "27 July 2024",
+    title: "Developer Interview",
+    category: "Technical",
+    rating: 3,
+    summary: "Strong technical skills, need to work on behavior and how to reply quick.",
+    explanation: "Your technical knowledge is solid, but you need to improve your communication speed and behavioral responses.",
+    example: "When asked about problem-solving, try to structure your response more clearly and provide specific examples."
+  },
+  {
+    id: 2,
+    date: "27 July 2024",
+    title: "Web Designer Interview",
+    category: "Mock",
+    rating: 3,
+    summary: "Practice required on web design concepts, answers given were ambiguous.",
+    explanation: "Your understanding of design principles needs improvement. Focus on being more specific in your responses.",
+    example: "When discussing design decisions, always explain the reasoning behind your choices."
+  },
+  {
+    id: 3,
+    date: "26 July 2024",
+    title: "Product Manager Interview",
+    category: "Behavioral",
+    rating: 4,
+    summary: "Excellent leadership examples, good communication skills demonstrated.",
+    explanation: "You showed strong leadership qualities and communicated effectively throughout the interview.",
+    example: "Your STAR method responses were well-structured and impactful."
+  },
+  {
+    id: 4,
+    date: "25 July 2024",
+    title: "Software Engineer Interview",
+    category: "Technical",
+    rating: 5,
+    summary: "Outstanding technical knowledge, excellent problem-solving approach.",
+    explanation: "Your technical skills are exceptional and your problem-solving methodology is sound.",
+    example: "Your approach to system design questions was methodical and comprehensive."
+  },
+  {
+    id: 5,
+    date: "24 July 2024",
+    title: "UX Designer Interview",
+    category: "Situational",
+    rating: 2,
+    summary: "Struggled with user-centered design scenarios, needs more practice.",
+    explanation: "You need to focus more on user-centered design thinking and practical application.",
+    example: "When presented with design challenges, always start by understanding user needs."
+  },
+  {
+    id: 6,
+    date: "23 July 2024",
+    title: "Data Scientist Interview",
+    category: "Technical",
+    rating: 4,
+    summary: "Good statistical knowledge, needs improvement in explaining complex concepts.",
+    explanation: "Your statistical foundation is strong, but work on simplifying complex explanations for non-technical audiences.",
+    example: "When explaining machine learning models, use analogies and real-world examples."
+  },
+  {
+    id: 7,
+    date: "22 July 2024",
+    title: "Marketing Manager Interview",
+    category: "Behavioral",
+    rating: 3,
+    summary: "Creative thinking demonstrated, but lacked specific metrics and results.",
+    explanation: "You showed good creative thinking, but need to provide more concrete examples with measurable outcomes.",
+    example: "Always quantify your achievements with specific numbers and percentages."
+  },
+  {
+    id: 8,
+    date: "21 July 2024",
+    title: "DevOps Engineer Interview",
+    category: "Technical",
+    rating: 5,
+    summary: "Excellent understanding of CI/CD pipelines and cloud infrastructure.",
+    explanation: "Your technical knowledge of DevOps practices is comprehensive and well-structured.",
+    example: "Your explanation of containerization and orchestration was clear and detailed."
+  },
+  {
+    id: 9,
+    date: "20 July 2024",
+    title: "Business Analyst Interview",
+    category: "Situational",
+    rating: 3,
+    summary: "Good analytical skills, needs improvement in stakeholder communication.",
+    explanation: "Your analytical approach is sound, but focus on better stakeholder engagement techniques.",
+    example: "When gathering requirements, use more collaborative techniques and active listening."
+  },
+  {
+    id: 10,
+    date: "19 July 2024",
+    title: "Frontend Developer Interview",
+    category: "Technical",
+    rating: 4,
+    summary: "Strong React skills, good understanding of modern web development.",
+    explanation: "Your frontend development skills are solid, with good knowledge of modern frameworks.",
+    example: "Your component architecture and state management explanations were clear and practical."
+  },
+  {
+    id: 11,
+    date: "18 July 2024",
+    title: "HR Manager Interview",
+    category: "Behavioral",
+    rating: 4,
+    summary: "Excellent people skills, good understanding of HR processes and policies.",
+    explanation: "You demonstrated strong interpersonal skills and comprehensive HR knowledge.",
+    example: "Your conflict resolution examples were well-structured and showed good judgment."
+  },
+  {
+    id: 12,
+    date: "17 July 2024",
+    title: "Cybersecurity Analyst Interview",
+    category: "Technical",
+    rating: 3,
+    summary: "Good security awareness, needs more hands-on technical examples.",
+    explanation: "Your security knowledge is good, but provide more specific technical implementations.",
+    example: "When discussing security measures, include specific tools and methodologies used."
+  }
+];
+
 export const questionBankData: Question[] = [
   {
     id: 1,

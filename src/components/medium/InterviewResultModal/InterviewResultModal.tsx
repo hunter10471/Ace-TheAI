@@ -3,7 +3,7 @@ import Modal from "../Modal/Modal";
 import Button from "../../small/Button/Button";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import { RxStopwatch } from "react-icons/rx";
-import { IoMdStar } from "react-icons/io";
+import { IoIosStar, IoIosStarOutline } from "react-icons/io";
 
 interface InterviewResultModalProps {
   isOpen: boolean;
@@ -73,11 +73,19 @@ const InterviewResultModal: React.FC<InterviewResultModalProps> = ({
 
           <div className="flex justify-center gap-1 mb-1">
             {[1, 2, 3, 4, 5].map((star) => (
-              <IoMdStar
-                key={star}
-                size={25}
-                className={`${star <= rating ? "text-[#FFB61D]" : "text-gray-300 dark:text-gray-600"}`}
-              />
+              star <= rating ? (
+                <IoIosStar
+                  key={star}
+                  size={25}
+                  className="text-[#FFB61D]"
+                />
+              ) : (
+                <IoIosStarOutline
+                  key={star}
+                  size={25}
+                  className="text-[#2D2D2D] opacity-70"
+                />
+              )
             ))}
           </div>
           

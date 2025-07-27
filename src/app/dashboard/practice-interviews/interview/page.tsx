@@ -6,7 +6,7 @@ import { MdOutlineReportProblem } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
 import { FiSend } from "react-icons/fi";
 import { BsClock } from "react-icons/bs";
-import { FaCheck, FaTimes, FaStar } from "react-icons/fa";
+import { FaCheck, FaTimes } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import InterviewResultModal from '@/components/medium/InterviewResultModal/InterviewResultModal';
 import EndInterviewModal from '@/components/medium/EndInterviewModal/EndInterviewModal';
