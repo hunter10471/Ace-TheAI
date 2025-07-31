@@ -855,3 +855,62 @@ export const questionBankData: Question[] = [
     example: "You might describe working with someone who prefers detailed planning while you're more spontaneous, how you found common ground, adapted your communication style, and ultimately delivered successful results together."
   }
 ];
+
+export const performanceData = {
+  stats: {
+    totalInterviews: 247,
+    averageScore: 4.5,
+    strongestCategory: "Technical",
+    totalTimePracticed: "120 hrs"
+  },
+  ratingInsights: [
+    { month: "Jan", rating: 2 },
+    { month: "Feb", rating: 2.2 },
+    { month: "Mar", rating: 2.5 },
+    { month: "Apr", rating: 3.0 },
+    { month: "May", rating: 3.5 },
+    { month: "Jun", rating: 3.7 },
+    { month: "Jul", rating: 3.75 },
+    { month: "Aug", rating: 3.4 },
+    { month: "Sep", rating: 3.0 },
+    { month: "Oct", rating: 2.8 },
+    { month: "Nov", rating: 2.5 },
+    { month: "Dec", rating: 2.3 }
+  ],
+  difficultySuccessRate: [
+    { label: "Novice", percentage: 65, color: "#4ade80" },
+    { label: "Advanced", percentage: 30, color: "#a855f7" },
+    { label: "Hard", percentage: 15, color: "#f87171" }
+  ],
+  interviewHistory: [
+    {
+      date: "2023-07-15",
+      jobTitle: "Software Engineer",
+      category: "Technical",
+      difficulty: "Advanced",
+      rating: 4.1,
+      feedback: "Good performance, needs to improve in system design."
+    },
+    {
+      date: "2023-09-11",
+      jobTitle: "Data Analyst",
+      category: "Behavioural",
+      difficulty: "Novice",
+      rating: 4.8,
+      feedback: "Excellent communication skills."
+    },
+    {
+      date: "2023-11-15",
+      jobTitle: "Project Manager",
+      category: "Technical",
+      difficulty: "Hard",
+      rating: 3.5,
+      feedback: "Good coding skills, need to work on time management"
+    }
+  ],
+  performanceByCategory: [
+    { category: "Tech.", percentage: 85, color: "#f59e0b" },
+    { category: "Behav.", percentage: 60, color: "#3b82f6" },
+    { category: "Struct.", percentage: 35, color: "#f97316" }
+  ]
+};

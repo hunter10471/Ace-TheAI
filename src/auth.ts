@@ -1,47 +1,63 @@
-import NextAuth, { AuthError } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import { verifyPassword } from "./lib/utils";
-import { createClient } from "./lib/supabase/server";
-import { User } from "./lib/types";
-import { LoginValidationSchema } from "./lib/validation-schemas";
+import NextAuth from "next-auth"
+import { verifyPassword } from "./lib/auth-utils";
+import CredentialsProvider from "next-auth/providers/credentials"
+import { createClient } from "@/lib/supabase/server"
 
-export class InvalidLoginError extends AuthError {
-    code = 'invalid_credentials'
-    constructor(message: string) {
-        super(message)
-        this.code = message
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  providers: [
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          return null
+        }
+
+        const supabase = await createClient()
+
+        const { data: { user }, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('email', credentials.email)
+          .single()
+
+        if (error || !user) {
+          return null
+        }
+
+        const password = credentials.password
+        const hashedPass = await verifyPassword(password as string, user.password as string);
+
+        if (!hashedPass) {
+          return null
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+        }
+      }
+    })
+  ],
+  pages: {
+    signIn: '/',
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id
+      }
+      return token
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id as string
+      }
+      return session
     }
-}
-export const {signOut, signIn, auth, handlers} = NextAuth({
-    providers:[
-        Credentials({
-            credentials: {
-                email: {label: "Email", type: "email"},
-                password: {label: "Password", type: "password"}
-            },
-            authorize: async(credentials): Promise<User> => {
-                try {
-                let user: User | null = null;
-                const {email, password} = await LoginValidationSchema.validate(credentials);
-                const supabase = await createClient();
-                const response = await supabase.from("users").select().eq("email", email);
-                const users: User[] = response.data as User[] || [];
-                if(response.error){
-                    throw new InvalidLoginError("There was an error logging in!");
-                }
-                if(users.length === 0){   
-                    throw new InvalidLoginError("User not found with this email.");
-                }
-                user = users[0];
-                const hashedPass = await verifyPassword(password as string, user.password as string);
-                if(!hashedPass){
-                    throw new InvalidLoginError("invalid_credentials");
-                }
-                return user;    
-            } catch (error: any) {
-                throw new InvalidLoginError(error.message || "There was an error logging in!");
-            }
-            }
-        })
-    ]
-});
+  }
+})

@@ -1,7 +1,7 @@
 'use server';
 import { createClient } from "@/lib/supabase/server";
 import { SignupValidationSchema } from "@/lib/validation-schemas";
-import { hashPassword } from "@/lib/utils";
+import { hashPassword } from "@/lib/auth-utils";
 import * as Yup from "yup";
 import { User, UserFormData } from "@/lib/types";
 import { auth, signIn } from "@/auth";
