@@ -5,25 +5,27 @@ import React from "react";
 import { Oval } from "react-loader-spinner";
 
 interface ButtonProps {
-  text: string;
-  type: "primary" | "outline" | "black-outline" | "text";
-  htmlButtonType: "submit" | "reset" | "button";
+  text?: string;
+  type?: "primary" | "outline" | "black-outline" | "text";
+  htmlButtonType?: "submit" | "reset" | "button";
   action?: () => void;
   className?: string;
   isLoading?: boolean;
   icon?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const roboto = Roboto({ subsets: ["latin"], weight: ["500"] });
 
 const Button: React.FC<ButtonProps> = ({
   text,
-  type,
+  type = "primary",
   action,
   className,
-  htmlButtonType,
+  htmlButtonType = "button",
   isLoading,
-  icon
+  icon,
+  children
 }) => {
   return (
     <button
@@ -46,7 +48,7 @@ const Button: React.FC<ButtonProps> = ({
       )}
     >
       {!isLoading && icon}
-      {isLoading ? <Oval color="#ff6f61" secondaryColor="#fff" strokeWidth={5} height={20} width={20} /> : text}
+      {isLoading ? <Oval color="#ff6f61" secondaryColor="#fff" strokeWidth={5} height={20} width={20} /> : (children || text)}
     </button>
   );
 };

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useModalStore } from "@/lib/store";
 import Image from "next/image";
-import Input from "@/components/small/Input/Input";
+import FormikInput from "@/components/small/FormikInput/FormikInput";
 import { CiUser } from "react-icons/ci";
 import { Form, Formik } from "formik";
 import Button from "@/components/small/Button/Button";
@@ -56,28 +56,28 @@ const RegisterModal = () => {
           validateOnBlur={false}
         >
           <Form>
-            <Input
+            <FormikInput
               label="Full Name"
               name="name"
               placeholder="Enter your full name"
               type="text"
               icon={<CiUser size={20} />}
             />
-            <Input
+            <FormikInput
               label="Email"
               name="email"
               placeholder="Enter your email"
               type="email"
               icon={<CiMail size={20} />}
             />
-            <Input
+            <FormikInput
               label="Password"
               name="password"
               placeholder="Enter your password"
               type="password"
               icon={<CiLock size={20} />}
             />
-            <Input
+            <FormikInput
               label="Confirm Password"
               name="confirm-password"
               placeholder="Enter your password again"

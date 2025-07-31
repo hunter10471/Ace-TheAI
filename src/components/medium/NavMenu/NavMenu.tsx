@@ -1,11 +1,13 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import NavLink from "../../small/NavLink/NavLink";
 import Button from "../../small/Button/Button";
 import { nanoid } from "nanoid";
 import { MdClose, MdDarkMode, MdLightMode } from "react-icons/md";
 import { useModalStore, useThemeStore, useUserStore } from "@/lib/store";
+import LogoutModal from "../LogoutModal/LogoutModal";
 import { navLinks } from "@/lib/data";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 interface NavMenuProps {
   open: boolean;
@@ -13,6 +15,7 @@ interface NavMenuProps {
 }
 
 const NavMenu: React.FC<NavMenuProps> = ({ open, setOpen }) => {
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { openRegisterModal, openLoginModal } = useModalStore();
   const { isDarkMode, toggleDarkMode } = useThemeStore();
   const { user, isAuthenticated, setUser } = useUserStore();
@@ -34,6 +37,23 @@ const NavMenu: React.FC<NavMenuProps> = ({ open, setOpen }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = async () => {
+    try {
+      await signOut({ redirect: false });
+    } catch (error) {
+      console.log('Error signing out:', error);
+    }
+    
+    setUser(null);
+    setShowLogoutModal(false);
+    setOpen(false);
+    router.push("/");
+  };
 
   return (
     <aside
@@ -82,11 +102,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ open, setOpen }) => {
             <Button
               htmlButtonType="button"
               text="Logout"
-              action={() => {
-                setUser(null);
-                setOpen(false);
-                router.push("/");
-              }}
+              action={handleLogout}
               type="outline"
             />
           </>
@@ -107,6 +123,11 @@ const NavMenu: React.FC<NavMenuProps> = ({ open, setOpen }) => {
           </>
         )}
       </div>
+      <LogoutModal 
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={confirmLogout}
+      />
     </aside>
   );
 };

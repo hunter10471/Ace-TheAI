@@ -4,7 +4,7 @@ import Modal from "../Modal/Modal";
 import { useModalStore, useUserStore } from "@/lib/store";
 import toast, { Toaster } from 'react-hot-toast';
 import Image from "next/image";
-import Input from "@/components/small/Input/Input";
+import FormikInput from "@/components/small/FormikInput/FormikInput";
 import { CiMail } from "react-icons/ci";
 import { CiLock } from "react-icons/ci";
 import { Form, Formik } from "formik";
@@ -71,14 +71,14 @@ const LoginModal = () => {
           validateOnBlur={false}
         >
           <Form>
-            <Input
+            <FormikInput
               label="Email"
               name="email"
               placeholder="Enter your email"
               type="email"
               icon={<CiMail size={20} />}
             />
-            <Input
+            <FormikInput
               label="Password"
               name="password"
               placeholder="Enter your password"

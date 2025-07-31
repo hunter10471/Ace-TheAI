@@ -6,15 +6,18 @@ import { nanoid } from "nanoid";
 import Button from "../../small/Button/Button";
 import { MdMenu, MdDarkMode, MdLightMode } from "react-icons/md";
 import NavMenu from "../../medium/NavMenu/NavMenu";
+import LogoutModal from "../../medium/LogoutModal/LogoutModal";
 import { useModalStore, useThemeStore, useUserStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
 import { navLinks } from "@/lib/data";
+import { signOut } from "next-auth/react";
 
 interface NavbarProps {}
 
 const Navbar: React.FC<NavbarProps> = ({}) => {
   const [scroll, setScroll] = useState(false);
   const [open, setOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const navigate = useRouter();
   const { openRegisterModal, openLoginModal } = useModalStore();
   const { isDarkMode, toggleDarkMode } = useThemeStore();
@@ -37,7 +40,18 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
   };
 
   const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = async () => {
+    try {
+      await signOut({ redirect: false });
+    } catch (error) {
+      console.log('Error signing out:', error);
+    }
+    
     setUser(null);
+    setShowLogoutModal(false);
     navigate.push("/");
   };
 
@@ -48,9 +62,12 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
         if (response.ok) {
           const userData = await response.json();
           setUser(userData);
+        } else {
+          setUser(null);
         }
       } catch (error) {
         console.log('Not authenticated');
+        setUser(null);
       }
     };
     
@@ -132,6 +149,11 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
         </div>
       </div>
       <NavMenu open={open} setOpen={setOpen} />
+      <LogoutModal 
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={confirmLogout}
+      />
     </div>
   );
 };

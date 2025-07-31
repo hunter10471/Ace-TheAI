@@ -1,20 +1,41 @@
 "use client";
 import { sidebarLinks } from "@/lib/data";
-import { useThemeStore } from "@/lib/store";
+import { useThemeStore, useUserStore } from "@/lib/store";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { IoIosMenu } from "react-icons/io";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { HiOutlineSun, HiOutlineMoon } from "react-icons/hi";
+import LogoutModal from "../../medium/LogoutModal/LogoutModal";
+import { signOut } from "next-auth/react";
 
 interface SidebarProps {}
 
 const Sidebar: React.FC<SidebarProps> = ({}) => {
   const path = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(true);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { isDarkMode, toggleDarkMode } = useThemeStore();
+  const { setUser } = useUserStore();
+
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = async () => {
+    try {
+      await signOut({ redirect: false });
+    } catch (error) {
+      console.log('Error signing out:', error);
+    }
+    
+    setUser(null);
+    setShowLogoutModal(false);
+    router.push("/");
+  };
 
   return (
     <div className="fixed left-0 top-0 h-full z-[99] flex">
@@ -45,20 +66,33 @@ const Sidebar: React.FC<SidebarProps> = ({}) => {
           <div className="flex flex-col flex-1">
             {sidebarLinks.map((link, index) =>
               link.url ? (
-                <Link
-                  key={index}
-                  className={`flex whitespace-nowrap items-center gap-2 text-xs lg:text-sm px-2 lg:px-4 py-1.5 border border-transparent transition-all mt-2 lg:mt-3 rounded-lg ${
-                    path === link.url
-                      ? "bg-primary text-offWhite dark:text-white"
-                      : "text-offWhite/50 dark:text-gray-400 hover:border-primary hover:text-offWhite dark:hover:text-gray-200"
-                  }`}
-                  href={link.url}
-                >
-                  {link.icon && (
-                    <link.icon className="flex-shrink-0" size={20} />
-                  )}{" "}
-                  {link.label}
-                </Link>
+                link.url === "/dashboard/logout" ? (
+                  <button
+                    key={index}
+                    onClick={handleLogout}
+                    className="flex whitespace-nowrap items-center gap-2 text-xs lg:text-sm px-2 lg:px-4 py-1.5 border border-transparent transition-all mt-2 lg:mt-3 rounded-lg text-offWhite/50 dark:text-gray-400 hover:border-primary hover:text-offWhite dark:hover:text-gray-200"
+                  >
+                    {link.icon && (
+                      <link.icon className="flex-shrink-0" size={20} />
+                    )}{" "}
+                    {link.label}
+                  </button>
+                ) : (
+                  <Link
+                    key={index}
+                    className={`flex whitespace-nowrap items-center gap-2 text-xs lg:text-sm px-2 lg:px-4 py-1.5 border border-transparent transition-all mt-2 lg:mt-3 rounded-lg ${
+                      path === link.url
+                        ? "bg-primary text-offWhite dark:text-white"
+                        : "text-offWhite/50 dark:text-gray-400 hover:border-primary hover:text-offWhite dark:hover:text-gray-200"
+                    }`}
+                    href={link.url}
+                  >
+                    {link.icon && (
+                      <link.icon className="flex-shrink-0" size={20} />
+                    )}{" "}
+                    {link.label}
+                  </Link>
+                )
               ) : (
                 <h3
                   key={index}
@@ -94,6 +128,11 @@ const Sidebar: React.FC<SidebarProps> = ({}) => {
           <IoIosMenu size={25} />
         </button>
       )}
+      <LogoutModal 
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={confirmLogout}
+      />
     </div>
   );
 };
