@@ -28,9 +28,14 @@ const LoginModal = () => {
     }) => {
         try {
             setIsLoading(true);
-            const result = await authenticate(values.email, values.password);
-            if (result?.error) {
-                throw new Error(result.error);
+            
+            const formData = new FormData();
+            formData.append("email", values.email);
+            formData.append("password", values.password);
+            
+            const result = await authenticate(undefined, formData);
+            if (result && typeof result === "string" && result !== "Missing Fields.") {
+                throw new Error(result);
             }
 
             // Get user data after successful login

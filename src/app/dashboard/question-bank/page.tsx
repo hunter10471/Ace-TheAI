@@ -10,7 +10,6 @@ import {
     LuTrophy,
     LuCog,
     LuUsers,
-    LuUser,
 } from "react-icons/lu";
 import { TbUserExclamation } from "react-icons/tb";
 import PageHeader from "@/components/big/PageHeader/PageHeader";
@@ -194,7 +193,7 @@ export default function QuestionBankPage() {
                         </div>
 
                         <div className="pt-4 border-t border-gray-200">
-                            <button className="flex items-center space-x-2 text-gray-700 hover:text-primary transition-colors">
+                            <button type="button" className="flex items-center space-x-2 text-gray-700 hover:text-primary transition-colors">
                                 <FaBookmark className="w-4 h-4" />
                                 <span className="text-xs text-left">
                                     Saved Questions
@@ -242,6 +241,7 @@ export default function QuestionBankPage() {
                                                         />
                                                     </div>
                                                     <button
+                                                        type="button"
                                                         onClick={() =>
                                                             setSelectedQuestion(
                                                                 question
@@ -257,6 +257,7 @@ export default function QuestionBankPage() {
                                                 </div>
                                             </div>
                                             <button
+                                                type="button"
                                                 onClick={() =>
                                                     toggleBookmark(question.id)
                                                 }
@@ -287,6 +288,7 @@ export default function QuestionBankPage() {
                         <div className="p-3 border-t border-gray-200">
                             <div className="flex justify-center items-center space-x-1">
                                 <button
+                                    type="button"
                                     onClick={() =>
                                         setCurrentPage(
                                             Math.max(1, currentPage - 1)
@@ -310,6 +312,7 @@ export default function QuestionBankPage() {
                                         ) {
                                             return (
                                                 <button
+                                                    type="button"
                                                     key={pageNum}
                                                     onClick={() =>
                                                         setCurrentPage(pageNum)
@@ -323,7 +326,8 @@ export default function QuestionBankPage() {
                                                     {pageNum}
                                                 </button>
                                             );
-                                        } else if (
+                                        }
+                                        if (
                                             pageNum === currentPage - 2 ||
                                             pageNum === currentPage + 2
                                         ) {
@@ -341,6 +345,7 @@ export default function QuestionBankPage() {
                                 )}
 
                                 <button
+                                    type="button"
                                     onClick={() =>
                                         setCurrentPage(
                                             Math.min(

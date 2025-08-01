@@ -91,14 +91,14 @@ export default function FeedbackHistoryPage() {
                                     <label
                                         key={rating}
                                         className="flex items-center cursor-pointer"
+                                        htmlFor={`rating-${rating}`}
                                     >
                                         <input
                                             type="radio"
                                             name="rating"
+                                            id={`rating-${rating}`}
                                             checked={selectedRating === rating}
-                                            onChange={() =>
-                                                setSelectedRating(rating)
-                                            }
+                                            onChange={() => setSelectedRating(rating)}
                                             className="sr-only"
                                         />
                                         <div className="flex items-center gap-3 py-1 px-2 rounded w-full hover:bg-gray-50">
@@ -154,16 +154,14 @@ export default function FeedbackHistoryPage() {
                                     <label
                                         key={category}
                                         className="flex items-center cursor-pointer"
+                                        htmlFor={`category-${category}`}
                                     >
                                         <input
                                             type="radio"
                                             name="category"
-                                            checked={
-                                                selectedCategory === category
-                                            }
-                                            onChange={() =>
-                                                setSelectedCategory(category)
-                                            }
+                                            id={`category-${category}`}
+                                            checked={selectedCategory === category}
+                                            onChange={() => setSelectedCategory(category)}
                                             className="sr-only"
                                         />
                                         <div className="flex items-center gap-3 py-1 px-2 rounded w-full hover:bg-gray-50">
@@ -205,6 +203,7 @@ export default function FeedbackHistoryPage() {
 
                     <div className="flex justify-center items-center space-x-1 mt-6 pt-6 border-t border-gray-200">
                         <button
+                            type="button"
                             onClick={() =>
                                 setCurrentPage(Math.max(1, currentPage - 1))
                             }
@@ -218,6 +217,7 @@ export default function FeedbackHistoryPage() {
                             const pageNum = i + 1;
                             return (
                                 <button
+                                    type="button"
                                     key={pageNum}
                                     onClick={() => setCurrentPage(pageNum)}
                                     className={`px-2.5 py-1.5 rounded text-xs font-medium ${
@@ -232,6 +232,7 @@ export default function FeedbackHistoryPage() {
                         })}
 
                         <button
+                            type="button"
                             onClick={() =>
                                 setCurrentPage(
                                     Math.min(totalPages, currentPage + 1)

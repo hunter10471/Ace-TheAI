@@ -43,12 +43,14 @@ export default function DateRangePicker({
 
         if (startDate && endDate) {
             return `${formatDate(startDate)} - ${formatDate(endDate)}`;
-        } else if (startDate) {
+        }
+        if (startDate) {
             return `${formatDate(startDate)} - Select end date`;
-        } else if (endDate) {
+        }
+        if (endDate) {
             return `Select start date - ${formatDate(endDate)}`;
         }
-
+        
         return placeholder;
     };
 
@@ -112,6 +114,7 @@ export default function DateRangePicker({
 
                     <div className="flex justify-end mt-4 gap-2">
                         <button
+                            type="button"
                             onClick={() => {
                                 onDateRangeChange(null, null);
                                 setIsOpen(false);
@@ -121,6 +124,7 @@ export default function DateRangePicker({
                             Clear
                         </button>
                         <button
+                            type="button"
                             onClick={() => setIsOpen(false)}
                             className="px-3 py-1 text-sm bg-primary text-white rounded hover:bg-primary/80"
                         >
