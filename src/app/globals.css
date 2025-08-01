@@ -2,290 +2,291 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-  height: 100%;
-  min-height: 100vh;
-  scroll-behavior: smooth;
+html,
+body {
+    height: 100%;
+    min-height: 100vh;
+    scroll-behavior: smooth;
 }
 
 .PhoneInput {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .PhoneInputInput {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border-color 0.2s;
-  background-color: white;
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    background-color: white;
 }
 
 .PhoneInputInput:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
 .PhoneInputCountrySelect {
-  margin-right: 8px;
-  padding: 8px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background-color: white;
-  font-size: 14px;
-  cursor: pointer;
+    margin-right: 8px;
+    padding: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: white;
+    font-size: 14px;
+    cursor: pointer;
 }
 
 .PhoneInputCountrySelect:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
 .PhoneInputCountrySelectArrow {
-  color: #6b7280;
+    color: #6b7280;
 }
 
 .dark .PhoneInputInput {
-  background-color: #374151;
-  border-color: #4b5563;
-  color: white;
+    background-color: #374151;
+    border-color: #4b5563;
+    color: white;
 }
 
 .dark .PhoneInputCountrySelect {
-  background-color: #374151;
-  border-color: #4b5563;
-  color: white;
+    background-color: #374151;
+    border-color: #4b5563;
+    color: white;
 }
 
 .dark .PhoneInputInput:focus {
-  border-color: #3b82f6;
+    border-color: #3b82f6;
 }
 
 .dark .PhoneInputCountrySelect:focus {
-  border-color: #3b82f6;
+    border-color: #3b82f6;
 }
 
 .dark .PhoneInputCountrySelectArrow {
-  color: #9ca3af;
+    color: #9ca3af;
 }
 
 /* DatePicker Styles */
 .react-datepicker-wrapper {
-  width: 100%;
+    width: 100%;
 }
 
 .react-datepicker__input-container {
-  width: 100%;
+    width: 100%;
 }
 
 .react-datepicker {
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  font-family: inherit;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    font-family: inherit;
 }
 
 .react-datepicker__header {
-  background-color: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
-  border-radius: 8px 8px 0 0;
-  padding: 8px 0;
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    border-radius: 8px 8px 0 0;
+    padding: 8px 0;
 }
 
 .react-datepicker__current-month {
-  color: #374151;
-  font-weight: 600;
-  font-size: 14px;
-  margin-bottom: 8px;
+    color: #374151;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
 }
 
 .react-datepicker__day-names {
-  color: #6b7280;
-  font-size: 12px;
-  font-weight: 500;
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 500;
 }
 
 .react-datepicker__day {
-  color: #374151;
-  font-size: 14px;
-  padding: 4px;
-  margin: 1px;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+    color: #374151;
+    font-size: 14px;
+    padding: 4px;
+    margin: 1px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
 }
 
 .react-datepicker__day:hover {
-  background-color: #f3f4f6;
+    background-color: #f3f4f6;
 }
 
 .react-datepicker__day--selected {
-  background-color: #3b82f6;
-  color: white;
+    background-color: #3b82f6;
+    color: white;
 }
 
 .react-datepicker__day--today {
-  background-color: #fef3c7;
-  color: #92400e;
+    background-color: #fef3c7;
+    color: #92400e;
 }
 
 .react-datepicker__day--keyboard-selected {
-  background-color: #dbeafe;
-  color: #1d4ed8;
+    background-color: #dbeafe;
+    color: #1d4ed8;
 }
 
 .react-datepicker__navigation {
-  border: none;
-  background: none;
-  color: #6b7280;
-  font-size: 16px;
-  padding: 4px;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+    border: none;
+    background: none;
+    color: #6b7280;
+    font-size: 16px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
 }
 
 .react-datepicker__navigation:hover {
-  background-color: #f3f4f6;
+    background-color: #f3f4f6;
 }
 
 .react-datepicker__month-dropdown,
 .react-datepicker__year-dropdown {
-  background-color: white;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  max-height: 200px;
-  overflow-y: auto;
+    background-color: white;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 .react-datepicker__month-option,
 .react-datepicker__year-option {
-  padding: 8px 12px;
-  cursor: pointer;
-  transition: background-color 0.2s;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .react-datepicker__month-option:hover,
 .react-datepicker__year-option:hover {
-  background-color: #f3f4f6;
+    background-color: #f3f4f6;
 }
 
 .react-datepicker__month-option--selected,
 .react-datepicker__year-option--selected {
-  background-color: #3b82f6;
-  color: white;
+    background-color: #3b82f6;
+    color: white;
 }
 
 /* Dark mode styles for DatePicker */
 .dark .react-datepicker {
-  background-color: #374151;
-  border-color: #4b5563;
-  color: white;
+    background-color: #374151;
+    border-color: #4b5563;
+    color: white;
 }
 
 .dark .react-datepicker__header {
-  background-color: #4b5563;
-  border-color: #6b7280;
+    background-color: #4b5563;
+    border-color: #6b7280;
 }
 
 .dark .react-datepicker__current-month {
-  color: #f9fafb;
+    color: #f9fafb;
 }
 
 .dark .react-datepicker__day-names {
-  color: #d1d5db;
+    color: #d1d5db;
 }
 
 .dark .react-datepicker__day {
-  color: #f9fafb;
+    color: #f9fafb;
 }
 
 .dark .react-datepicker__day:hover {
-  background-color: #4b5563;
+    background-color: #4b5563;
 }
 
 .dark .react-datepicker__day--selected {
-  background-color: #3b82f6;
-  color: white;
+    background-color: #3b82f6;
+    color: white;
 }
 
 .dark .react-datepicker__day--today {
-  background-color: #f59e0b;
-  color: #1f2937;
+    background-color: #f59e0b;
+    color: #1f2937;
 }
 
 .dark .react-datepicker__day--keyboard-selected {
-  background-color: #1e40af;
-  color: white;
+    background-color: #1e40af;
+    color: white;
 }
 
 .dark .react-datepicker__navigation {
-  color: #d1d5db;
+    color: #d1d5db;
 }
 
 .dark .react-datepicker__navigation:hover {
-  background-color: #4b5563;
+    background-color: #4b5563;
 }
 
 .dark .react-datepicker__month-dropdown,
 .dark .react-datepicker__year-dropdown {
-  background-color: #374151;
-  border-color: #4b5563;
+    background-color: #374151;
+    border-color: #4b5563;
 }
 
 .dark .react-datepicker__month-option,
 .dark .react-datepicker__year-option {
-  color: #f9fafb;
+    color: #f9fafb;
 }
 
 .dark .react-datepicker__month-option:hover,
 .dark .react-datepicker__year-option:hover {
-  background-color: #4b5563;
+    background-color: #4b5563;
 }
 
 .dark .react-datepicker__month-option--selected,
 .dark .react-datepicker__year-option--selected {
-  background-color: #3b82f6;
-  color: white;
+    background-color: #3b82f6;
+    color: white;
 }
 
 /* Custom scrollbar styles */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+    width: 6px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+    background: transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #ff6f61;
-  border-radius: 3px;
-  transition: background 0.2s ease;
+    background: #ff6f61;
+    border-radius: 3px;
+    transition: background 0.2s ease;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #e55a4e;
+    background: #e55a4e;
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #ff6f61;
+    background: #ff6f61;
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #e55a4e;
+    background: #e55a4e;
 }
 
 /* For Firefox */
 .custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: #d1d5db transparent;
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
 }
 
 .dark .custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: #4b5563 transparent;
+    scrollbar-width: thin;
+    scrollbar-color: #4b5563 transparent;
 }
