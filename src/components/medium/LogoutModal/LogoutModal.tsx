@@ -59,7 +59,6 @@ export default function LogoutModal({ isOpen, onClose, onConfirm }: LogoutModalP
           htmlButtonType="button"
           action={onClose}
           className="px-4 py-2"
-          disabled={isLoading}
         >
           Cancel
         </Button>
