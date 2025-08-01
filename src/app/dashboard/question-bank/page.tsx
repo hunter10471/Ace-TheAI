@@ -193,7 +193,10 @@ export default function QuestionBankPage() {
                         </div>
 
                         <div className="pt-4 border-t border-gray-200">
-                            <button type="button" className="flex items-center space-x-2 text-gray-700 hover:text-primary transition-colors">
+                            <button
+                                type="button"
+                                className="flex items-center space-x-2 text-gray-700 hover:text-primary transition-colors"
+                            >
                                 <FaBookmark className="w-4 h-4" />
                                 <span className="text-xs text-left">
                                     Saved Questions

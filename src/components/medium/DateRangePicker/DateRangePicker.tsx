@@ -50,7 +50,7 @@ export default function DateRangePicker({
         if (endDate) {
             return `Select start date - ${formatDate(endDate)}`;
         }
-        
+
         return placeholder;
     };
 

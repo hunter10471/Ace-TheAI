@@ -98,7 +98,9 @@ export default function FeedbackHistoryPage() {
                                             name="rating"
                                             id={`rating-${rating}`}
                                             checked={selectedRating === rating}
-                                            onChange={() => setSelectedRating(rating)}
+                                            onChange={() =>
+                                                setSelectedRating(rating)
+                                            }
                                             className="sr-only"
                                         />
                                         <div className="flex items-center gap-3 py-1 px-2 rounded w-full hover:bg-gray-50">
@@ -160,8 +162,12 @@ export default function FeedbackHistoryPage() {
                                             type="radio"
                                             name="category"
                                             id={`category-${category}`}
-                                            checked={selectedCategory === category}
-                                            onChange={() => setSelectedCategory(category)}
+                                            checked={
+                                                selectedCategory === category
+                                            }
+                                            onChange={() =>
+                                                setSelectedCategory(category)
+                                            }
                                             className="sr-only"
                                         />
                                         <div className="flex items-center gap-3 py-1 px-2 rounded w-full hover:bg-gray-50">

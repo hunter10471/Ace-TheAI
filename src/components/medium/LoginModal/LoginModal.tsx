@@ -28,13 +28,17 @@ const LoginModal = () => {
     }) => {
         try {
             setIsLoading(true);
-            
+
             const formData = new FormData();
             formData.append("email", values.email);
             formData.append("password", values.password);
-            
+
             const result = await authenticate(undefined, formData);
-            if (result && typeof result === "string" && result !== "Missing Fields.") {
+            if (
+                result &&
+                typeof result === "string" &&
+                result !== "Missing Fields."
+            ) {
                 throw new Error(result);
             }
 
