@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { signIn, signOut } from "@/auth";
+import { signIn, signOut, auth } from "@/auth";
 
 const FormSchema = z.object({
   email: z.string().email(),
@@ -50,4 +50,13 @@ export async function logout() {
 
   revalidatePath("/");
   redirect("/");
+}
+
+export async function getUser() {
+  try {
+    const session = await auth();
+    return session?.user || null;
+  } catch (error) {
+    return null;
+  }
 }
