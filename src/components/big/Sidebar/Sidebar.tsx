@@ -11,7 +11,9 @@ import { HiOutlineSun, HiOutlineMoon } from "react-icons/hi";
 import LogoutModal from "../../medium/LogoutModal/LogoutModal";
 import { signOut } from "next-auth/react";
 
-interface SidebarProps {}
+interface SidebarProps {
+  // Props can be added here in the future
+}
 
 const Sidebar: React.FC<SidebarProps> = ({}) => {
     const path = usePathname();
