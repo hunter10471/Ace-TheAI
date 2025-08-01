@@ -27,10 +27,10 @@ export default async function page() {
     return (
         <div>
             <PageHeader
-                title={`Welcome back, ${user.name.split(" ")[0]}`}
+                title={`Welcome back, ${user?.name?.split(" ")[0] || "User"}`}
                 subtitle="Prepare, Practice, Perform!"
-                userName={user.name}
-                userEmail={user.email}
+                userName={user?.name || undefined}
+                userEmail={user?.email || undefined}
             />
             <div className="flex justify-between">
                 <div className="flex my-6 gap-4">
