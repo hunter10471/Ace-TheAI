@@ -109,12 +109,15 @@ const LoginModal = () => {
                         <span className="text-center text-xs block my-1 text-gray-500 dark:text-gray-400">
                             OR
                         </span>
-                        <button className="relative w-full text-sm font-medium py-2 px-4 hover:bg-text hover:text-white dark:hover:bg-gray-700 transition-all border border-text dark:border-gray-600 rounded-lg text-gray-900 dark:text-white">
+                        <button 
+                            disabled
+                            className="relative w-full text-sm font-medium py-2 px-4 transition-all border border-gray-300 dark:border-gray-600 rounded-lg text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60"
+                        >
                             <FcGoogle
                                 size={25}
                                 className="absolute bottom-[5px] left-14"
                             />{" "}
-                            Sign in with Google
+                            Sign in with Google (Coming Soon)
                         </button>
                         <span className="block text-center text-xs mt-4 text-gray-600 dark:text-gray-400">
                             Don't have an account?{" "}
