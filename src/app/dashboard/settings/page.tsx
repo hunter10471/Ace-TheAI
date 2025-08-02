@@ -14,8 +14,8 @@ export default async function SettingsPage() {
             <PageHeader
                 title="Settings"
                 subtitle="Manage your account settings and preferences"
-                userName={user.name}
-                userEmail={user.email}
+                userName={user?.name}
+                userEmail={user?.email}
             />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <ChangePasswordForm />
