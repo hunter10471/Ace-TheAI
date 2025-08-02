@@ -23,7 +23,11 @@ const RegisterModal = () => {
     const handleSubmit = async (values: UserFormData) => {
         try {
             setIsLoading(true);
-            await signup(values);
+            const formData = new FormData();
+            formData.append("name", values.name);
+            formData.append("email", values.email);
+            formData.append("password", values.password);
+            await signup(formData);
             toast.success("Account created successfully!");
             closeRegisterModal();
             openLoginModal();
