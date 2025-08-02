@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import Modal from "../Modal/Modal";
-import { useModalStore, useUserStore } from "@/lib/store";
-import toast, { Toaster } from "react-hot-toast";
+import { useModalStore } from "@/lib/store";
+import toast from "react-hot-toast";
 import Image from "next/image";
 import FormikInput from "@/components/small/FormikInput/FormikInput";
 import { CiMail } from "react-icons/ci";
@@ -11,16 +11,16 @@ import { Form, Formik } from "formik";
 import Button from "@/components/small/Button/Button";
 import { FcGoogle } from "react-icons/fc";
 import { LoginValidationSchema } from "@/lib/validation-schemas";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { authenticate } from "@/app/actions/actions";
+import { useSession } from "next-auth/react";
 
 const LoginModal = () => {
     const { closeLoginModal, openRegisterModal, isLoginModalOpen } =
         useModalStore();
-    const { setUser } = useUserStore();
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const { data: session, status, update } = useSession();
 
     const handleSubmit = async (values: {
         email: string;
@@ -28,34 +28,40 @@ const LoginModal = () => {
     }) => {
         try {
             setIsLoading(true);
+            console.log("Attempting login with:", values.email);
 
             const formData = new FormData();
             formData.append("email", values.email);
             formData.append("password", values.password);
 
             const result = await authenticate(undefined, formData);
-            if (
-                result &&
-                typeof result === "string" &&
-                result !== "Missing Fields."
-            ) {
-                throw new Error(result);
-            }
+            console.log("Authentication result:", result);
 
-            // Get user data after successful login
-            const response = await fetch("/api/auth/check");
-            if (response.ok) {
-                const userData = await response.json();
-                setUser(userData);
-            }
+            console.log("LoginModal result:", result);
 
-            toast.success("Logged in successfully!");
-            closeLoginModal();
-            setTimeout(() => {
-                router.push("/dashboard");
-            }, 1000);
+            if (result === "success") {
+                console.log("Authentication successful, checking session...");
+                console.log("Session status:", status);
+                console.log("Session data:", session);
+
+                // Force session update
+                await update();
+
+                toast.success("Logged in successfully!");
+                closeLoginModal();
+
+                // Small delay to ensure session is established
+                setTimeout(() => {
+                    router.push("/dashboard");
+                }, 500);
+            } else if (result && result !== "Missing Fields.") {
+                toast.error(result);
+            } else {
+                console.log("Unexpected result:", result);
+            }
         } catch (error: any) {
-            toast.error(error.message);
+            console.error("Login error:", error);
+            toast.error("Login failed. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -102,7 +108,7 @@ const LoginModal = () => {
                         <Button
                             className="w-full mt-2"
                             htmlButtonType="submit"
-                            text="Log In"
+                            text={isLoading ? "Logging in..." : "Log In"}
                             type="primary"
                             isLoading={isLoading}
                         />
@@ -111,12 +117,9 @@ const LoginModal = () => {
                         </span>
                         <button
                             disabled
-                            className="relative w-full text-sm font-medium py-2 px-4 transition-all border border-gray-300 dark:border-gray-600 rounded-lg text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60"
+                            className="relative w-full text-sm font-medium py-3 px-4 transition-all border border-gray-300 dark:border-gray-600 rounded-lg text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60 flex items-center justify-center gap-3"
                         >
-                            <FcGoogle
-                                size={25}
-                                className="absolute bottom-[5px] left-14"
-                            />{" "}
+                            <FcGoogle size={20} />
                             Sign in with Google (Coming Soon)
                         </button>
                         <span className="block text-center text-xs mt-4 text-gray-600 dark:text-gray-400">

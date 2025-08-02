@@ -15,22 +15,29 @@ import { PiHandWavingFill } from "react-icons/pi";
 import { MdOutlineEdit } from "react-icons/md";
 import { BsChatSquareQuote } from "react-icons/bs";
 import { BsPatchQuestion } from "react-icons/bs";
-import { getUser } from "../actions/actions";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import ActivityStats from "@/components/medium/ActivityStats/ActivityStats";
 import PageHeader from "@/components/big/PageHeader/PageHeader";
 
 export const dynamic = "force-dynamic";
 
 export default async function page() {
-    const user = await getUser();
+    const session = await auth();
+
+    if (!session?.user) {
+        redirect("/");
+    }
 
     return (
         <div>
             <PageHeader
-                title={`Welcome back, ${user?.name?.split(" ")[0] || "User"}`}
+                title={`Welcome back, ${
+                    session.user.name?.split(" ")[0] || "User"
+                }`}
                 subtitle="Prepare, Practice, Perform!"
-                userName={user?.name || undefined}
-                userEmail={user?.email || undefined}
+                userName={session.user.name || undefined}
+                userEmail={session.user.email || undefined}
             />
             <div className="flex justify-between">
                 <div className="flex my-6 gap-4">

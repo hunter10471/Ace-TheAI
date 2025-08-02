@@ -9,11 +9,11 @@ import NavLink from "../../small/NavLink/NavLink";
 import Button from "../../small/Button/Button";
 import { nanoid } from "nanoid";
 import { MdClose, MdDarkMode, MdLightMode } from "react-icons/md";
-import { useModalStore, useThemeStore, useUserStore } from "@/lib/store";
+import { useModalStore, useThemeStore } from "@/lib/store";
 import LogoutModal from "../LogoutModal/LogoutModal";
 import { navLinks } from "@/lib/data";
 import { useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 interface NavMenuProps {
     open: boolean;
@@ -24,7 +24,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ open, setOpen }) => {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const { openRegisterModal, openLoginModal } = useModalStore();
     const { isDarkMode, toggleDarkMode } = useThemeStore();
-    const { user, isAuthenticated, setUser } = useUserStore();
+    const { data: session, status, update } = useSession();
     const router = useRouter();
     const sidebarRef = useRef<HTMLDivElement>(null);
 
@@ -44,6 +44,13 @@ const NavMenu: React.FC<NavMenuProps> = ({ open, setOpen }) => {
         };
     }, []);
 
+    // Refresh session when component mounts
+    useEffect(() => {
+        if (status === "loading") {
+            update();
+        }
+    }, [status, update]);
+
     const handleLogout = () => {
         setShowLogoutModal(true);
     };
@@ -51,11 +58,12 @@ const NavMenu: React.FC<NavMenuProps> = ({ open, setOpen }) => {
     const confirmLogout = async () => {
         try {
             await signOut({ redirect: false });
+            // Force session update after logout
+            await update();
         } catch (error) {
             console.log("Error signing out:", error);
         }
 
-        setUser(null);
         setShowLogoutModal(false);
         setOpen(false);
         router.push("/");
@@ -102,7 +110,9 @@ const NavMenu: React.FC<NavMenuProps> = ({ open, setOpen }) => {
                         />
                     )}
                 </button>
-                {isAuthenticated ? (
+                {status === "loading" ? (
+                    <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-10 w-20 rounded-lg"></div>
+                ) : session ? (
                     <>
                         <Button
                             htmlButtonType="button"

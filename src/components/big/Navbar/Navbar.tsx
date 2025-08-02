@@ -7,10 +7,10 @@ import Button from "../../small/Button/Button";
 import { MdMenu, MdDarkMode, MdLightMode } from "react-icons/md";
 import NavMenu from "../../medium/NavMenu/NavMenu";
 import LogoutModal from "../../medium/LogoutModal/LogoutModal";
-import { useModalStore, useThemeStore, useUserStore } from "@/lib/store";
+import { useModalStore, useThemeStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
 import { navLinks } from "@/lib/data";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 const Navbar: React.FC = () => {
     const [scroll, setScroll] = useState(false);
@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
     const navigate = useRouter();
     const { openRegisterModal, openLoginModal } = useModalStore();
     const { isDarkMode, toggleDarkMode } = useThemeStore();
-    const { user, isAuthenticated, setUser } = useUserStore();
+    const { data: session, status, update } = useSession();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -33,6 +33,13 @@ const Navbar: React.FC = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, [scroll]);
 
+    // Refresh session when component mounts
+    useEffect(() => {
+        if (status === "loading") {
+            update();
+        }
+    }, [status, update]);
+
     const navigateToDashboard = () => {
         navigate.push("/dashboard");
     };
@@ -44,33 +51,15 @@ const Navbar: React.FC = () => {
     const confirmLogout = async () => {
         try {
             await signOut({ redirect: false });
+            // Force session update after logout
+            await update();
         } catch (error) {
             console.log("Error signing out:", error);
         }
 
-        setUser(null);
         setShowLogoutModal(false);
         navigate.push("/");
     };
-
-    useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                const response = await fetch("/api/auth/check");
-                if (response.ok) {
-                    const userData = await response.json();
-                    setUser(userData);
-                } else {
-                    setUser(null);
-                }
-            } catch (error) {
-                console.log("Not authenticated");
-                setUser(null);
-            }
-        };
-
-        checkAuth();
-    }, [setUser]);
 
     return (
         <div
@@ -105,7 +94,9 @@ const Navbar: React.FC = () => {
                             />
                         )}
                     </button>
-                    {isAuthenticated ? (
+                    {status === "loading" ? (
+                        <div className="animate-pulse bg-gray-200 dark:bg-gray-700 h-10 w-20 rounded-lg"></div>
+                    ) : session ? (
                         <>
                             <Button
                                 htmlButtonType="button"

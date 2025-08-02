@@ -1,6 +1,6 @@
 "use client";
 import { sidebarLinks } from "@/lib/data";
-import { useThemeStore, useUserStore } from "@/lib/store";
+import { useThemeStore } from "@/lib/store";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -17,7 +17,6 @@ const Sidebar: React.FC = () => {
     const [open, setOpen] = useState(true);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const { isDarkMode, toggleDarkMode } = useThemeStore();
-    const { setUser } = useUserStore();
 
     const handleLogout = () => {
         setShowLogoutModal(true);
@@ -30,7 +29,6 @@ const Sidebar: React.FC = () => {
             console.log("Error signing out:", error);
         }
 
-        setUser(null);
         setShowLogoutModal(false);
         router.push("/");
     };

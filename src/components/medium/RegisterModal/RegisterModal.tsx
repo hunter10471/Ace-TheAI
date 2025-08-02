@@ -27,12 +27,17 @@ const RegisterModal = () => {
             formData.append("name", values.name);
             formData.append("email", values.email);
             formData.append("password", values.password);
-            await signup(formData);
-            toast.success("Account created successfully!");
-            closeRegisterModal();
-            openLoginModal();
+            const result = await signup(formData);
+
+            if (result === "success") {
+                toast.success("Account created successfully!");
+                closeRegisterModal();
+                openLoginModal();
+            } else if (result) {
+                toast.error(result);
+            }
         } catch (error: any) {
-            toast.error(error.message);
+            toast.error("Registration failed. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -93,7 +98,7 @@ const RegisterModal = () => {
                         <Button
                             className="w-full mt-2"
                             htmlButtonType="submit"
-                            text="Sign Up"
+                            text={isLoading ? "Creating account..." : "Sign Up"}
                             type="primary"
                             isLoading={isLoading}
                         />
@@ -102,12 +107,9 @@ const RegisterModal = () => {
                         </span>
                         <button
                             disabled
-                            className="relative w-full text-sm font-medium py-2 px-4 transition-all border border-gray-300 dark:border-gray-600 rounded-lg text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60"
+                            className="relative w-full text-sm font-medium py-3 px-4 transition-all border border-gray-300 dark:border-gray-600 rounded-lg text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60 flex items-center justify-center gap-3"
                         >
-                            <FcGoogle
-                                size={25}
-                                className="absolute bottom-[5px] left-14"
-                            />{" "}
+                            <FcGoogle size={20} />
                             Sign up with Google (Coming Soon)
                         </button>
                         <span className="text-xs my-4 text-center block leading-relaxed text-gray-600 dark:text-gray-400">

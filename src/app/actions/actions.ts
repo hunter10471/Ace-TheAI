@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { signIn, signOut, auth } from "@/auth";
+import { createClient } from "@/lib/supabase/server";
+import { hashPassword } from "@/lib/auth-utils";
 
 const FormSchema = z.object({
     email: z.string().email(),
@@ -32,16 +34,30 @@ export async function authenticate(
     const { email, password } = validatedFields.data;
 
     try {
-        await signIn("credentials", { email, password });
-    } catch (error) {
-        if (error instanceof Error) {
-            return error.message;
-        }
-        return "Something went wrong.";
-    }
+        const result = await signIn("credentials", {
+            email,
+            password,
+            redirect: false,
+        });
 
-    revalidatePath("/");
-    redirect("/dashboard");
+        console.log("SignIn result:", result);
+
+        if (result?.error) {
+            console.error("SignIn error:", result.error);
+            return "Invalid credentials. Please check your email and password.";
+        }
+
+        // Check if the result is successful (either ok: true or no error)
+        if (result?.ok || !result?.error) {
+            revalidatePath("/");
+            return "success";
+        }
+
+        return "Login failed. Please try again.";
+    } catch (error) {
+        console.error("Authentication error:", error);
+        return "Something went wrong. Please try again.";
+    }
 }
 
 export async function signup(formData: FormData) {
@@ -58,14 +74,28 @@ export async function signup(formData: FormData) {
     const { name, email, password } = validatedFields.data;
 
     try {
-        // Here you would typically create the user in your database
-        // For now, we'll just redirect to login
-        revalidatePath("/");
-        redirect("/");
-    } catch (error) {
-        if (error instanceof Error) {
-            return error.message;
+        const supabase = await createClient();
+
+        const hashedPassword = await hashPassword(password);
+
+        const { error } = await supabase.from("users").insert([
+            {
+                name,
+                email,
+                password: hashedPassword,
+            },
+        ]);
+
+        if (error) {
+            if (error.code === "23505") {
+                return "User already exists.";
+            }
+            return "Something went wrong.";
         }
+
+        revalidatePath("/");
+        return "success";
+    } catch (error) {
         return "Something went wrong.";
     }
 }
@@ -74,9 +104,6 @@ export async function logout() {
     try {
         await signOut();
     } catch (error) {
-        if (error instanceof Error) {
-            return error.message;
-        }
         return "Something went wrong.";
     }
 
