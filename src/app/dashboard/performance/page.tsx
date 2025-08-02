@@ -16,8 +16,8 @@ export default async function PerformancePage() {
             <PageHeader
                 title="Performance"
                 subtitle="Track your interview performance and see detailed metrics"
-                userName={user.name}
-                userEmail={user.email}
+                userName={user?.name || undefined}
+                userEmail={user?.email || undefined}
             />
             <PerformanceStatsCards />
             <div className="flex gap-6">
