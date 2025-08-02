@@ -12,7 +12,7 @@ const inter = Inter({
 export const metadata: Metadata = {
     title: "Ace The AI - AI-Powered Interview Preparation",
     description:
-    "Ace is an AI-driven interview preparation coach that helps job seekers excel in their interviews. With personalized question prompts, real-time feedback, and tailored strategies, Ace empowers you to confidently navigate any interview. Master behavioral, technical, and situational questions across industries with insights from advanced AI coaching. Ready to ace your next interview? Start prepping with Ace today!",
+        "Ace is an AI-driven interview preparation coach that helps job seekers excel in their interviews. With personalized question prompts, real-time feedback, and tailored strategies, Ace empowers you to confidently navigate any interview. Master behavioral, technical, and situational questions across industries with insights from advanced AI coaching. Ready to ace your next interview? Start prepping with Ace today!",
 };
 
 export default async function RootLayout({

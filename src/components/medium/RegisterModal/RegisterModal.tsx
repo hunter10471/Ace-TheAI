@@ -100,7 +100,7 @@ const RegisterModal = () => {
                         <span className="text-center text-xs block my-1 text-gray-500 dark:text-gray-400">
                             OR
                         </span>
-                        <button 
+                        <button
                             disabled
                             className="relative w-full text-sm font-medium py-2 px-4 transition-all border border-gray-300 dark:border-gray-600 rounded-lg text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60"
                         >
