@@ -12,11 +12,7 @@ import { useRouter } from "next/navigation";
 import { navLinks } from "@/lib/data";
 import { signOut } from "next-auth/react";
 
-interface NavbarProps {
-  // Props can be added here in the future
-}
-
-const Navbar: React.FC<NavbarProps> = ({}) => {
+const Navbar: React.FC = () => {
     const [scroll, setScroll] = useState(false);
     const [open, setOpen] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
