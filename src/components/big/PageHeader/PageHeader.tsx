@@ -1,9 +1,9 @@
 interface PageHeaderProps {
     title: string;
     subtitle: string;
-    userName?: string;
-    userEmail?: string;
-    userAvatar?: string;
+    userName?: string | null;
+    userEmail?: string | null;
+    userAvatar?: string | null;
 }
 
 export default function PageHeader({
@@ -33,7 +33,7 @@ export default function PageHeader({
                     </p>
                 </div>
                 <img
-                    src={userAvatar}
+                    src={userAvatar || "/assets/avatar.jpg"}
                     alt="User"
                     className="w-12 h-12 rounded-full"
                 />
