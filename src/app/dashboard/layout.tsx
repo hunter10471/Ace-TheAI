@@ -16,9 +16,9 @@ export default async function DashboardLayout({
     }
 
     return (
-        <main className="flex gap-5 lg:gap-10 py-5 px-5 lg:px-10 bg-text dark:bg-gray-900 justify-center h-screen">
+        <main className="flex gap-2 lg:gap-5 xl:gap-10 py-2 lg:py-5 px-2 lg:px-5 xl:px-10 bg-text dark:bg-gray-900 justify-center min-h-screen">
             <Sidebar />
-            <div className="bg-offWhite dark:bg-gray-800 rounded-xl w-full p-8 max-w-screen-lg h-full overflow-y-auto">
+            <div className="bg-offWhite dark:bg-gray-800 rounded-xl w-full p-4 lg:p-6 xl:p-8 max-w-screen-lg min-h-full overflow-y-auto">
                 {children}
             </div>
         </main>

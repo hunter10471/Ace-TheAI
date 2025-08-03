@@ -282,6 +282,13 @@ export default function QuestionBankPage() {
         }
     }, [selectedQuestion]);
 
+    // Check for existing generation jobs when component mounts
+    useEffect(() => {
+        if (session?.user?.id) {
+            checkGenerationStatus();
+        }
+    }, [session?.user?.id]);
+
     // Poll for status updates when generation is in progress
     useEffect(() => {
         let pollInterval: ReturnType<typeof setTimeout> | null = null;
@@ -342,14 +349,14 @@ export default function QuestionBankPage() {
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="w-full max-w-7xl mx-auto px-2 lg:px-4 py-4 lg:py-8">
             <PageHeader
                 title="Question Bank"
                 subtitle="Prepare for your interviews with our question bank personalized for you."
             />
 
-            <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center space-x-4">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+                <div className="flex flex-wrap items-center gap-2 lg:gap-4">
                     <button
                         type="button"
                         onClick={() =>
@@ -432,8 +439,8 @@ export default function QuestionBankPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-12 gap-6">
-                <div className="col-span-2">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+                <div className="lg:col-span-2">
                     <div className="flex items-center space-x-2 mb-6">
                         <LuSettings2 className="w-5 h-5 text-gray-400 dark:text-gray-300" />
                         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -559,8 +566,8 @@ export default function QuestionBankPage() {
                     </div>
                 </div>
 
-                <div className="col-span-6">
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm h-[calc(100vh-300px)] flex flex-col">
+                <div className="lg:col-span-6">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm h-[calc(100vh-400px)] lg:h-[calc(100vh-300px)] flex flex-col">
                         <div className="p-4 flex-1 overflow-y-auto">
                             {loading ? (
                                 <div className="flex items-center justify-center h-full">
@@ -758,10 +765,10 @@ export default function QuestionBankPage() {
                     )}
                 </div>
 
-                <div className="col-span-4">
+                <div className="lg:col-span-4">
                     <div
                         ref={answerColumnRef}
-                        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 shadow-sm h-[calc(100vh-300px)] overflow-y-auto overflow-x-visible"
+                        className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 shadow-sm h-[calc(100vh-400px)] lg:h-[calc(100vh-300px)] overflow-y-auto overflow-x-visible"
                     >
                         <div className="flex items-center justify-center space-x-2 mb-6">
                             <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">

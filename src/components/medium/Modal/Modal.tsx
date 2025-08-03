@@ -40,11 +40,11 @@ const Modal: React.FC<ModalProps> = ({
             } w-screen h-screen`}
         >
             <div
-                className={`absolute transition-all duration-500 ease-in-out w-[370px] sm:w-[500px] h-fit mx-auto my-auto left-0 right-0 top-0 bottom-0 ${
+                className={`absolute transition-all duration-500 ease-in-out w-[90vw] max-w-[500px] max-h-[90vh] mx-auto my-auto left-0 right-0 top-0 bottom-0 ${
                     isModalOpen
                         ? "translate-y-[0vh] opacity-100"
                         : "translate-y-[100vh] opacity-0"
-                } p-4 bg-offWhite dark:bg-gray-800 rounded-xl`}
+                } p-4 bg-offWhite dark:bg-gray-800 rounded-xl overflow-y-auto`}
                 ref={modalRef}
             >
                 <button
