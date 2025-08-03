@@ -71,6 +71,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     ],
     pages: {
         signIn: "/",
+        error: "/",
     },
     callbacks: {
         async signIn({ user, account, profile }) {
@@ -78,33 +79,72 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 try {
                     const supabase = await createClient();
 
-                    const { data: existingUser } = await supabase
-                        .from("users")
-                        .select("*")
-                        .eq("email", user.email)
-                        .single();
+                    // First check if user exists by email
+                    const { data: existingUser, error: selectError } =
+                        await supabase
+                            .from("users")
+                            .select("*")
+                            .eq("email", user.email)
+                            .single();
+
+                    if (selectError && selectError.code !== "PGRST116") {
+                        console.error(
+                            "Error checking existing user:",
+                            selectError
+                        );
+                        return false;
+                    }
 
                     if (!existingUser) {
-                        const { error } = await supabase.from("users").insert([
-                            {
-                                id: user.id,
-                                name: user.name,
-                                email: user.email,
-                                password: null,
-                                provider: "google",
-                                provider_id: profile?.sub,
-                            },
-                        ]);
+                        // Create new user with proper error handling
+                        const { error: insertError } = await supabase
+                            .from("users")
+                            .insert([
+                                {
+                                    id: user.id,
+                                    name: user.name || "User",
+                                    email: user.email,
+                                    password: null,
+                                    provider: "google",
+                                    provider_id: profile?.sub,
+                                    job_title: "Software Developer", // Default values
+                                    years_of_experience: "1-3 years",
+                                    key_skills: [
+                                        "JavaScript",
+                                        "React",
+                                        "Node.js",
+                                    ],
+                                    professional_goal:
+                                        "To become a senior developer",
+                                },
+                            ]);
 
-                        if (error) {
-                            console.error("Error creating Google user:", error);
-                            return false;
+                        if (insertError) {
+                            console.error(
+                                "Error creating Google user:",
+                                insertError
+                            );
+                            // Don't fail the sign-in, just log the error
+                            // The user can still sign in and complete their profile later
                         }
                     } else {
+                        // Update existing user with latest info from Google
+                        const { error: updateError } = await supabase
+                            .from("users")
+                            .update({
+                                name: user.name || existingUser.name,
+                                provider_id:
+                                    profile?.sub || existingUser.provider_id,
+                            })
+                            .eq("id", existingUser.id);
+
+                        if (updateError) {
+                            console.error("Error updating user:", updateError);
+                        }
                     }
                 } catch (error) {
                     console.error("Error in signIn callback:", error);
-                    return false;
+                    // Don't fail the sign-in, just log the error
                 }
             }
             return true;
@@ -149,4 +189,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         },
     },
     debug: process.env.NODE_ENV === "development",
+    session: {
+        strategy: "jwt",
+    },
+    useSecureCookies: process.env.NODE_ENV === "production",
 });

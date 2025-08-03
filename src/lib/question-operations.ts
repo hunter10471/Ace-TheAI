@@ -450,12 +450,61 @@ export async function getUserProfile(userId: string): Promise<{
         return null;
     }
 
-    return data;
+    if (!data) {
+        return null;
+    }
+
+    // Return default values if profile is incomplete
+    return {
+        job_title: data.job_title || "Software Developer",
+        years_of_experience: data.years_of_experience || "1-3 years",
+        key_skills: data.key_skills || ["JavaScript", "React", "Node.js"],
+        professional_goal:
+            data.professional_goal || "To become a senior developer",
+    };
+}
+
+// Ensure user exists in database
+async function ensureUserExists(userId: string): Promise<void> {
+    const supabase = await createClient();
+
+    // Check if user exists
+    const { data: user, error: selectError } = await supabase
+        .from("users")
+        .select("id")
+        .eq("id", userId)
+        .single();
+
+    if (selectError && selectError.code === "PGRST116") {
+        // User doesn't exist, create a basic user record
+        const { error: insertError } = await supabase.from("users").insert([
+            {
+                id: userId,
+                name: "User",
+                email: "user@example.com", // This will be updated when user completes profile
+                job_title: "Software Developer",
+                years_of_experience: "1-3 years",
+                key_skills: ["JavaScript", "React", "Node.js"],
+                professional_goal: "To become a senior developer",
+            },
+        ]);
+
+        if (insertError) {
+            console.error("Error creating user record:", insertError);
+            throw new Error("Failed to create user record");
+        }
+    } else if (selectError) {
+        console.error("Error checking user existence:", selectError);
+        throw new Error("Failed to verify user existence");
+    }
 }
 
 // Generation job management functions
 export async function createGenerationJob(userId: string): Promise<string> {
     const supabase = await createClient();
+
+    // Ensure user exists before creating job
+    await ensureUserExists(userId);
 
     const { data, error } = await supabase
         .from("generation_jobs")

@@ -59,8 +59,18 @@ export async function POST(request: NextRequest) {
         }
     } catch (error) {
         console.error("Error in question generation:", error);
+
+        // Provide more detailed error information
+        let errorMessage = "Failed to generate questions";
+        if (error instanceof Error) {
+            errorMessage = error.message;
+        }
+
         return NextResponse.json(
-            { error: "Failed to generate questions" },
+            {
+                error: errorMessage,
+                details: error instanceof Error ? error.stack : error,
+            },
             { status: 500 }
         );
     }
