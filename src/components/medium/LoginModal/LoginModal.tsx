@@ -13,7 +13,7 @@ import { FcGoogle } from "react-icons/fc";
 import { LoginValidationSchema } from "@/lib/validation-schemas";
 import { useRouter } from "next/navigation";
 import { authenticate } from "@/app/actions/actions";
-import { useSession, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useLoading } from "@/components/providers/LoadingProvider";
 
 const LoginModal = () => {
@@ -26,26 +26,8 @@ const LoginModal = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
     const router = useRouter();
-    const { data: session, status, update } = useSession();
+
     const { showLoading, hideLoading } = useLoading();
-
-    // Listen for session changes when modal is open
-    useEffect(() => {
-        if (!isLoginModalOpen) return;
-
-        const checkSession = async () => {
-            // Only check session once when modal opens
-            const freshSession = await update();
-            if (freshSession?.user) {
-                toast.success("Logged in with Google successfully!");
-                closeAllModals();
-                router.push("/dashboard");
-            }
-        };
-
-        // Check session once when modal opens
-        checkSession();
-    }, [isLoginModalOpen, update, closeAllModals, router]);
 
     const handleSubmit = async (values: {
         email: string;
@@ -66,11 +48,7 @@ const LoginModal = () => {
             console.log("LoginModal result:", result);
 
             if (result === "success") {
-                console.log("Authentication successful, checking session...");
-                console.log("Session status:", status);
-                console.log("Session data:", session);
-
-                await update();
+                console.log("Authentication successful!");
 
                 toast.success("Logged in successfully!");
                 closeAllModals();
@@ -102,8 +80,6 @@ const LoginModal = () => {
             showLoading("Redirecting to Google sign-in...");
 
             console.log("Starting Google sign-in process...");
-            console.log("Current session status:", status);
-            console.log("Current session data:", session);
 
             // Use direct redirect instead of popup
             await signIn("google", {

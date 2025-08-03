@@ -14,7 +14,7 @@ import { UserFormData } from "@/lib/types";
 import toast from "react-hot-toast";
 import Modal from "../Modal/Modal";
 import { signup } from "@/app/actions/actions";
-import { useSession, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useLoading } from "@/components/providers/LoadingProvider";
 
@@ -28,26 +28,8 @@ const RegisterModal = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
     const router = useRouter();
-    const { data: session, status, update } = useSession();
+
     const { showLoading, hideLoading } = useLoading();
-
-    // Listen for session changes when modal is open
-    useEffect(() => {
-        if (!isRegisterModalOpen) return;
-
-        const checkSession = async () => {
-            // Only check session once when modal opens
-            const freshSession = await update();
-            if (freshSession?.user) {
-                toast.success("Account created with Google successfully!");
-                closeAllModals();
-                router.push("/dashboard");
-            }
-        };
-
-        // Check session once when modal opens
-        checkSession();
-    }, [isRegisterModalOpen, update, closeAllModals, router]);
 
     const handleSubmit = async (values: UserFormData) => {
         try {
