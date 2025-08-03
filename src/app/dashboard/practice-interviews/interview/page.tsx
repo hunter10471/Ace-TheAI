@@ -1,11 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { IoClose } from "react-icons/io5";
 import { MdOutlineReportProblem } from "react-icons/md";
-import { useSession } from "next-auth/react";
+import { IoClose } from "react-icons/io5";
+import { FiSend } from "react-icons/fi";
+import { BsClock } from "react-icons/bs";
+import { FaCheck, FaTimes } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import InterviewResultModal from "@/components/medium/InterviewResultModal/InterviewResultModal";
 import EndInterviewModal from "@/components/medium/EndInterviewModal/EndInterviewModal";
 import ReportIssueModal from "@/components/medium/ReportIssueModal/ReportIssueModal";
 
@@ -18,107 +21,105 @@ interface Message {
 
 const InterviewPage = () => {
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const { data: session } = useSession();
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: 1,
-            text: "Hello! I'm ACE, your AI interview assistant. I'll be conducting your interview today. Are you ready to begin?",
-            sender: "ai",
-            timestamp: new Date(),
-        },
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [inputMessage, setInputMessage] = useState("");
     const [isTyping, setIsTyping] = useState(false);
+    const [showResultsModal, setShowResultsModal] = useState(false);
     const [showEndInterviewModal, setShowEndInterviewModal] = useState(false);
     const [showReportIssueModal, setShowReportIssueModal] = useState(false);
+    const [counters, setCounters] = useState({
+        counter1: 0,
+        counter2: 4,
+        counter3: 3,
+        counter4: 0,
+    });
 
-    const counters = {
-        counter1: 1,
-        counter2: 5,
-        counter3: 10,
-        counter4: 15,
-    };
+    useEffect(() => {
+        setIsTyping(true);
+        const timer = setTimeout(() => {
+            setIsTyping(false);
+            setMessages([
+                {
+                    id: 1,
+                    text: "Hello Rafay, How are you doing today ?",
+                    sender: "ai",
+                    timestamp: new Date(),
+                },
+            ]);
+        }, 2000);
 
-    const area = searchParams.get("area");
-    const difficulty = searchParams.get("difficulty");
-    const jobTitle = searchParams.get("jobTitle");
+        return () => clearTimeout(timer);
+    }, []);
 
     const handleSendMessage = () => {
-        if (!inputMessage.trim()) return;
-
-        const newMessage: Message = {
-            id: messages.length + 1,
-            text: inputMessage,
-            sender: "user",
-            timestamp: new Date(),
-        };
-
-        setMessages(prev => [...prev, newMessage]);
-        setInputMessage("");
-        setIsTyping(true);
-
-        // Simulate AI response
-        setTimeout(() => {
-            const aiResponse: Message = {
-                id: messages.length + 2,
-                text: "Thank you for your response. That's a great answer! Let me ask you another question...",
-                sender: "ai",
+        if (inputMessage.trim()) {
+            const newMessage: Message = {
+                id: messages.length + 1,
+                text: inputMessage,
+                sender: "user",
                 timestamp: new Date(),
             };
-            setMessages(prev => [...prev, aiResponse]);
-            setIsTyping(false);
-        }, 2000);
+
+            setMessages(prev => [...prev, newMessage]);
+            setInputMessage("");
+
+            setIsTyping(true);
+            setTimeout(() => {
+                setIsTyping(false);
+                const aiResponse: Message = {
+                    id: messages.length + 2,
+                    text: "That's lovely, Let's start with your interview then. Shall we ?",
+                    sender: "ai",
+                    timestamp: new Date(),
+                };
+                setMessages(prev => [...prev, aiResponse]);
+            }, 1500);
+        }
     };
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
+        if (e.key === "Enter") {
             handleSendMessage();
         }
     };
 
     const handleEndInterview = () => {
         setShowEndInterviewModal(false);
-        router.push("/dashboard/practice-interviews");
+        setShowResultsModal(true);
     };
 
     const handleReportIssue = (email: string, message: string) => {
-        console.log("Reporting issue:", { email, message });
+        // TODO: Implement report submission logic
+        console.log("Report submitted:", { email, message });
         setShowReportIssueModal(false);
+        // You could show a success message here
     };
 
     return (
-        <div className="h-screen flex flex-col bg-white dark:bg-gray-900">
-            <div className="border-b border-gray-200 dark:border-gray-700 p-4">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => router.back()}
-                            className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
-                        >
-                            <IoClose size={20} />
-                            <span>Back to Practice Interviews</span>
-                        </button>
-                        <div className="h-6 w-px bg-gray-300 dark:bg-gray-600"></div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
-                            {area} • {difficulty} • {jobTitle}
-                        </div>
+        <div className="max-w-7xl mx-auto h-full overflow-y-auto flex flex-col">
+            <div className=" border-b border-gray-200 dark:border-gray-700 p-4">
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                            Practice Interviews
+                        </h1>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm">
+                            Prepare for your interviews with our interactive
+                            practice sessions.
+                        </p>
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="text-right">
                             <p className="font-semibold text-gray-900 dark:text-white">
-                                {session?.user?.name || "User"}
+                                Rafay Zia
                             </p>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                                {session?.user?.email || ""}
+                                rafay.zia@gmail.com
                             </p>
                         </div>
                         <div className="w-12 h-12 rounded-full overflow-hidden">
                             <Image
-                                src={
-                                    session?.user?.image || "/assets/avatar.jpg"
-                                }
+                                src="/assets/avatar.jpg"
                                 alt="Profile Avatar"
                                 width={48}
                                 height={48}
@@ -243,10 +244,7 @@ const InterviewPage = () => {
                                     {message.sender === "user" && (
                                         <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
                                             <Image
-                                                src={
-                                                    session?.user?.image ||
-                                                    "/assets/avatar.jpg"
-                                                }
+                                                src="/assets/avatar.jpg"
                                                 alt="User Avatar"
                                                 width={34}
                                                 height={34}
@@ -275,7 +273,7 @@ const InterviewPage = () => {
                             className="bg-primary hover:bg-primary/80 text-white rounded-lg px-10 py-2 flex items-center gap-2 transition-colors"
                         >
                             <span className="text-sm font-medium">Send</span>
-                            <IoClose size={21} />
+                            <FiSend size={21} />
                         </button>
                     </div>
                 </div>
@@ -293,7 +291,30 @@ const InterviewPage = () => {
                 onConfirm={handleEndInterview}
             />
 
-            {/* InterviewResultModal removed as per new_code */}
+            <InterviewResultModal
+                isOpen={showResultsModal}
+                onClose={() => setShowResultsModal(false)}
+                score={15} // TODO: Replace with dynamic value
+                maxScore={20} // TODO: Replace with dynamic value
+                rating={4} // TODO: Replace with dynamic value
+                avgResponseTime={45} // TODO: Replace with dynamic value
+                strengths={[
+                    "Strong technical knowledge",
+                    "Excellent problem-solving skills",
+                    "Good examples and answers.",
+                ]} // TODO: Replace with dynamic value
+                weaknesses={[
+                    "Improve communication clarity",
+                    "Work on time management",
+                    "Politeness needs to be worked on.",
+                ]} // TODO: Replace with dynamic value
+                onReturn={() => {
+                    /* TODO: Implement navigation to dashboard */
+                }}
+                onViewReport={() => {
+                    /* TODO: Implement view detailed report */
+                }}
+            />
         </div>
     );
 };

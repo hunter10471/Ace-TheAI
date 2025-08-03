@@ -88,18 +88,18 @@ const RegisterModal = () => {
     };
 
     const RegisterBody = (
-        <div className="max-w-[320px] mx-auto flex flex-col gap-5 items-center">
+        <div className="max-w-[320px] mx-auto flex flex-col gap-3 items-center">
             <div className="flex flex-col items-center">
                 <Image
                     src={"/assets/logo_primary.png"}
                     alt="primary logo"
-                    width={100}
-                    height={100}
+                    width={80}
+                    height={80}
                 />
-                <h1 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
+                <h1 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white mt-2">
                     Create a new account
                 </h1>
-                <span className="text-xs lg:text-sm text-gray-400 dark:text-gray-500">
+                <span className="text-xs text-gray-400 dark:text-gray-500">
                     Enter your details to register
                 </span>
             </div>
@@ -140,7 +140,7 @@ const RegisterModal = () => {
                             icon={<CiLock size={20} />}
                         />
                         <Button
-                            className="w-full mt-2"
+                            className="w-full mt-1"
                             htmlButtonType="submit"
                             text={isLoading ? "Creating account..." : "Sign Up"}
                             type="primary"
@@ -160,7 +160,7 @@ const RegisterModal = () => {
                                 ? "Creating account..."
                                 : "Sign up with Google"}
                         </button>
-                        <span className="text-xs my-4 text-center block leading-relaxed text-gray-600 dark:text-gray-400">
+                        <span className="text-xs my-2 text-center block leading-relaxed text-gray-600 dark:text-gray-400">
                             By clicking Sign Up, you agree to accept Ace The
                             AI's{" "}
                             <em className="text-primary hover:underline cursor-pointer">

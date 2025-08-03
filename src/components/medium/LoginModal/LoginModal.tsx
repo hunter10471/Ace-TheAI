@@ -96,18 +96,18 @@ const LoginModal = () => {
     };
 
     const LoginBody = (
-        <div className="max-w-[320px] mx-auto flex flex-col gap-5 items-center">
+        <div className="max-w-[320px] mx-auto flex flex-col gap-3 items-center">
             <div className="flex flex-col items-center">
                 <Image
                     src={"/assets/logo_primary.png"}
                     alt="primary logo"
-                    width={100}
-                    height={100}
+                    width={80}
+                    height={80}
                 />
-                <h1 className="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
+                <h1 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white mt-2">
                     Welcome Back!
                 </h1>
-                <span className="text-xs lg:text-sm text-gray-400 dark:text-gray-500">
+                <span className="text-xs text-gray-400 dark:text-gray-500">
                     Enter your details to log in
                 </span>
             </div>
@@ -134,7 +134,7 @@ const LoginModal = () => {
                             icon={<CiLock size={20} />}
                         />
                         <Button
-                            className="w-full mt-2"
+                            className="w-full mt-1"
                             htmlButtonType="submit"
                             text={isLoading ? "Logging in..." : "Log In"}
                             type="primary"
@@ -154,7 +154,7 @@ const LoginModal = () => {
                                 ? "Signing in..."
                                 : "Sign in with Google"}
                         </button>
-                        <span className="block text-center text-xs mt-4 text-gray-600 dark:text-gray-400">
+                        <span className="block text-center text-xs mt-2 text-gray-600 dark:text-gray-400">
                             Don't have an account?{" "}
                             <button
                                 onClick={() => {

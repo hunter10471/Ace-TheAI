@@ -1,21 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import Button from "@/components/small/Button/Button";
+import { HiOutlineCubeTransparent } from "react-icons/hi2";
+import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { BsClock } from "react-icons/bs";
-import { useSession } from "next-auth/react";
-import {
-    FaCode,
-    FaDatabase,
-    FaServer,
-    FaMobile,
-    FaCloud,
-    FaShieldAlt,
-    FaChartLine,
-    FaCogs,
-} from "react-icons/fa";
+import { jobTitles } from "@/lib/data";
+import { PiUserCircleDashedLight } from "react-icons/pi";
+import { LuMessageSquareDashed } from "react-icons/lu";
 
 interface InterviewArea {
     id: string;
@@ -33,59 +27,40 @@ interface DifficultyLevel {
 
 const PracticeInterviewsPage = () => {
     const router = useRouter();
-    const { data: session } = useSession();
-    const [selectedArea, setSelectedArea] = useState<string>("");
-    const [selectedDifficulty, setSelectedDifficulty] = useState<string>("");
-    const [selectedJobTitle, setSelectedJobTitle] = useState<string>("");
+    const [selectedArea, setSelectedArea] = useState<string>("technical");
+    const [selectedDifficulty, setSelectedDifficulty] =
+        useState<string>("advanced");
+    const [selectedTime, setSelectedTime] = useState<string>("5");
+    const [targetJobTitle, setTargetJobTitle] = useState<string>("");
 
     const interviewAreas: InterviewArea[] = [
         {
-            id: "frontend",
-            title: "Frontend Development",
-            description: "HTML, CSS, JavaScript, React, Vue, Angular",
-            icon: <FaCode className="text-blue-500" size={24} />,
+            id: "technical",
+            title: "Technical Skills Assessment",
+            description:
+                "Tests technical knowledge and problem-solving abilities. i.e Coding challenges, system design, troubleshooting scenarios.",
+            icon: <HiOutlineCubeTransparent size={60} />,
         },
         {
-            id: "backend",
-            title: "Backend Development",
-            description: "Node.js, Python, Java, C#, APIs, Databases",
-            icon: <FaServer className="text-green-500" size={24} />,
+            id: "behavioral",
+            title: "Behavioral Interviews",
+            description:
+                'Evaluates past behavior to predict future performance. i.e "Tell me about a time when...", "How do you handle conflict?"',
+            icon: <PiUserCircleDashedLight size={60} />,
         },
         {
-            id: "fullstack",
-            title: "Full Stack Development",
-            description: "Complete web application development",
-            icon: <FaCogs className="text-purple-500" size={24} />,
+            id: "situational",
+            title: "Situational Interviews",
+            description:
+                'Assesses how candidates would handle hypothetical situations. i.e "What would you do if...", "How would you approach..."',
+            icon: <LuMessageSquareDashed size={60} />,
         },
         {
-            id: "database",
-            title: "Database & Data Engineering",
-            description: "SQL, NoSQL, Data Modeling, ETL",
-            icon: <FaDatabase className="text-orange-500" size={24} />,
-        },
-        {
-            id: "mobile",
-            title: "Mobile Development",
-            description: "React Native, Flutter, iOS, Android",
-            icon: <FaMobile className="text-pink-500" size={24} />,
-        },
-        {
-            id: "cloud",
-            title: "Cloud & DevOps",
-            description: "AWS, Azure, Docker, Kubernetes",
-            icon: <FaCloud className="text-cyan-500" size={24} />,
-        },
-        {
-            id: "security",
-            title: "Cybersecurity",
-            description: "Network Security, Application Security",
-            icon: <FaShieldAlt className="text-red-500" size={24} />,
-        },
-        {
-            id: "data",
-            title: "Data Science & Analytics",
-            description: "Machine Learning, Statistics, BI",
-            icon: <FaChartLine className="text-indigo-500" size={24} />,
+            id: "mock-interview",
+            title: "Mock Interview",
+            description:
+                "Simulate a real interview experience, covering all aspects of a real interview. Perfect for comprehensive preparation.",
+            icon: <IoIosCheckmarkCircleOutline size={60} />,
         },
     ];
 
@@ -93,54 +68,45 @@ const PracticeInterviewsPage = () => {
         {
             id: "novice",
             title: "Novice",
-            description: "Entry-level questions for beginners",
+            description:
+                "Covers fundamental concepts and easy questions to help you get started.",
             image: "/assets/novice.png",
-        },
-        {
-            id: "intermediate",
-            title: "Intermediate",
-            description: "Mid-level questions for experienced developers",
-            image: "/assets/advanced.png",
         },
         {
             id: "advanced",
             title: "Advanced",
-            description: "Expert-level questions for senior developers",
+            description:
+                "Includes moderately challenging questions to build on your skills.",
+            image: "/assets/advanced.png",
+        },
+        {
+            id: "hard",
+            title: "Hard",
+            description:
+                "Features complex and in-depth questions to test your expertise.",
             image: "/assets/hard.png",
         },
     ];
 
-    const jobTitles = [
-        "Software Engineer",
-        "Frontend Developer",
-        "Backend Developer",
-        "Full Stack Developer",
-        "DevOps Engineer",
-        "Data Engineer",
-        "Mobile Developer",
-        "QA Engineer",
-        "Product Manager",
-        "UI/UX Designer",
-    ];
+    const timeOptions = ["5", "10", "15", "20", "25"];
 
     const handleStartInterview = () => {
-        if (!selectedArea || !selectedDifficulty || !selectedJobTitle) {
-            alert("Please select all required fields");
-            return;
-        }
-
-        const queryParams = new URLSearchParams({
+        const params = new URLSearchParams({
             area: selectedArea,
             difficulty: selectedDifficulty,
-            jobTitle: selectedJobTitle,
+            time: selectedTime,
+            jobTitle: targetJobTitle,
         });
 
-        router.push(`/dashboard/practice-interviews/interview?${queryParams}`);
+        router.push(
+            `/dashboard/practice-interviews/interview?${params.toString()}`
+        );
     };
 
     return (
-        <div className="max-w-7xl mx-auto p-6">
-            <div className="flex items-center justify-between mb-8">
+        <div className="max-w-7xl mx-auto p-6 relative">
+            {/* Header */}
+            <div className="flex justify-between items-start mb-8">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                         Practice Interviews
@@ -153,15 +119,15 @@ const PracticeInterviewsPage = () => {
                 <div className="flex items-center gap-4">
                     <div className="text-right">
                         <p className="font-semibold text-gray-900 dark:text-white">
-                            {session?.user?.name || "User"}
+                            Rafay Zia
                         </p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                            {session?.user?.email || ""}
+                            rafay.zia@gmail.com
                         </p>
                     </div>
                     <div className="w-12 h-12 rounded-full overflow-hidden">
                         <Image
-                            src={session?.user?.image || "/assets/avatar.jpg"}
+                            src="/assets/avatar.jpg"
                             alt="Profile Avatar"
                             width={48}
                             height={48}
@@ -326,7 +292,26 @@ const PracticeInterviewsPage = () => {
                             Choose Time
                         </h3>
                         <div className="space-y-2">
-                            {/* This section was removed as per the new_code, as time selection is no longer present in the UI */}
+                            {timeOptions.map(time => (
+                                <div
+                                    key={time}
+                                    onClick={() => setSelectedTime(time)}
+                                    className={`
+                    w-[90px] aspect-square rounded-full border-2 cursor-pointer transition-all flex items-center justify-center
+                    ${
+                        selectedTime === time
+                            ? "border-primary bg-primary/10 dark:bg-primary/20 dark:border-primary"
+                            : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500"
+                    }
+                  `}
+                                >
+                                    <div className="text-center">
+                                        <div className="text-lg font-bold text-gray-900 dark:text-white">
+                                            {time} min
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -337,8 +322,8 @@ const PracticeInterviewsPage = () => {
                         Target Job Title
                     </h3>
                     <select
-                        value={selectedJobTitle}
-                        onChange={e => setSelectedJobTitle(e.target.value)}
+                        value={targetJobTitle}
+                        onChange={e => setTargetJobTitle(e.target.value)}
                         className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-800 dark:text-white"
                     >
                         <option value="">Enter your desired job title</option>

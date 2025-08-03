@@ -1,33 +1,49 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
+import { feedbackHistoryData, FeedbackEntry } from "@/lib/data";
+import { FaCheck } from "react-icons/fa";
+import { IoIosStar, IoIosStarOutline } from "react-icons/io";
+import { LuSettings2, LuCog, LuUsers } from "react-icons/lu";
+import { TbUserExclamation } from "react-icons/tb";
+import { IoCheckmarkCircle } from "react-icons/io5";
 import PageHeader from "@/components/big/PageHeader/PageHeader";
 import FeedbackCard from "@/components/medium/FeedbackCard/FeedbackCard";
 import DateRangePicker from "@/components/medium/DateRangePicker/DateRangePicker";
-import { LuSettings2 } from "react-icons/lu";
-import { IoIosStar, IoIosStarOutline } from "react-icons/io";
-import { FaCheck } from "react-icons/fa";
-import { useSession } from "next-auth/react";
+import FeedbackDetailModal from "@/components/medium/FeedbackDetailModal/FeedbackDetailModal";
 
 export default function FeedbackHistoryPage() {
-    const { data: session } = useSession();
-    const [startDate, setStartDate] = useState<Date | null>(null);
-    const [endDate, setEndDate] = useState<Date | null>(null);
-    const [selectedRating, setSelectedRating] = useState<number>(0);
-    const [selectedCategory, setSelectedCategory] = useState<string>("");
+    const [selectedRating, setSelectedRating] = useState<number>(4);
+    const [selectedCategory, setSelectedCategory] =
+        useState<string>("Behavioral");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [selectedFeedback, setSelectedFeedback] =
+        useState<FeedbackEntry | null>(null);
+    const [startDate, setStartDate] = useState<Date | null>(
+        new Date(2024, 6, 27)
+    );
+    const [endDate, setEndDate] = useState<Date | null>(new Date(2024, 6, 30));
+
+    const feedbackPerPage = 6;
+    const totalPages = Math.ceil(feedbackHistoryData.length / feedbackPerPage);
+    const startIndex = (currentPage - 1) * feedbackPerPage;
+    const endIndex = startIndex + feedbackPerPage;
+    const currentFeedback = feedbackHistoryData.slice(startIndex, endIndex);
+
+    const displayFeedback = currentFeedback;
 
     const getCategoryIcon = (category: string) => {
         switch (category) {
             case "Technical":
-                return "💻";
+                return <LuCog className="w-4 h-4" />;
             case "Behavioral":
-                return "👤";
+                return <LuUsers className="w-4 h-4" />;
             case "Situational":
-                return "🎯";
+                return <TbUserExclamation className="w-4 h-4" />;
             case "Mock":
-                return "🎭";
+                return <IoCheckmarkCircle className="w-4 h-4" />;
             default:
-                return "📝";
+                return <LuCog className="w-4 h-4" />;
         }
     };
 
@@ -36,36 +52,13 @@ export default function FeedbackHistoryPage() {
         setEndDate(end);
     };
 
-    const mockFeedbackData = [
-        {
-            id: 1,
-            title: "Frontend Developer Interview",
-            category: "Technical" as const,
-            rating: 4,
-            date: "2024-02-15",
-            summary:
-                "Excellent technical knowledge, good problem-solving skills.",
-            explanation: "Strong React knowledge and CSS skills demonstrated.",
-            example: "Could improve TypeScript usage in future interviews.",
-        },
-        {
-            id: 2,
-            title: "Behavioral Assessment",
-            category: "Behavioral" as const,
-            rating: 5,
-            date: "2024-02-10",
-            summary: "Great communication skills and team collaboration.",
-            explanation: "Excellent communication and strong leadership shown.",
-            example:
-                "Could provide more specific examples in future responses.",
-        },
-    ];
-
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
             <PageHeader
                 title="Feedback History"
                 subtitle="Review your past interviews and feedback from Ace"
+                userName="Rafay Zia"
+                userEmail="rafay_zia@mail.com"
             />
 
             <div className="flex justify-between gap-6">
@@ -205,11 +198,11 @@ export default function FeedbackHistoryPage() {
                 </div>
                 <div className="flex-[4] flex flex-col">
                     <div className="grid grid-cols-3 gap-4 flex-1">
-                        {mockFeedbackData.map(feedback => (
+                        {displayFeedback.map(feedback => (
                             <FeedbackCard
                                 key={feedback.id}
                                 feedback={feedback}
-                                onExpand={() => {}}
+                                onExpand={setSelectedFeedback}
                             />
                         ))}
                     </div>
@@ -217,22 +210,24 @@ export default function FeedbackHistoryPage() {
                     <div className="flex justify-center items-center space-x-1 mt-6 pt-6 border-t border-gray-200">
                         <button
                             type="button"
-                            onClick={() => {}}
-                            disabled={true}
+                            onClick={() =>
+                                setCurrentPage(Math.max(1, currentPage - 1))
+                            }
+                            disabled={currentPage === 1}
                             className="p-1.5 rounded bg-gray-100 text-gray-400 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                         >
                             ←
                         </button>
 
-                        {Array.from({ length: 1 }, (_, i) => {
+                        {Array.from({ length: totalPages }, (_, i) => {
                             const pageNum = i + 1;
                             return (
                                 <button
                                     type="button"
                                     key={pageNum}
-                                    onClick={() => {}}
+                                    onClick={() => setCurrentPage(pageNum)}
                                     className={`px-2.5 py-1.5 rounded text-xs font-medium ${
-                                        true
+                                        currentPage === pageNum
                                             ? "bg-white border border-primary text-primary"
                                             : "bg-white text-gray-600 hover:bg-gray-50"
                                     }`}
@@ -244,8 +239,12 @@ export default function FeedbackHistoryPage() {
 
                         <button
                             type="button"
-                            onClick={() => {}}
-                            disabled={true}
+                            onClick={() =>
+                                setCurrentPage(
+                                    Math.min(totalPages, currentPage + 1)
+                                )
+                            }
+                            disabled={currentPage === totalPages}
                             className="p-1.5 rounded bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                         >
                             →
@@ -254,7 +253,11 @@ export default function FeedbackHistoryPage() {
                 </div>
             </div>
 
-            {/* FeedbackDetailModal is removed as per the new_code, as the data is now mock */}
+            <FeedbackDetailModal
+                feedback={selectedFeedback}
+                isOpen={!!selectedFeedback}
+                onClose={() => setSelectedFeedback(null)}
+            />
         </div>
     );
 }
