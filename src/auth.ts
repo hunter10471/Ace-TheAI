@@ -1,11 +1,16 @@
 import NextAuth from "next-auth";
 import { verifyPassword } from "./lib/auth-utils";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import { createClient } from "@/lib/supabase/server";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     secret: process.env.NEXTAUTH_SECRET,
     providers: [
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+        }),
         CredentialsProvider({
             name: "credentials",
             credentials: {
@@ -14,12 +19,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             },
             async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) {
-                    console.log("Missing credentials");
                     return null;
                 }
 
                 try {
-                    // Check if environment variables are set
                     if (
                         !process.env.NEXT_PUBLIC_SUPABASE_URL ||
                         !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -37,12 +40,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                         .single();
 
                     if (error) {
-                        console.log("Supabase error:", error);
                         return null;
                     }
 
                     if (!data) {
-                        console.log("User not found");
                         return null;
                     }
 
@@ -53,11 +54,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     );
 
                     if (!hashedPass) {
-                        console.log("Password verification failed");
                         return null;
                     }
 
-                    console.log("Authentication successful for:", data.email);
                     return {
                         id: data.id,
                         email: data.email,
@@ -74,20 +73,80 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         signIn: "/",
     },
     callbacks: {
-        async jwt({ token, user }) {
+        async signIn({ user, account, profile }) {
+            if (account?.provider === "google") {
+                try {
+                    const supabase = await createClient();
+
+                    const { data: existingUser } = await supabase
+                        .from("users")
+                        .select("*")
+                        .eq("email", user.email)
+                        .single();
+
+                    if (!existingUser) {
+                        const { error } = await supabase.from("users").insert([
+                            {
+                                id: user.id,
+                                name: user.name,
+                                email: user.email,
+                                password: null,
+                                provider: "google",
+                                provider_id: profile?.sub,
+                            },
+                        ]);
+
+                        if (error) {
+                            console.error("Error creating Google user:", error);
+                            return false;
+                        }
+                    } else {
+                    }
+                } catch (error) {
+                    console.error("Error in signIn callback:", error);
+                    return false;
+                }
+            }
+            return true;
+        },
+        async jwt({ token, user, account }) {
             if (user) {
                 token.id = user.id;
-                console.log("JWT callback - user:", user);
+                token.provider = account?.provider;
             }
-            console.log("JWT callback - token:", token);
             return token;
         },
         async session({ session, token }) {
             if (token) {
                 session.user.id = token.id as string;
-                console.log("Session callback - session:", session);
+                session.user.provider = token.provider as string;
+
+                // Fetch latest user data from database to ensure session has updated info
+                try {
+                    const supabase = await createClient();
+                    const { data: userData } = await supabase
+                        .from("users")
+                        .select("name, email, image")
+                        .eq("id", token.id)
+                        .single();
+
+                    if (userData) {
+                        session.user.name = userData.name;
+                        session.user.email = userData.email;
+                        // Only update image if it exists (for Google users)
+                        if (userData.image) {
+                            session.user.image = userData.image;
+                        }
+                    }
+                } catch (error) {
+                    console.error(
+                        "Error fetching user data for session:",
+                        error
+                    );
+                }
             }
             return session;
         },
     },
+    debug: process.env.NODE_ENV === "development",
 });

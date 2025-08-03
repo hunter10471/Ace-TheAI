@@ -28,8 +28,10 @@ export interface User {
     id: string;
     name: string;
     email: string;
-    password: string;
+    password: string | null;
     created_at: string;
+    provider?: string;
+    provider_id?: string;
 }
 
 export interface UserFormData {

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useModalStore } from "@/lib/store";
 import Image from "next/image";
 import FormikInput from "@/components/small/FormikInput/FormikInput";
@@ -14,32 +14,147 @@ import { UserFormData } from "@/lib/types";
 import toast from "react-hot-toast";
 import Modal from "../Modal/Modal";
 import { signup } from "@/app/actions/actions";
+import { useSession, signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useLoading } from "@/components/providers/LoadingProvider";
 
 const RegisterModal = () => {
-    const { closeRegisterModal, openLoginModal, isRegisterModalOpen } =
-        useModalStore();
+    const {
+        closeRegisterModal,
+        openLoginModal,
+        isRegisterModalOpen,
+        closeAllModals,
+    } = useModalStore();
     const [isLoading, setIsLoading] = useState(false);
+    const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+    const router = useRouter();
+    const { data: session, status, update } = useSession();
+    const { showLoading, hideLoading } = useLoading();
+
+    // Listen for popup close and session changes
+    useEffect(() => {
+        if (!isRegisterModalOpen) return;
+
+        const checkPopupAndSession = async () => {
+            // Check if popup is closed
+            const popup = window.open("", "google-signin");
+            if (popup && popup.closed) {
+                // Popup is closed, check session
+                console.log("Popup closed, checking session...");
+                hideLoading();
+
+                // Update session
+                const freshSession = await update();
+                console.log("Session after popup close:", freshSession);
+
+                if (freshSession?.user) {
+                    toast.success("Account created with Google successfully!");
+                    closeAllModals();
+
+                    showLoading("Redirecting to dashboard...");
+                    setTimeout(() => {
+                        hideLoading();
+                        router.push("/dashboard");
+                    }, 2000);
+                } else {
+                    toast.error("Google sign-up failed. Please try again.");
+                }
+            }
+        };
+
+        // Check every 500ms if popup is closed
+        const interval = setInterval(checkPopupAndSession, 500);
+
+        return () => clearInterval(interval);
+    }, [
+        isRegisterModalOpen,
+        hideLoading,
+        update,
+        closeAllModals,
+        showLoading,
+        router,
+    ]);
 
     const handleSubmit = async (values: UserFormData) => {
         try {
             setIsLoading(true);
+            showLoading("Creating your account...");
+
+            const startTime = Date.now();
+
             const formData = new FormData();
             formData.append("name", values.name);
             formData.append("email", values.email);
             formData.append("password", values.password);
             const result = await signup(formData);
 
+            // Ensure minimum 2 seconds of loading
+            const elapsedTime = Date.now() - startTime;
+            const remainingTime = Math.max(2000 - elapsedTime, 0);
+            await new Promise(resolve => setTimeout(resolve, remainingTime));
+
             if (result === "success") {
+                hideLoading();
                 toast.success("Account created successfully!");
-                closeRegisterModal();
+                closeAllModals();
                 openLoginModal();
             } else if (result) {
+                hideLoading();
                 toast.error(result);
             }
         } catch (error: any) {
+            hideLoading();
             toast.error("Registration failed. Please try again.");
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleGoogleSignUp = async () => {
+        try {
+            setIsGoogleLoading(true);
+            showLoading("Opening Google sign-up...");
+
+            console.log("Starting Google sign-up process...");
+
+            // Get the sign-in URL
+            const signInUrl = await signIn("google", {
+                callbackUrl: `${window.location.origin}${window.location.pathname}`,
+                redirect: false,
+            });
+
+            console.log("Google signIn URL result:", signInUrl);
+
+            if (signInUrl?.url) {
+                // Open Google OAuth in a popup
+                const popup = window.open(
+                    signInUrl.url,
+                    "google-signin",
+                    "width=500,height=600,scrollbars=yes,resizable=yes,status=yes"
+                );
+
+                if (!popup) {
+                    hideLoading();
+                    toast.error(
+                        "Popup blocked! Please allow popups and try again."
+                    );
+                    return;
+                }
+
+                // Focus the popup
+                popup.focus();
+            } else {
+                hideLoading();
+                toast.error(
+                    "Failed to get Google sign-in URL. Please try again."
+                );
+            }
+        } catch (error) {
+            hideLoading();
+            console.error("Google sign-up error:", error);
+            toast.error("Google sign-up failed. Please try again.");
+        } finally {
+            setIsGoogleLoading(false);
         }
     };
 
@@ -106,11 +221,15 @@ const RegisterModal = () => {
                             OR
                         </span>
                         <button
-                            disabled
-                            className="relative w-full text-sm font-medium py-3 px-4 transition-all border border-gray-300 dark:border-gray-600 rounded-lg text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60 flex items-center justify-center gap-3"
+                            type="button"
+                            onClick={handleGoogleSignUp}
+                            disabled={isGoogleLoading}
+                            className="relative w-full text-sm font-medium py-3 px-4 transition-all border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed"
                         >
                             <FcGoogle size={20} />
-                            Sign up with Google (Coming Soon)
+                            {isGoogleLoading
+                                ? "Creating account..."
+                                : "Sign up with Google"}
                         </button>
                         <span className="text-xs my-4 text-center block leading-relaxed text-gray-600 dark:text-gray-400">
                             By clicking Sign Up, you agree to accept Ace The

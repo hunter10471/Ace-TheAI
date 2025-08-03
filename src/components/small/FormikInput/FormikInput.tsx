@@ -25,7 +25,7 @@ const FormikInput: React.FC<FormikInputProps> = ({
     };
 
     return (
-        <div className="mb-4 lg:mb-6">
+        <div className="mb-3">
             <label
                 htmlFor={name}
                 className="block font-medium mb-2 text-xs lg:text-sm text-gray-700 dark:text-gray-300"

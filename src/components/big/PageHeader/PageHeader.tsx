@@ -1,3 +1,6 @@
+"use client";
+import { useSession } from "next-auth/react";
+
 interface PageHeaderProps {
     title: string;
     subtitle: string;
@@ -9,10 +12,18 @@ interface PageHeaderProps {
 export default function PageHeader({
     title,
     subtitle,
-    userName = "Rafay Zia",
-    userEmail = "rafay_zia@mail.com",
-    userAvatar = "/assets/avatar.jpg",
+    userName,
+    userEmail,
+    userAvatar,
 }: PageHeaderProps) {
+    const { data: session } = useSession();
+
+    // Use session data if available, otherwise fall back to props or defaults
+    const displayName = userName || session?.user?.name || "User";
+    const displayEmail = userEmail || session?.user?.email || "";
+    const displayAvatar =
+        userAvatar || session?.user?.image || "/assets/avatar.jpg";
+
     return (
         <div className="flex justify-between items-center mb-8">
             <div>
@@ -26,16 +37,16 @@ export default function PageHeader({
             <div className="flex items-center space-x-3">
                 <div className="text-right">
                     <p className="font-medium text-gray-900 dark:text-gray-100">
-                        {userName}
+                        {displayName}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {userEmail}
+                        {displayEmail}
                     </p>
                 </div>
                 <img
-                    src={userAvatar || "/assets/avatar.jpg"}
+                    src={displayAvatar}
                     alt="User"
-                    className="w-12 h-12 rounded-full"
+                    className="w-12 h-12 rounded-full object-cover"
                 />
             </div>
         </div>

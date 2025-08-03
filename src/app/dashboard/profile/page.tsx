@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaUser, FaBriefcase, FaCalendarAlt, FaFlag } from "react-icons/fa";
 import Button from "@/components/small/Button/Button";
 import Image from "next/image";
@@ -11,10 +11,27 @@ import "react-datepicker/dist/react-datepicker.css";
 import SkillsSelector from "@/components/medium/SkillsSelector/SkillsSelector";
 import { jobTitles } from "@/lib/data";
 import PageHeader from "@/components/big/PageHeader/PageHeader";
+import { useSession } from "next-auth/react";
+import toast from "react-hot-toast";
+import { updateProfile, getUserProfile } from "@/app/actions/actions";
 // @ts-ignore
 import countryList from "react-select-country-list";
 
 const ProfilePage = () => {
+    const { data: session, update: updateSession } = useSession();
+    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingData, setIsLoadingData] = useState(true);
+    const [hasChanges, setHasChanges] = useState(false);
+    const [originalData, setOriginalData] = useState({
+        fullName: "",
+        dateOfBirth: null as Date | null,
+        phoneNumber: "",
+        country: "",
+        jobTitle: "",
+        yearsOfExperience: "",
+        keySkills: ["SQL", "Node.js", "CSS"],
+        professionalGoal: "",
+    });
     const [formData, setFormData] = useState({
         fullName: "",
         dateOfBirth: null as Date | null,
@@ -26,70 +43,255 @@ const ProfilePage = () => {
         professionalGoal: "",
     });
 
+    // Fetch user profile data from database
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            if (session?.user) {
+                try {
+                    const userProfile = await getUserProfile();
+                    if (userProfile) {
+                        const profileData = {
+                            fullName:
+                                userProfile.name || session.user.name || "",
+                            dateOfBirth: userProfile.date_of_birth
+                                ? new Date(userProfile.date_of_birth)
+                                : null,
+                            phoneNumber: userProfile.phone_number || "",
+                            country: userProfile.country || "",
+                            jobTitle: userProfile.job_title || "",
+                            yearsOfExperience:
+                                userProfile.years_of_experience || "",
+                            keySkills: userProfile.key_skills || [
+                                "SQL",
+                                "Node.js",
+                                "CSS",
+                            ],
+                            professionalGoal:
+                                userProfile.professional_goal || "",
+                        };
+                        setFormData(profileData);
+                        setOriginalData(profileData);
+                    } else {
+                        // Fallback to session data if no profile found
+                        const fallbackData = {
+                            fullName: session.user.name || "",
+                            dateOfBirth: null,
+                            phoneNumber: "",
+                            country: "",
+                            jobTitle: "",
+                            yearsOfExperience: "",
+                            keySkills: ["SQL", "Node.js", "CSS"],
+                            professionalGoal: "",
+                        };
+                        setFormData(fallbackData);
+                        setOriginalData(fallbackData);
+                    }
+                } catch (error) {
+                    console.error("Error fetching user profile:", error);
+                    // Fallback to session data
+                    setFormData(prev => ({
+                        ...prev,
+                        fullName: session.user.name || "",
+                    }));
+                } finally {
+                    setIsLoadingData(false);
+                }
+            } else {
+                setIsLoadingData(false);
+            }
+        };
+
+        fetchUserProfile();
+    }, [session]);
+
+    const checkForChanges = (newData: typeof formData) => {
+        const hasChanges =
+            newData.fullName !== originalData.fullName ||
+            newData.phoneNumber !== originalData.phoneNumber ||
+            newData.country !== originalData.country ||
+            newData.jobTitle !== originalData.jobTitle ||
+            newData.yearsOfExperience !== originalData.yearsOfExperience ||
+            newData.professionalGoal !== originalData.professionalGoal ||
+            JSON.stringify(newData.keySkills) !==
+                JSON.stringify(originalData.keySkills) ||
+            newData.dateOfBirth?.toISOString().split("T")[0] !==
+                originalData.dateOfBirth?.toISOString().split("T")[0];
+
+        setHasChanges(hasChanges);
+    };
+
     const handleInputChange = (
         e: React.ChangeEvent<
             HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
         >
     ) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
+        const newData = {
+            ...formData,
             [name]: value,
-        }));
+        };
+        setFormData(newData);
+        checkForChanges(newData);
     };
 
     const handlePhoneChange = (value: string | undefined) => {
-        setFormData(prev => ({
-            ...prev,
+        const newData = {
+            ...formData,
             phoneNumber: value || "",
-        }));
+        };
+        setFormData(newData);
+        checkForChanges(newData);
     };
 
     const handleSkillsChange = (skills: string[]) => {
-        setFormData(prev => ({
-            ...prev,
+        const newData = {
+            ...formData,
             keySkills: skills,
-        }));
+        };
+        setFormData(newData);
+        checkForChanges(newData);
     };
 
     const handleDateChange = (date: Date | null) => {
-        setFormData(prev => ({
-            ...prev,
+        const newData = {
+            ...formData,
             dateOfBirth: date,
-        }));
+        };
+        setFormData(newData);
+        checkForChanges(newData);
     };
 
-    const handleSave = () => {
-        console.log("Saving profile data:", formData);
+    const handleSave = async () => {
+        if (!formData.fullName.trim()) {
+            toast.error("Full name is required");
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const formDataToSend = new FormData();
+            formDataToSend.append("fullName", formData.fullName);
+            if (formData.dateOfBirth) {
+                formDataToSend.append(
+                    "dateOfBirth",
+                    formData.dateOfBirth.toISOString().split("T")[0]
+                );
+            }
+            formDataToSend.append("phoneNumber", formData.phoneNumber);
+            formDataToSend.append("country", formData.country);
+            formDataToSend.append("jobTitle", formData.jobTitle);
+            formDataToSend.append(
+                "yearsOfExperience",
+                formData.yearsOfExperience
+            );
+            formDataToSend.append(
+                "keySkills",
+                JSON.stringify(formData.keySkills)
+            );
+            formDataToSend.append(
+                "professionalGoal",
+                formData.professionalGoal
+            );
+
+            const result = await updateProfile(formDataToSend);
+
+            if (result === "success") {
+                toast.success("Profile updated successfully!");
+                // Update the session to reflect the new name in the header
+                await updateSession();
+                // Update original data to current form data
+                setOriginalData(formData);
+                setHasChanges(false);
+            } else {
+                toast.error(result || "Failed to update profile");
+            }
+        } catch (error) {
+            console.error("Profile update error:", error);
+            toast.error("Something went wrong. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const handleDiscard = () => {
-        setFormData({
-            fullName: "",
-            dateOfBirth: null,
-            phoneNumber: "",
-            country: "",
-            jobTitle: "",
-            yearsOfExperience: "",
-            keySkills: ["SQL", "Node.js", "CSS"],
-            professionalGoal: "",
-        });
+    const handleDiscard = async () => {
+        try {
+            const userProfile = await getUserProfile();
+            if (userProfile) {
+                const profileData = {
+                    fullName: userProfile.name || session?.user?.name || "",
+                    dateOfBirth: userProfile.date_of_birth
+                        ? new Date(userProfile.date_of_birth)
+                        : null,
+                    phoneNumber: userProfile.phone_number || "",
+                    country: userProfile.country || "",
+                    jobTitle: userProfile.job_title || "",
+                    yearsOfExperience: userProfile.years_of_experience || "",
+                    keySkills: userProfile.key_skills || [
+                        "SQL",
+                        "Node.js",
+                        "CSS",
+                    ],
+                    professionalGoal: userProfile.professional_goal || "",
+                };
+                setFormData(profileData);
+                setOriginalData(profileData);
+                setHasChanges(false);
+                toast.success("Changes discarded");
+            } else {
+                // Fallback to session data
+                const fallbackData = {
+                    fullName: session?.user?.name || "",
+                    dateOfBirth: null,
+                    phoneNumber: "",
+                    country: "",
+                    jobTitle: "",
+                    yearsOfExperience: "",
+                    keySkills: ["SQL", "Node.js", "CSS"],
+                    professionalGoal: "",
+                };
+                setFormData(fallbackData);
+                setOriginalData(fallbackData);
+                setHasChanges(false);
+                toast.success("Changes discarded");
+            }
+        } catch (error) {
+            console.error("Error discarding changes:", error);
+            toast.error("Failed to discard changes");
+        }
     };
 
     const countryOptions = countryList().getData();
+
+    if (isLoadingData) {
+        return (
+            <div className="max-w-7xl mx-auto p-6">
+                <PageHeader
+                    title="Your Profile"
+                    subtitle="Loading your profile..."
+                />
+                <div className="flex items-center justify-center h-64">
+                    <div className="text-center">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                        <p className="text-gray-600 dark:text-gray-400">
+                            Loading your profile data...
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-7xl mx-auto p-6">
             <PageHeader
                 title="Your Profile"
                 subtitle="Last Edit on 12th February 2024"
-                userEmail="rafay.zia@gmail.com"
             />
 
             <div className="flex items-center gap-4 mb-8">
                 <div className="w-20 h-20 rounded-full overflow-hidden">
                     <Image
-                        src="/assets/avatar.jpg"
+                        src={session?.user?.image || "/assets/avatar.jpg"}
                         alt="Profile Avatar"
                         width={80}
                         height={80}
@@ -276,22 +478,25 @@ const ProfilePage = () => {
                 </div>
             </div>
 
-            <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <Button
-                    text="Discard"
-                    type="black-outline"
-                    htmlButtonType="button"
-                    action={handleDiscard}
-                    className="px-6 py-2"
-                />
-                <Button
-                    text="Save"
-                    type="primary"
-                    htmlButtonType="button"
-                    action={handleSave}
-                    className="px-6 py-2"
-                />
-            </div>
+            {hasChanges && (
+                <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <Button
+                        text="Discard"
+                        type="black-outline"
+                        htmlButtonType="button"
+                        action={handleDiscard}
+                        className="px-6 py-2"
+                    />
+                    <Button
+                        text={isLoading ? "Saving..." : "Save"}
+                        type="primary"
+                        htmlButtonType="button"
+                        action={handleSave}
+                        className="px-6 py-2"
+                        isLoading={isLoading}
+                    />
+                </div>
+            )}
         </div>
     );
 };

@@ -13,6 +13,7 @@ interface ModalState {
     closeLoginModal: () => void;
     openRegisterModal: () => void;
     closeRegisterModal: () => void;
+    closeAllModals: () => void;
 }
 
 interface ThemeState {
@@ -32,10 +33,14 @@ export const useModalStore = create<ModalState>(
     (set): ModalState => ({
         isLoginModalOpen: false,
         isRegisterModalOpen: false,
-        openLoginModal: () => set({ isLoginModalOpen: true }),
+        openLoginModal: () =>
+            set({ isLoginModalOpen: true, isRegisterModalOpen: false }),
         closeLoginModal: () => set({ isLoginModalOpen: false }),
-        openRegisterModal: () => set({ isRegisterModalOpen: true }),
+        openRegisterModal: () =>
+            set({ isRegisterModalOpen: true, isLoginModalOpen: false }),
         closeRegisterModal: () => set({ isRegisterModalOpen: false }),
+        closeAllModals: () =>
+            set({ isLoginModalOpen: false, isRegisterModalOpen: false }),
     })
 );
 

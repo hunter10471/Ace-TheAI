@@ -3,8 +3,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "@/components/providers/ThemeProvider";
+import { LoadingProvider } from "@/components/providers/LoadingProvider";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
+import SessionDebug from "@/components/small/SessionDebug/SessionDebug";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -30,7 +32,12 @@ export default async function RootLayout({
                 className={`${inter.className} text-text dark:text-gray-100 dark:bg-gray-900 bg-white transition-colors duration-200 antialiased`}
             >
                 <SessionProvider session={session}>
-                    <ThemeProvider>{children}</ThemeProvider>
+                    <ThemeProvider>
+                        <LoadingProvider>
+                            {children}
+                            <SessionDebug />
+                        </LoadingProvider>
+                    </ThemeProvider>
                 </SessionProvider>
             </body>
         </html>
