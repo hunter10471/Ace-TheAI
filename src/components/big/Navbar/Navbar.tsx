@@ -33,12 +33,20 @@ const Navbar: React.FC = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, [scroll]);
 
-    // Refresh session when component mounts
+    // Refresh session only once when component mounts
     useEffect(() => {
+        // Only update session once on mount, not continuously
         if (status === "loading") {
-            update();
+            const refreshSession = async () => {
+                try {
+                    await update();
+                } catch (error) {
+                    console.error("Error updating session:", error);
+                }
+            };
+            refreshSession();
         }
-    }, [status, update]);
+    }, []); // Empty dependency array - only run once on mount
 
     const navigateToDashboard = () => {
         navigate.push("/dashboard");

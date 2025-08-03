@@ -36,7 +36,7 @@ const RegisterModal = () => {
         if (!isRegisterModalOpen) return;
 
         const checkSession = async () => {
-            // Update session periodically while modal is open
+            // Only check session once when modal opens
             const freshSession = await update();
             if (freshSession?.user) {
                 toast.success("Account created with Google successfully!");
@@ -45,10 +45,8 @@ const RegisterModal = () => {
             }
         };
 
-        // Check session every 2 seconds while modal is open
-        const interval = setInterval(checkSession, 2000);
-
-        return () => clearInterval(interval);
+        // Check session once when modal opens
+        checkSession();
     }, [isRegisterModalOpen, update, closeAllModals, router]);
 
     const handleSubmit = async (values: UserFormData) => {

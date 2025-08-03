@@ -34,7 +34,7 @@ const LoginModal = () => {
         if (!isLoginModalOpen) return;
 
         const checkSession = async () => {
-            // Update session periodically while modal is open
+            // Only check session once when modal opens
             const freshSession = await update();
             if (freshSession?.user) {
                 toast.success("Logged in with Google successfully!");
@@ -43,10 +43,8 @@ const LoginModal = () => {
             }
         };
 
-        // Check session every 2 seconds while modal is open
-        const interval = setInterval(checkSession, 2000);
-
-        return () => clearInterval(interval);
+        // Check session once when modal opens
+        checkSession();
     }, [isLoginModalOpen, update, closeAllModals, router]);
 
     const handleSubmit = async (values: {
