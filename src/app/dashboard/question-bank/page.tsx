@@ -284,7 +284,7 @@ export default function QuestionBankPage() {
 
     // Poll for status updates when generation is in progress
     useEffect(() => {
-        let pollInterval: NodeJS.Timeout | null = null;
+        let pollInterval: ReturnType<typeof setTimeout> | null = null;
 
         if (
             generationStatus === "pending" ||

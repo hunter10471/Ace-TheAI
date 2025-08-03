@@ -18,8 +18,8 @@ export async function GET(request: NextRequest) {
         const showBookmarkedOnly = searchParams.get("bookmarked") === "true";
         const sortOrder = searchParams.get("sort") || "newest";
         const search = searchParams.get("search");
-        const page = parseInt(searchParams.get("page") || "1");
-        const limit = parseInt(searchParams.get("limit") || "10");
+        const page = parseInt(searchParams.get("page") || "1", 10);
+        const limit = parseInt(searchParams.get("limit") || "10", 10);
 
         const filters = {
             category: category || undefined,
