@@ -31,49 +31,25 @@ const RegisterModal = () => {
     const { data: session, status, update } = useSession();
     const { showLoading, hideLoading } = useLoading();
 
-    // Listen for popup close and session changes
+    // Listen for session changes when modal is open
     useEffect(() => {
         if (!isRegisterModalOpen) return;
 
-        const checkPopupAndSession = async () => {
-            // Check if popup is closed
-            const popup = window.open("", "google-signin");
-            if (popup && popup.closed) {
-                // Popup is closed, check session
-                console.log("Popup closed, checking session...");
-                hideLoading();
-
-                // Update session
-                const freshSession = await update();
-                console.log("Session after popup close:", freshSession);
-
-                if (freshSession?.user) {
-                    toast.success("Account created with Google successfully!");
-                    closeAllModals();
-
-                    showLoading("Redirecting to dashboard...");
-                    setTimeout(() => {
-                        hideLoading();
-                        router.push("/dashboard");
-                    }, 2000);
-                } else {
-                    toast.error("Google sign-up failed. Please try again.");
-                }
+        const checkSession = async () => {
+            // Update session periodically while modal is open
+            const freshSession = await update();
+            if (freshSession?.user) {
+                toast.success("Account created with Google successfully!");
+                closeAllModals();
+                router.push("/dashboard");
             }
         };
 
-        // Check every 500ms if popup is closed
-        const interval = setInterval(checkPopupAndSession, 500);
+        // Check session every 2 seconds while modal is open
+        const interval = setInterval(checkSession, 2000);
 
         return () => clearInterval(interval);
-    }, [
-        isRegisterModalOpen,
-        hideLoading,
-        update,
-        closeAllModals,
-        showLoading,
-        router,
-    ]);
+    }, [isRegisterModalOpen, update, closeAllModals, router]);
 
     const handleSubmit = async (values: UserFormData) => {
         try {
@@ -113,42 +89,15 @@ const RegisterModal = () => {
     const handleGoogleSignUp = async () => {
         try {
             setIsGoogleLoading(true);
-            showLoading("Opening Google sign-up...");
+            showLoading("Redirecting to Google sign-up...");
 
             console.log("Starting Google sign-up process...");
 
-            // Get the sign-in URL
-            const signInUrl = await signIn("google", {
-                callbackUrl: `${window.location.origin}${window.location.pathname}`,
-                redirect: false,
+            // Use direct redirect instead of popup
+            await signIn("google", {
+                callbackUrl: `${window.location.origin}/dashboard`,
+                redirect: true,
             });
-
-            console.log("Google signIn URL result:", signInUrl);
-
-            if (signInUrl?.url) {
-                // Open Google OAuth in a popup
-                const popup = window.open(
-                    signInUrl.url,
-                    "google-signin",
-                    "width=500,height=600,scrollbars=yes,resizable=yes,status=yes"
-                );
-
-                if (!popup) {
-                    hideLoading();
-                    toast.error(
-                        "Popup blocked! Please allow popups and try again."
-                    );
-                    return;
-                }
-
-                // Focus the popup
-                popup.focus();
-            } else {
-                hideLoading();
-                toast.error(
-                    "Failed to get Google sign-in URL. Please try again."
-                );
-            }
         } catch (error) {
             hideLoading();
             console.error("Google sign-up error:", error);

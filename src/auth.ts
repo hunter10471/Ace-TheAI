@@ -6,10 +6,18 @@ import { createClient } from "@/lib/supabase/server";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     secret: process.env.NEXTAUTH_SECRET,
+    basePath: "/api/auth",
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+            authorization: {
+                params: {
+                    prompt: "consent",
+                    access_type: "offline",
+                    response_type: "code",
+                },
+            },
         }),
         CredentialsProvider({
             name: "credentials",
@@ -193,4 +201,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         strategy: "jwt",
     },
     useSecureCookies: process.env.NODE_ENV === "production",
+    trustHost: true,
 });
