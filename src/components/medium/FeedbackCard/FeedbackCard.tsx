@@ -1,5 +1,5 @@
 import { IoIosStar, IoIosStarOutline } from "react-icons/io";
-import { FeedbackEntry } from "@/lib/data";
+import { FeedbackEntry } from "@/lib/types";
 import Button from "@/components/small/Button/Button";
 import TagPill from "@/components/small/TagPill/TagPill";
 

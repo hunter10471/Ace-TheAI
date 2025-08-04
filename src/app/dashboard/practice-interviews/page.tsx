@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Button from "@/components/small/Button/Button";
 import { HiOutlineCubeTransparent } from "react-icons/hi2";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
@@ -27,6 +28,7 @@ interface DifficultyLevel {
 
 const PracticeInterviewsPage = () => {
     const router = useRouter();
+    const { data: session } = useSession();
     const [selectedArea, setSelectedArea] = useState<string>("technical");
     const [selectedDifficulty, setSelectedDifficulty] =
         useState<string>("advanced");
@@ -119,15 +121,15 @@ const PracticeInterviewsPage = () => {
                 <div className="flex items-center gap-4">
                     <div className="text-right">
                         <p className="font-semibold text-gray-900 dark:text-white">
-                            Rafay Zia
+                            {session?.user?.name || "User"}
                         </p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                            rafay.zia@gmail.com
+                            {session?.user?.email || ""}
                         </p>
                     </div>
                     <div className="w-12 h-12 rounded-full overflow-hidden">
                         <Image
-                            src="/assets/avatar.jpg"
+                            src={session?.user?.image || "/assets/avatar.jpg"}
                             alt="Profile Avatar"
                             width={48}
                             height={48}

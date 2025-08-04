@@ -4,6 +4,7 @@ import Button from "../../small/Button/Button";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import { RxStopwatch } from "react-icons/rx";
 import { IoIosStar, IoIosStarOutline } from "react-icons/io";
+import { IoCheckmarkCircle } from "react-icons/io5";
 
 interface InterviewResultModalProps {
     isOpen: boolean;
@@ -30,17 +31,32 @@ const InterviewResultModal: React.FC<InterviewResultModalProps> = ({
     onReturn,
     onViewReport,
 }) => {
+    const percentage = (score / maxScore) * 100;
+    const getScoreColor = (percentage: number) => {
+        if (percentage >= 80) return "#10B981"; // green
+        if (percentage >= 60) return "#F59E0B"; // amber
+        return "#EF4444"; // red
+    };
+
     return (
         <Modal
             isModalOpen={isOpen}
             closeModal={onClose}
             modalBody={
-                <div className="text-center">
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                        Interview Results
+                <div className="text-center p-6">
+                    <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <IoCheckmarkCircle
+                            size={32}
+                            className="text-green-500"
+                        />
+                    </div>
+
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        Interview Complete!
                     </h2>
 
-                    <div className="relative w-[140px] h-[140px] mx-auto mb-2">
+                    {/* Score Circle */}
+                    <div className="relative w-[140px] h-[140px] mx-auto mb-6">
                         <svg
                             className="absolute inset-0"
                             width="140"
@@ -50,7 +66,7 @@ const InterviewResultModal: React.FC<InterviewResultModalProps> = ({
                                 cx="70"
                                 cy="70"
                                 r="60"
-                                stroke="#FFE3E0"
+                                stroke="#E5E7EB"
                                 strokeWidth="14"
                                 fill="none"
                             />
@@ -64,12 +80,12 @@ const InterviewResultModal: React.FC<InterviewResultModalProps> = ({
                                 cx="70"
                                 cy="70"
                                 r="60"
-                                stroke="#FF6F61"
+                                stroke={getScoreColor(percentage)}
                                 strokeWidth="14"
                                 fill="none"
-                                strokeDasharray={2 * Math.PI * 40}
+                                strokeDasharray={2 * Math.PI * 60}
                                 strokeDashoffset={
-                                    (1 - score / maxScore) * 2 * Math.PI * 40
+                                    (1 - percentage / 100) * 2 * Math.PI * 60
                                 }
                                 strokeLinecap="round"
                                 style={{
@@ -78,95 +94,109 @@ const InterviewResultModal: React.FC<InterviewResultModalProps> = ({
                                 }}
                             />
                         </svg>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="text-[2rem] font-bold text-[#2D2D2D] dark:text-white leading-none">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <span className="text-[2rem] font-bold text-gray-900 dark:text-white leading-none">
                                 {score}
                             </span>
-                            <span className="text-base text-gray-400 font-semibold mt-2">
+                            <span className="text-base text-gray-500 font-medium">
                                 /{maxScore}
+                            </span>
+                            <span className="text-sm text-gray-400 mt-1">
+                                {percentage.toFixed(0)}%
                             </span>
                         </div>
                     </div>
 
-                    <div className="flex justify-center gap-1 mb-1">
+                    {/* Rating Stars */}
+                    <div className="flex justify-center gap-1 mb-4">
                         {[1, 2, 3, 4, 5].map(star =>
                             star <= rating ? (
                                 <IoIosStar
                                     key={star}
-                                    size={25}
-                                    className="text-[#FFB61D]"
+                                    size={28}
+                                    className="text-yellow-400"
                                 />
                             ) : (
                                 <IoIosStarOutline
                                     key={star}
-                                    size={25}
-                                    className="text-[#2D2D2D] opacity-70"
+                                    size={28}
+                                    className="text-gray-300"
                                 />
                             )
                         )}
                     </div>
 
-                    <div className="flex items-center justify-center gap-2 mb-4">
-                        <span className="text-gray-600 dark:text-gray-400">
-                            Rating:
+                    <div className="flex items-center justify-center gap-2 mb-6">
+                        <span className="text-gray-600 dark:text-gray-400 font-medium">
+                            Overall Rating:
                         </span>
-                        <span className="w-7 h-7 border-primary border text-primary rounded-full flex items-center justify-center text-sm font-semibold">
+                        <span className="w-8 h-8 bg-primary border-2 border-primary text-white rounded-full flex items-center justify-center text-sm font-bold">
                             {rating}
                         </span>
+                        <span className="text-gray-500 text-sm">/5</span>
                     </div>
 
-                    <div className="bg-[#2D2D2D] text-white rounded-lg p-4 mb-4">
-                        <div className="flex items-center gap-3">
-                            <RxStopwatch
-                                size={50}
-                                className="text-primary flex-shrink-0"
-                            />
+                    {/* Response Time Card */}
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-6">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+                                <RxStopwatch
+                                    size={24}
+                                    className="text-blue-600"
+                                />
+                            </div>
                             <div className="text-left">
-                                <div className="font-semibold">
-                                    Response Time
+                                <div className="font-semibold text-gray-900 dark:text-white">
+                                    Average Response Time
                                 </div>
-                                <div className="text-white/80 text-sm font-thin">
-                                    Your average response time was{" "}
-                                    <span className="text-[#56F56F] font-semibold">
+                                <div className="text-gray-600 dark:text-gray-400 text-sm">
+                                    You answered questions in{" "}
+                                    <span className="font-semibold text-blue-600">
                                         {avgResponseTime} seconds
                                     </span>{" "}
-                                    per question.
+                                    on average
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 mb-4">
-                        <div className="flex flex-col items-center">
-                            <h3 className="font-semibold text-gray-900 dark:text-white mb-2 underline">
-                                Strengths
+                    {/* Strengths and Weaknesses */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        {/* Strengths */}
+                        <div className="bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-xl p-4">
+                            <h3 className="font-semibold text-green-800 dark:text-green-400 mb-3 flex items-center gap-2">
+                                <FaCheck className="text-green-600" />
+                                Your Strengths
                             </h3>
-                            <div className="space-y-1">
+                            <div className="space-y-2">
                                 {strengths.map((strength, idx) => (
                                     <div
-                                        className="flex items-start gap-2 w-[180px]"
+                                        className="flex items-start gap-2"
                                         key={idx}
                                     >
-                                        <FaCheck className="text-green-500 w-4 h-4 mt-0.5 flex-shrink-0" />
-                                        <span className="text-sm text-gray-600 dark:text-gray-400 text-left">
+                                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                                        <span className="text-sm text-green-700 dark:text-green-300 text-left">
                                             {strength}
                                         </span>
                                     </div>
                                 ))}
                             </div>
                         </div>
-                        <div className="flex flex-col items-center">
-                            <h3 className="font-semibold text-gray-900 dark:text-white mb-2 underline">
-                                Weaknesses
+
+                        {/* Weaknesses */}
+                        <div className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-xl p-4">
+                            <h3 className="font-semibold text-red-800 dark:text-red-400 mb-3 flex items-center gap-2">
+                                <FaTimes className="text-red-600" />
+                                Areas for Improvement
                             </h3>
-                            <div className="space-y-1">
+                            <div className="space-y-2">
                                 {weaknesses.map((weakness, idx) => (
                                     <div
-                                        className="flex items-start gap-2 w-[180px]"
+                                        className="flex items-start gap-2"
                                         key={idx}
                                     >
-                                        <FaTimes className="text-red-500 w-4 h-4 mt-0.5 flex-shrink-0" />
-                                        <span className="text-sm text-gray-600 dark:text-gray-400 text-left">
+                                        <div className="w-1.5 h-1.5 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                                        <span className="text-sm text-red-700 dark:text-red-300 text-left">
                                             {weakness}
                                         </span>
                                     </div>
@@ -175,20 +205,21 @@ const InterviewResultModal: React.FC<InterviewResultModalProps> = ({
                         </div>
                     </div>
 
-                    <div className="flex gap-3">
+                    {/* Action Buttons */}
+                    <div className="flex gap-4">
                         <Button
                             text="Return to Dashboard"
                             type="outline"
                             htmlButtonType="button"
                             action={onReturn}
-                            className="flex-1 text-sm"
+                            className="flex-1 py-3"
                         />
                         <Button
-                            text="View detailed report"
+                            text="View Detailed Report"
                             type="primary"
                             htmlButtonType="button"
                             action={onViewReport}
-                            className="flex-1 text-sm"
+                            className="flex-1 py-3"
                         />
                     </div>
                 </div>

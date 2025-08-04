@@ -1,14 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { FeedbackEntry } from "@/lib/data";
+import { FeedbackEntry } from "@/lib/types";
 import {
     FaCalendarAlt,
     FaChevronUp,
     FaChevronDown,
     FaTimes,
+    FaLightbulb,
+    FaCheckCircle,
+    FaComments,
 } from "react-icons/fa";
 import { IoIosStar, IoIosStarOutline } from "react-icons/io";
+import { LuMessageSquare, LuCheckCircle2 } from "react-icons/lu";
 import Modal from "../Modal/Modal";
 import TagPill from "@/components/small/TagPill/TagPill";
 
@@ -110,46 +114,73 @@ export default function FeedbackDetailModal({
                         />
                     </div>
                     <div className="px-6 pb-6 overflow-y-auto h-[400px] custom-scrollbar">
-                        <div className="space-y-3">
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-2 mb-4">
+                                <LuMessageSquare className="w-5 h-5 text-primary" />
+                                <h3 className="text-lg font-semibold text-gray-900">
+                                    Interview Questions & Feedback
+                                </h3>
+                            </div>
+
                             {mockQuestions.map(question => (
-                                <div key={question.id}>
+                                <div
+                                    key={question.id}
+                                    className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                                >
                                     <button
                                         onClick={() =>
                                             toggleQuestion(question.id)
                                         }
-                                        className="w-full p-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
+                                        className="w-full p-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors rounded-t-lg"
                                     >
-                                        <span className="font-semibold text-gray-900 text-sm">
-                                            {question.id}. {question.question}
-                                        </span>
+                                        <div className="flex items-start gap-3">
+                                            <div className="flex-shrink-0 w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center">
+                                                <span className="text-xs font-semibold text-primary">
+                                                    {question.id}
+                                                </span>
+                                            </div>
+                                            <span className="font-semibold text-gray-900 text-sm leading-relaxed">
+                                                {question.question}
+                                            </span>
+                                        </div>
                                         {expandedQuestions.includes(
                                             question.id
                                         ) ? (
-                                            <FaChevronUp className="text-gray-500 w-4 h-4" />
+                                            <FaChevronUp className="text-gray-500 w-4 h-4 flex-shrink-0" />
                                         ) : (
-                                            <FaChevronDown className="text-gray-500 w-4 h-4" />
+                                            <FaChevronDown className="text-gray-500 w-4 h-4 flex-shrink-0" />
                                         )}
                                     </button>
 
                                     {expandedQuestions.includes(
                                         question.id
                                     ) && (
-                                        <div className="px-4 pb-4 space-y-3">
-                                            <div>
-                                                <h4 className="font-medium text-gray-900 mb-1 text-sm">
-                                                    Answer:
-                                                </h4>
-                                                <p className="text-gray-700 text-sm leading-relaxed">
-                                                    {question.answer}
-                                                </p>
+                                        <div className="px-4 pb-4 space-y-4 border-t border-gray-100">
+                                            <div className="pt-4">
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <LuCheckCircle2 className="w-4 h-4 text-green-600" />
+                                                    <h4 className="font-semibold text-gray-900 text-sm">
+                                                        Your Answer
+                                                    </h4>
+                                                </div>
+                                                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                                                    <p className="text-gray-700 text-sm leading-relaxed">
+                                                        {question.answer}
+                                                    </p>
+                                                </div>
                                             </div>
                                             <div>
-                                                <h4 className="font-medium text-gray-900 mb-1 text-sm">
-                                                    Feedback:
-                                                </h4>
-                                                <p className="text-gray-700 text-sm leading-relaxed">
-                                                    {question.feedback}
-                                                </p>
+                                                <div className="flex items-center gap-2 mb-2">
+                                                    <FaLightbulb className="w-4 h-4 text-amber-600" />
+                                                    <h4 className="font-semibold text-gray-900 text-sm">
+                                                        Feedback & Suggestions
+                                                    </h4>
+                                                </div>
+                                                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                                                    <p className="text-gray-700 text-sm leading-relaxed">
+                                                        {question.feedback}
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
                                     )}

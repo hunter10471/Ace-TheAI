@@ -664,18 +664,7 @@ export interface Question {
     example: string;
 }
 
-export interface FeedbackEntry {
-    id: number;
-    date: string;
-    title: string;
-    category: "Technical" | "Behavioral" | "Situational" | "Mock";
-    rating: number;
-    summary: string;
-    explanation?: string;
-    example?: string;
-}
-
-export const feedbackHistoryData: FeedbackEntry[] = [
+export const feedbackHistoryData = [
     {
         id: 1,
         date: "27 July 2024",
