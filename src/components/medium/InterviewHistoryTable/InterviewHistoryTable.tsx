@@ -9,38 +9,19 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { ChevronUp, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import TagPill from "@/components/small/TagPill/TagPill";
 import { useThemeStore } from "@/lib/store";
+import { InterviewHistory } from "@/lib/performance-operations";
+import Link from "next/link";
 
-const interviewData = [
-    {
-        date: "2023-07-15",
-        jobTitle: "Software Engineer",
-        category: "Technical",
-        difficulty: "Advanced",
-        rating: 4.1,
-        feedback: "Good performance, needs to improve in system design.",
-    },
-    {
-        date: "2023-09-11",
-        jobTitle: "Data Analyst",
-        category: "Behavioural",
-        difficulty: "Novice",
-        rating: 4.8,
-        feedback: "Excellent communication skills.",
-    },
-    {
-        date: "2023-11-15",
-        jobTitle: "Project Manager",
-        category: "Technical",
-        difficulty: "Hard",
-        rating: 3.5,
-        feedback: "Good coding skills, need to work on time management",
-    },
-];
+interface InterviewHistoryTableProps {
+    data: InterviewHistory[];
+}
 
-export default function InterviewHistoryTable() {
+export default function InterviewHistoryTable({
+    data,
+}: InterviewHistoryTableProps) {
     const { isDarkMode } = useThemeStore();
     const [sortConfig, setSortConfig] = useState<{
         key: string;
@@ -73,11 +54,39 @@ export default function InterviewHistoryTable() {
         );
     };
 
+    const sortedData = useMemo(() => {
+        if (!sortConfig) return data.slice(0, 10);
+
+        const sorted = [...data].sort((a, b) => {
+            const { key, direction } = sortConfig;
+            let aValue: any = a[key as keyof InterviewHistory];
+            let bValue: any = b[key as keyof InterviewHistory];
+
+            if (key === "date") {
+                aValue = new Date(aValue);
+                bValue = new Date(bValue);
+            }
+
+            if (aValue < bValue) {
+                return direction === "asc" ? -1 : 1;
+            }
+            if (aValue > bValue) {
+                return direction === "asc" ? 1 : -1;
+            }
+            return 0;
+        });
+
+        return sorted.slice(0, 10);
+    }, [data, sortConfig]);
+
     const titleColor = isDarkMode ? "text-gray-100" : "text-gray-900";
     const hoverColor = isDarkMode ? "hover:bg-gray-600" : "hover:bg-gray-50";
     const headTextColor = isDarkMode ? "text-gray-300" : "text-gray-700";
     const cellTextColor = isDarkMode ? "text-gray-200" : "text-gray-900";
     const feedbackTextColor = isDarkMode ? "text-gray-400" : "text-gray-600";
+    const linkColor = isDarkMode
+        ? "text-gray-400 hover:text-gray-300"
+        : "text-gray-600 hover:text-gray-800";
 
     return (
         <div className="w-[80%] max-w-[700px]">
@@ -141,7 +150,7 @@ export default function InterviewHistoryTable() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {interviewData.map((interview, index) => (
+                        {sortedData.map((interview, index) => (
                             <TableRow
                                 key={index}
                                 className={`border-b last:border-b-0 h-10`}
@@ -182,6 +191,14 @@ export default function InterviewHistoryTable() {
                         ))}
                     </TableBody>
                 </Table>
+            </div>
+            <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+                <Link
+                    href="/dashboard/feedback-history"
+                    className={`text-xs ${linkColor} transition-colors duration-200 font-medium`}
+                >
+                    View all interview details →
+                </Link>
             </div>
         </div>
     );

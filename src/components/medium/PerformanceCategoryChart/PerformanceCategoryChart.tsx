@@ -12,32 +12,18 @@ import {
 import { ChartContainer } from "@/components/ui/chart";
 import { useState } from "react";
 import { useThemeStore } from "@/lib/store";
+import { PerformanceCategory } from "@/lib/performance-operations";
+import { PiStudentLight } from "react-icons/pi";
 
-const data = [
-    {
-        category: "Tech.",
-        fullLabel: "Technical",
-        percentage: 100,
-        color: "#FFF1D4",
-        stroke: "#F3CD7D",
-    },
-    {
-        category: "Behav.",
-        fullLabel: "Behavioral",
-        percentage: 60,
-        color: "#C1DCFB",
-        stroke: "#92C3FA",
-    },
-    {
-        category: "Situat.",
-        fullLabel: "Situational",
-        percentage: 25,
-        color: "#FBCFAE",
-        stroke: "#F3AF7D",
-    },
-];
+interface PerformanceCategoryChartProps {
+    data: PerformanceCategory[];
+    totalInterviews: number;
+}
 
-export default function PerformanceCategoryChart() {
+export default function PerformanceCategoryChart({
+    data,
+    totalInterviews,
+}: PerformanceCategoryChartProps) {
     const { isDarkMode } = useThemeStore();
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
     const [isHovering, setIsHovering] = useState(false);
@@ -51,6 +37,8 @@ export default function PerformanceCategoryChart() {
 
     const textColor = isDarkMode ? "#E5E7EB" : "#6B7280";
     const titleColor = isDarkMode ? "text-gray-100" : "text-gray-900";
+
+    const hasInsufficientData = totalInterviews < 3;
 
     const CustomTooltip = ({ active, payload }: any) => {
         if (active && payload && payload.length) {
@@ -88,70 +76,92 @@ export default function PerformanceCategoryChart() {
     };
 
     return (
-        <div className={`w-full max-w-[500px]`}>
+        <div className={`w-full max-w-[500px] relative`}>
             <h2 className={`text-lg font-semibold ${titleColor} mb-4`}>
                 Performance by Category
             </h2>
-            <ChartContainer config={chartConfig} className="h-[150px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                        data={data}
-                        layout="vertical"
-                        barGap={0}
-                        onMouseMove={state => {
-                            if (
-                                state &&
-                                state.activeTooltipIndex !== undefined
-                            ) {
-                                setActiveIndex(state.activeTooltipIndex);
-                                setIsHovering(true);
-                            }
-                        }}
-                        onMouseLeave={() => {
-                            setIsHovering(false);
-                            setActiveIndex(null);
-                        }}
-                    >
-                        <XAxis
-                            type="number"
-                            domain={[0, 100]}
-                            ticks={[0, 25, 50, 75, 100]}
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fontSize: 12, fill: textColor }}
-                            tickFormatter={value => `${value}%`}
-                        />
-                        <YAxis
-                            type="category"
-                            dataKey="category"
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fontSize: 12, fill: textColor }}
-                            width={50}
-                        />
-                        <Tooltip
-                            content={<CustomTooltip />}
-                            cursor={{
-                                fill: isDarkMode
-                                    ? "rgba(255, 255, 255, 0.1)"
-                                    : "rgba(0, 0, 0, 0.05)",
+            <div className="relative">
+                <ChartContainer
+                    config={chartConfig}
+                    className="h-[150px] w-full"
+                >
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                            data={data}
+                            layout="vertical"
+                            barGap={0}
+                            onMouseMove={state => {
+                                if (
+                                    state &&
+                                    state.activeTooltipIndex !== undefined
+                                ) {
+                                    setActiveIndex(state.activeTooltipIndex);
+                                    setIsHovering(true);
+                                }
                             }}
-                        />
-                        <Bar
-                            dataKey="percentage"
-                            radius={[0, 4, 4, 0]}
-                            barSize={60}
+                            onMouseLeave={() => {
+                                setIsHovering(false);
+                                setActiveIndex(null);
+                            }}
                         >
-                            {data.map((entry, index) => (
-                                <Cell
-                                    key={`cell-${index}`}
-                                    fill={entry.color}
-                                />
-                            ))}
-                        </Bar>
-                    </BarChart>
-                </ResponsiveContainer>
-            </ChartContainer>
+                            <XAxis
+                                type="number"
+                                domain={[0, 100]}
+                                ticks={[0, 25, 50, 75, 100]}
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fontSize: 12, fill: textColor }}
+                                tickFormatter={value => `${value}%`}
+                            />
+                            <YAxis
+                                type="category"
+                                dataKey="category"
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fontSize: 12, fill: textColor }}
+                                width={50}
+                            />
+                            <Tooltip
+                                content={<CustomTooltip />}
+                                cursor={{
+                                    fill: isDarkMode
+                                        ? "rgba(255, 255, 255, 0.1)"
+                                        : "rgba(0, 0, 0, 0.05)",
+                                }}
+                            />
+                            <Bar
+                                dataKey="percentage"
+                                radius={[0, 4, 4, 0]}
+                                barSize={60}
+                            >
+                                {data.map((entry, index) => (
+                                    <Cell
+                                        key={`cell-${index}`}
+                                        fill={entry.color}
+                                    />
+                                ))}
+                            </Bar>
+                        </BarChart>
+                    </ResponsiveContainer>
+                </ChartContainer>
+                {hasInsufficientData && (
+                    <div className="absolute inset-0 bg-white/30 dark:bg-gray-900/30 backdrop-blur-md flex items-center justify-center rounded-lg">
+                        <div className="text-center p-4">
+                            <div className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                                <PiStudentLight
+                                    size={50}
+                                    className="inline-block"
+                                />{" "}
+                                More Practice Needed
+                            </div>
+                            <div className="text-xs text-gray-600 dark:text-gray-400">
+                                Complete at least 3 interviews to unlock
+                                detailed insights
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

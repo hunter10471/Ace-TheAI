@@ -3,12 +3,13 @@
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { ChartContainer } from "@/components/ui/chart";
 import { useThemeStore } from "@/lib/store";
+import { DifficultySuccessRate } from "@/lib/performance-operations";
+import { PiStudentLight } from "react-icons/pi";
 
-const data = [
-    { name: "Novice", value: 65, color: "#86EFAC" },
-    { name: "Advanced", value: 30, color: "#C4B5FD" },
-    { name: "Hard", value: 15, color: "#FDA4AF" },
-];
+interface DifficultySuccessRateProps {
+    data: DifficultySuccessRate[];
+    totalInterviews: number;
+}
 
 const chartConfig = {
     novice: {
@@ -47,7 +48,13 @@ const CustomLegend = ({ payload, isDarkMode }: any) => {
     );
 };
 
-const CenterLabel = ({ isDarkMode }: { isDarkMode: boolean }) => {
+const CenterLabel = ({
+    isDarkMode,
+    averageRate,
+}: {
+    isDarkMode: boolean;
+    averageRate: number;
+}) => {
     return (
         <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
@@ -56,7 +63,7 @@ const CenterLabel = ({ isDarkMode }: { isDarkMode: boolean }) => {
                         isDarkMode ? "text-gray-100" : "text-gray-900"
                     }`}
                 >
-                    75%
+                    {averageRate}%
                 </div>
                 <div
                     className={`text-sm ${
@@ -70,17 +77,29 @@ const CenterLabel = ({ isDarkMode }: { isDarkMode: boolean }) => {
     );
 };
 
-export default function DifficultySuccessRateChart() {
+export default function DifficultySuccessRateChart({
+    data,
+    totalInterviews,
+}: DifficultySuccessRateProps) {
     const { isDarkMode } = useThemeStore();
 
     const titleColor = isDarkMode ? "text-gray-100" : "text-gray-900";
+
+    const averageRate =
+        data.length > 0
+            ? Math.round(
+                  data.reduce((sum, item) => sum + item.value, 0) / data.length
+              )
+            : 0;
+
+    const hasInsufficientData = totalInterviews < 3;
 
     return (
         <div className={`w-full max-w-[350px] rounded-lg`}>
             <h2 className={`text-lg font-semibold ${titleColor} mb-6`}>
                 Difficulty Success Rate
             </h2>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between relative">
                 <div className="relative">
                     <ChartContainer
                         config={chartConfig}
@@ -107,7 +126,10 @@ export default function DifficultySuccessRateChart() {
                             </PieChart>
                         </ResponsiveContainer>
                     </ChartContainer>
-                    <CenterLabel isDarkMode={isDarkMode} />
+                    <CenterLabel
+                        isDarkMode={isDarkMode}
+                        averageRate={averageRate}
+                    />
                 </div>
                 <CustomLegend
                     isDarkMode={isDarkMode}
@@ -117,6 +139,23 @@ export default function DifficultySuccessRateChart() {
                         payload: { value: item.value },
                     }))}
                 />
+                {hasInsufficientData && (
+                    <div className="absolute inset-0 bg-white/30 dark:bg-gray-900/30 backdrop-blur-md flex items-center justify-center rounded-lg">
+                        <div className="text-center p-4">
+                            <div className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                                <PiStudentLight
+                                    size={50}
+                                    className="inline-block"
+                                />{" "}
+                                More Practice Needed
+                            </div>
+                            <div className="text-xs text-gray-600 dark:text-gray-400">
+                                Complete at least 3 interviews to unlock
+                                detailed insights
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

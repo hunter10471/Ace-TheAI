@@ -6,6 +6,7 @@ import { IoIosStarOutline } from "react-icons/io";
 import { RiShapesLine } from "react-icons/ri";
 import { GoClock } from "react-icons/go";
 import { useThemeStore } from "@/lib/store";
+import { PerformanceStats } from "@/lib/performance-operations";
 
 interface StatCard {
     icon: React.ReactNode;
@@ -13,29 +14,35 @@ interface StatCard {
     value: string;
 }
 
-export default function PerformanceStatsCards() {
+interface PerformanceStatsCardsProps {
+    stats: PerformanceStats;
+}
+
+export default function PerformanceStatsCards({
+    stats,
+}: PerformanceStatsCardsProps) {
     const { isDarkMode } = useThemeStore();
 
-    const stats: StatCard[] = [
+    const statCards: StatCard[] = [
         {
             icon: <RiSpeakLine size={50} className="text-primary" />,
             title: "Total Interviews Completed",
-            value: "247",
+            value: stats.totalInterviews.toString(),
         },
         {
             icon: <IoIosStarOutline size={50} className="text-primary" />,
             title: "Average Score",
-            value: "4.5",
+            value: stats.averageScore.toString(),
         },
         {
             icon: <RiShapesLine size={50} className="text-primary" />,
             title: "Strongest Category",
-            value: "Technical",
+            value: stats.strongestCategory,
         },
         {
             icon: <GoClock size={50} className="text-primary" />,
             title: "Total Time Practiced",
-            value: "120 hrs",
+            value: `${stats.totalTimePracticed} hrs`,
         },
     ];
 
@@ -44,7 +51,7 @@ export default function PerformanceStatsCards() {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {stats.map((stat, index) => (
+            {statCards.map((stat, index) => (
                 <div
                     key={index}
                     className={`bg-[#2D2D2D] rounded-3xl px-6 py-4 ${textColor}`}
