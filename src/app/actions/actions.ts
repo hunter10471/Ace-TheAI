@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { signIn, signOut, auth } from "@/auth";
 import { createClient } from "@/lib/supabase/server";
-import { hashPassword, verifyPassword } from "@/lib/auth-utils";
+import { hashPassword, verifyPassword } from "@/lib/auth-server";
 
 const FormSchema = z.object({
     email: z.string().email(),

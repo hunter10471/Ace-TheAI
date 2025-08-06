@@ -14,12 +14,13 @@ import PageHeader from "@/components/big/PageHeader/PageHeader";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import { updateProfile, getUserProfile } from "@/app/actions/actions";
+import { useUnifiedLoading } from "@/lib/use-unified-loading";
 // @ts-ignore
 import countryList from "react-select-country-list";
 
 const ProfilePage = () => {
     const { data: session, update: updateSession } = useSession();
-    const [isLoading, setIsLoading] = useState(false);
+    const { withLoading } = useUnifiedLoading();
     const [isLoadingData, setIsLoadingData] = useState(true);
     const [hasChanges, setHasChanges] = useState(false);
     const [originalData, setOriginalData] = useState({
@@ -167,8 +168,7 @@ const ProfilePage = () => {
             return;
         }
 
-        setIsLoading(true);
-        try {
+        await withLoading(async () => {
             const formDataToSend = new FormData();
             formDataToSend.append("fullName", formData.fullName);
             if (formData.dateOfBirth) {
@@ -205,12 +205,7 @@ const ProfilePage = () => {
             } else {
                 toast.error(result || "Failed to update profile");
             }
-        } catch (error) {
-            console.error("Profile update error:", error);
-            toast.error("Something went wrong. Please try again.");
-        } finally {
-            setIsLoading(false);
-        }
+        }, "Updating your profile...");
     };
 
     const handleDiscard = async () => {
@@ -488,12 +483,11 @@ const ProfilePage = () => {
                         className="px-6 py-2"
                     />
                     <Button
-                        text={isLoading ? "Saving..." : "Save"}
+                        text="Save"
                         type="primary"
                         htmlButtonType="button"
                         action={handleSave}
                         className="px-6 py-2"
-                        isLoading={isLoading}
                     />
                 </div>
             )}

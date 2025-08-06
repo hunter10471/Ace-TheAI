@@ -4,11 +4,13 @@ import { motion } from "framer-motion";
 interface LoadingSpinnerProps {
     size?: "sm" | "md" | "lg";
     color?: "primary" | "white" | "gray";
+    className?: string;
 }
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     size = "md",
     color = "primary",
+    className = "",
 }) => {
     const sizeClasses = {
         sm: "w-4 h-4",
@@ -24,7 +26,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 
     return (
         <motion.div
-            className={`${sizeClasses[size]} border-2 border-gray-200 dark:border-gray-700 rounded-full ${colorClasses[color]}`}
+            className={`${sizeClasses[size]} border-2 border-gray-200 dark:border-gray-700 rounded-full ${colorClasses[color]} ${className}`}
             animate={{ rotate: 360 }}
             transition={{
                 duration: 1,

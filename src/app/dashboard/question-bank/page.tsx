@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
+import { useUnifiedLoading } from "@/lib/use-unified-loading";
 import {
     FaBookmark,
     FaExternalLinkAlt,
@@ -45,6 +46,7 @@ interface Question {
 
 export default function QuestionBankPage() {
     const { data: session } = useSession();
+    const { withLoading } = useUnifiedLoading();
     const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(
         null
     );
@@ -53,7 +55,6 @@ export default function QuestionBankPage() {
     const [showBookmarkedOnly, setShowBookmarkedOnly] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [questions, setQuestions] = useState<Question[]>([]);
-    const [loading, setLoading] = useState(true);
     const [generating, setGenerating] = useState(false);
     const [bookmarkedQuestions, setBookmarkedQuestions] = useState<Set<string>>(
         new Set()
@@ -83,8 +84,7 @@ export default function QuestionBankPage() {
     const fetchQuestions = async () => {
         if (!session?.user?.id) return;
 
-        try {
-            setLoading(true);
+        await withLoading(async () => {
             const params = new URLSearchParams();
 
             if (selectedCategory !== "All") {
@@ -121,12 +121,7 @@ export default function QuestionBankPage() {
                 }
             });
             setBookmarkedQuestions(bookmarkedIds);
-        } catch (error) {
-            console.error("Error fetching questions:", error);
-            toast.error("Failed to load questions");
-        } finally {
-            setLoading(false);
-        }
+        }, "Loading questions...");
     };
 
     // Generate new questions
@@ -273,6 +268,7 @@ export default function QuestionBankPage() {
         searchQuery,
         sortOrder,
         currentPage,
+        withLoading,
     ]);
 
     // Scroll to top when selected question changes
@@ -569,13 +565,7 @@ export default function QuestionBankPage() {
                 <div className="lg:col-span-6">
                     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm h-[calc(100vh-400px)] lg:h-[calc(100vh-300px)] flex flex-col">
                         <div className="p-4 flex-1 overflow-y-auto">
-                            {loading ? (
-                                <div className="flex items-center justify-center h-full">
-                                    <div className="text-gray-500 dark:text-gray-400">
-                                        Loading questions...
-                                    </div>
-                                </div>
-                            ) : questions.length === 0 ? (
+                            {questions.length === 0 ? (
                                 <div className="flex items-center justify-center h-full">
                                     <div className="text-center">
                                         <p className="text-gray-500 dark:text-gray-400 mb-4">

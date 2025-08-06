@@ -31,22 +31,7 @@ const Navbar: React.FC = () => {
         };
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
-    }, [scroll]);
-
-    // Refresh session only once when component mounts
-    useEffect(() => {
-        // Only update session once on mount, not continuously
-        if (status === "loading") {
-            const refreshSession = async () => {
-                try {
-                    await update();
-                } catch (error) {
-                    console.error("Error updating session:", error);
-                }
-            };
-            refreshSession();
-        }
-    }, []); // Empty dependency array - only run once on mount
+    }, []);
 
     const navigateToDashboard = () => {
         navigate.push("/dashboard");
@@ -59,8 +44,6 @@ const Navbar: React.FC = () => {
     const confirmLogout = async () => {
         try {
             await signOut({ redirect: false });
-            // Force session update after logout
-            await update();
         } catch (error) {
             console.log("Error signing out:", error);
         }

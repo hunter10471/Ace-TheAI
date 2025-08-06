@@ -1,11 +1,31 @@
-import bcrypt from "bcrypt";
+import { useSession } from "next-auth/react";
+import { useMemo } from "react";
 
-export const hashPassword = async (password: string) => {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPass = await bcrypt.hash(password, salt);
-    return hashedPass;
+export const useOptimizedSession = () => {
+    const { data: session, status, update } = useSession();
+
+    const memoizedSession = useMemo(() => session, [session]);
+
+    return {
+        session: memoizedSession,
+        status,
+        update,
+        isAuthenticated: status === "authenticated",
+        isLoading: status === "loading",
+        isUnauthenticated: status === "unauthenticated",
+    };
 };
 
-export const verifyPassword = async (password: string, hashedPass: string) => {
-    return await bcrypt.compare(password, hashedPass);
+export const useSessionUser = () => {
+    const { session } = useOptimizedSession();
+
+    return useMemo(
+        () => ({
+            user: session?.user,
+            name: session?.user?.name,
+            email: session?.user?.email,
+            image: session?.user?.image,
+        }),
+        [session?.user]
+    );
 };

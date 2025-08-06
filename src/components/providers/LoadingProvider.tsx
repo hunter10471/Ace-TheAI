@@ -49,7 +49,9 @@ export const LoadingProvider: React.FC<LoadingProviderProps> = ({
     return (
         <LoadingContext.Provider value={value}>
             {children}
-            {isLoading && <LoadingScreen message={loadingMessage} />}
+            {isLoading && (
+                <LoadingScreen message={loadingMessage} size="large" />
+            )}
         </LoadingContext.Provider>
     );
 };

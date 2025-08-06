@@ -1,5 +1,5 @@
 import NextAuth from "next-auth";
-import { verifyPassword } from "./lib/auth-utils";
+import { verifyPassword } from "./lib/auth-server";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { createClient } from "@/lib/supabase/server";

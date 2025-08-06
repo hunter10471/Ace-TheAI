@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { IoMdClose } from "react-icons/io";
 
 interface ModalProps {
@@ -15,8 +15,8 @@ const Modal: React.FC<ModalProps> = ({
 }) => {
     const modalRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = useCallback(
+        (event: MouseEvent) => {
             if (
                 isModalOpen &&
                 modalRef.current &&
@@ -24,12 +24,16 @@ const Modal: React.FC<ModalProps> = ({
             ) {
                 closeModal();
             }
-        };
+        },
+        [isModalOpen, closeModal]
+    );
+
+    useEffect(() => {
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [closeModal, isModalOpen]);
+    }, [handleClickOutside]);
 
     return (
         <div

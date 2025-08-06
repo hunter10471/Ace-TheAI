@@ -277,14 +277,6 @@ async function handleCompleteInterview(userId: string, data: any) {
         data: {
             session,
             feedback: savedFeedback,
-            summary: {
-                score: feedback.score,
-                maxScore: feedback.maxScore,
-                rating: feedback.overallRating,
-                avgResponseTime: feedback.avgResponseTime,
-                strengths: feedback.strengths,
-                weaknesses: feedback.weaknesses,
-            },
         },
     });
 }
