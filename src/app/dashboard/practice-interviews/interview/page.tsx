@@ -22,6 +22,7 @@ import {
 import InterviewResultModal from "@/components/medium/InterviewResultModal/InterviewResultModal";
 import EndInterviewModal from "@/components/medium/EndInterviewModal/EndInterviewModal";
 import ReportIssueModal from "@/components/medium/ReportIssueModal/ReportIssueModal";
+import { reportIssue } from "@/app/actions/settings";
 import toast from "react-hot-toast";
 import Image from "next/image";
 
@@ -808,10 +809,16 @@ const InterviewPage = () => {
             <ReportIssueModal
                 isOpen={showReportIssueModal}
                 onClose={() => setShowReportIssueModal(false)}
-                onSubmit={(email: string, message: string) => {
-                    console.log("Report submitted:", { email, message });
+                onSubmit={async (email: string, message: string) => {
                     setShowReportIssueModal(false);
-                    toast.success("Issue reported successfully");
+                    const result = await reportIssue(email, message);
+                    if (result.success) {
+                        toast.success("Issue reported successfully");
+                    } else {
+                        toast.error(
+                            result.error || "Failed to report the issue"
+                        );
+                    }
                 }}
             />
         </div>

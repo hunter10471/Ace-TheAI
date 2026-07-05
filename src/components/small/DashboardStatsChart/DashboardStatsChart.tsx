@@ -1,7 +1,6 @@
 "use client";
 import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import React from "react";
-import { interviewSuccessRateChartData } from "@/lib/data";
 import { useThemeStore } from "@/lib/store";
 
 interface DashboardStatsChartProps {
@@ -11,7 +10,7 @@ interface DashboardStatsChartProps {
 
 const DashboardStatsChart: React.FC<DashboardStatsChartProps> = ({
     strokeColor,
-    chartData = interviewSuccessRateChartData,
+    chartData = [],
 }) => {
     const { isDarkMode } = useThemeStore();
 

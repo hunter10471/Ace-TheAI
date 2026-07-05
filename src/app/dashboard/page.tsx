@@ -3,31 +3,51 @@ import ActionCard from "@/components/medium/ActionCard/ActionCard";
 import Calendar from "@/components/medium/Calendar/Calendar";
 import FeaturedContent from "@/components/medium/FeaturedContent/FeaturedContent";
 import WeeklyActivity from "@/components/medium/WeeklyActivity/WeeklyActivity";
-import {
-    interviewSuccessRateChartData,
-    highlightDates,
-    activityStats,
-} from "@/lib/data";
 import { DashboardStatsCardType } from "@/lib/types";
-import Image from "next/image";
 import React from "react";
-import { PiHandWavingFill } from "react-icons/pi";
 import { MdOutlineEdit } from "react-icons/md";
 import { BsChatSquareQuote } from "react-icons/bs";
 import { BsPatchQuestion } from "react-icons/bs";
+import { IoTimeOutline, IoStatsChartOutline } from "react-icons/io5";
+import { LuPieChart } from "react-icons/lu";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import ActivityStats from "@/components/medium/ActivityStats/ActivityStats";
 import PageHeader from "@/components/big/PageHeader/PageHeader";
+import { getDashboardData } from "@/lib/dashboard-operations";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
 export default async function page() {
     const session = await auth();
 
-    if (!session?.user) {
+    if (!session?.user?.id) {
         redirect("/");
     }
+
+    const data = await getDashboardData(session.user.id);
+
+    const activityStats = [
+        {
+            value: data.totalTimePracticedHours,
+            label: "Hours practiced",
+            icon: <IoTimeOutline size={22} />,
+            color: "bg-[#009EFA]",
+        },
+        {
+            value: `${data.averageScore}/5`,
+            label: "Average interview rating",
+            icon: <IoStatsChartOutline size={22} />,
+            color: "bg-[#00C9A7]",
+        },
+        {
+            value: data.totalInterviews,
+            label: "Interviews completed",
+            icon: <LuPieChart size={22} />,
+            color: "bg-[#C197FF]",
+        },
+    ];
 
     return (
         <div>
@@ -39,6 +59,25 @@ export default async function page() {
                 userName={session.user.name || undefined}
                 userEmail={session.user.email || undefined}
             />
+            {data.totalInterviews === 0 && (
+                <div className="my-6 rounded-xl border border-primary/30 bg-primary/5 p-5 flex items-center justify-between gap-4">
+                    <div>
+                        <h2 className="font-semibold text-lg">
+                            No interviews yet
+                        </h2>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                            Complete your first practice interview and your
+                            stats will show up here.
+                        </p>
+                    </div>
+                    <Link
+                        href="/dashboard/practice-interviews"
+                        className="bg-primary text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap"
+                    >
+                        Start practicing
+                    </Link>
+                </div>
+            )}
             <div className="flex justify-between">
                 <div className="flex my-6 gap-4">
                     <DashboardStatsCard
@@ -47,9 +86,13 @@ export default async function page() {
                         lightColor="#96C3FF"
                         title="Practice Sessions This Week"
                         imageSrc="/assets/practice-this-week.png"
-                        stats="18/25"
-                        percentage={5}
-                        progress={70}
+                        stats={`${data.sessionsThisWeek}/${data.weeklyGoal}`}
+                        progress={Math.min(
+                            100,
+                            Math.round(
+                                (data.sessionsThisWeek / data.weeklyGoal) * 100
+                            )
+                        )}
                         type={DashboardStatsCardType.PracticeSessions}
                     />
                     <DashboardStatsCard
@@ -58,24 +101,21 @@ export default async function page() {
                         lightColor="#96C3FF"
                         title="Interview Success Rate"
                         imageSrc="/assets/interview-success-rate.png"
-                        stats="85%"
-                        percentage={-3}
+                        stats={`${data.successRate}%`}
                         type={DashboardStatsCardType.InterviewSuccess}
-                        chartData={interviewSuccessRateChartData}
+                        chartData={data.successRateChart}
                     />
                     <DashboardStatsCard
                         color="#9570C9"
                         darkColor="#7533D2"
-                        title="Interviews Coming Up This Week"
+                        title="Practice Days This Month"
                         imageSrc="/assets/interviews-coming-up.png"
-                        stats="4"
-                        percentage={5}
-                        progress={70}
+                        stats={`${data.highlightDates.length}`}
                         type={DashboardStatsCardType.InterviewThisWeek}
-                        calendarDays={[6, 13, 22]}
+                        calendarDays={data.highlightDates}
                     />
                 </div>
-                <Calendar highlightDates={highlightDates} />
+                <Calendar highlightDates={data.highlightDates} />
             </div>
             <h1 className="text-2xl mb-4 text-gray-900 dark:text-gray-100">
                 What's Next?
@@ -117,7 +157,7 @@ export default async function page() {
             </div>
             <div className="flex gap-6 justify-between">
                 <FeaturedContent />
-                <WeeklyActivity />
+                <WeeklyActivity data={data.weeklyActivity} />
             </div>
         </div>
     );

@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import { useThemeStore } from "@/lib/store";
+import { getSettings, updateSettings } from "@/app/actions/settings";
+import toast from "react-hot-toast";
 
 const languages = [
     { code: "en", name: "English" },
@@ -16,6 +18,22 @@ export default function LanguageSettings() {
         null
     );
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        getSettings().then(settings => {
+            setSelectedLanguage(settings.preferred_language);
+        });
+    }, []);
+
+    const selectLanguage = async (code: string) => {
+        setSelectedLanguage(code);
+        const result = await updateSettings({ preferred_language: code });
+        if (result.success) {
+            toast.success("Language saved");
+        } else {
+            toast.error(result.error || "Failed to save language");
+        }
+    };
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -80,7 +98,7 @@ export default function LanguageSettings() {
                                     key={language.code}
                                     type="button"
                                     onClick={() => {
-                                        setSelectedLanguage(language.code);
+                                        selectLanguage(language.code);
                                         setIsOpen(false);
                                     }}
                                     className={`w-full px-3 py-2 text-left text-sm ${textColor} ${hoverColor} transition-colors`}

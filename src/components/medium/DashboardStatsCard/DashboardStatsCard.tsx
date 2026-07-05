@@ -57,7 +57,12 @@ const DashboardStatsCard: React.FC<DashboardStatsCardProps> = ({
                     </div>
                 );
             case DashboardStatsCardType.InterviewSuccess:
-                return <DashboardStatsChart strokeColor={darkColor} />;
+                return (
+                    <DashboardStatsChart
+                        strokeColor={darkColor}
+                        chartData={chartData}
+                    />
+                );
             case DashboardStatsCardType.InterviewThisWeek:
                 return (
                     <div className="mx-3 mt-1.5 text-white font-light">

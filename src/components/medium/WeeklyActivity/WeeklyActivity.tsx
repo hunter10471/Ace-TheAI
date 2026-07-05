@@ -1,12 +1,28 @@
 "use client";
 
 import type React from "react";
-import { weeklyData } from "@/lib/data";
 
-type WeeklyActivityProps = {};
+interface WeeklyActivityDay {
+    day: string;
+    hours: number;
+}
 
-const WeeklyActivity: React.FC<WeeklyActivityProps> = () => {
-    const maxHours = 6;
+type WeeklyActivityProps = {
+    data: WeeklyActivityDay[];
+};
+
+function barColors(hours: number) {
+    if (hours >= 5) {
+        return { bgColor: "bg-[#C9E2FF]", borderColor: "border-[#63A8FD]" };
+    }
+    if (hours >= 3) {
+        return { bgColor: "bg-[#FFFEAD]", borderColor: "border-[#CBC956]" };
+    }
+    return { bgColor: "bg-[#FFD9D1]", borderColor: "border-[#FEA997]" };
+}
+
+const WeeklyActivity: React.FC<WeeklyActivityProps> = ({ data }) => {
+    const maxHours = Math.max(6, ...data.map(d => d.hours));
 
     return (
         <div className="bg-white dark:bg-gray-800 rounded-lg p-5 w-[300px] dark:border-gray-700">
@@ -28,31 +44,37 @@ const WeeklyActivity: React.FC<WeeklyActivityProps> = () => {
 
                     {/* Bar chart */}
                     <div className="flex items-end justify-center h-36 mb-4 gap-[1px]">
-                        {weeklyData.map((data, index) => (
-                            <div
-                                key={index}
-                                className="flex flex-col items-center"
-                            >
+                        {data.map((entry, index) => {
+                            const { bgColor, borderColor } = barColors(
+                                entry.hours
+                            );
+                            return (
                                 <div
-                                    className={`w-8 rounded-sm border ${data.borderColor} ${data.bgColor} transition-all duration-300 hover:opacity-80`}
-                                    style={{
-                                        height: `${Math.max(
-                                            (data.hours / maxHours) * 144,
-                                            12
-                                        )}px`,
-                                    }}
-                                />
-                            </div>
-                        ))}
+                                    key={index}
+                                    className="flex flex-col items-center"
+                                >
+                                    <div
+                                        title={`${entry.day}: ${entry.hours}h`}
+                                        className={`w-8 rounded-sm border ${borderColor} ${bgColor} transition-all duration-300 hover:opacity-80`}
+                                        style={{
+                                            height: `${Math.max(
+                                                (entry.hours / maxHours) * 144,
+                                                12
+                                            )}px`,
+                                        }}
+                                    />
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             </div>
 
             {/* Day labels */}
             <div className="flex justify-center text-xs text-gray-500 dark:text-gray-400 mt-3 gap-1 ml-6">
-                {weeklyData.map((data, index) => (
+                {data.map((entry, index) => (
                     <span key={index} className="text-center w-8">
-                        {data.day}
+                        {entry.day}
                     </span>
                 ))}
             </div>
