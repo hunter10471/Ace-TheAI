@@ -6,50 +6,41 @@ A modern, AI-powered interview preparation platform designed to help users excel
 
 Ace The AI Interview Coach is a Next.js-based web application that provides an interactive platform for interview preparation. The application features a comprehensive dashboard with practice sessions, feedback tracking, and performance analytics to help users improve their interview skills.
 
-## ⚠️ Development Status
+## ✨ Features
 
-**Currently in Development Phase - UI Only**
+### AI (Google Gemini, structured output)
 
-This project is currently in active development. The user interface and frontend components are fully implemented, but **API integrations are still in progress**. The application currently uses mock data and placeholder functionality for demonstration purposes.
+-   **Personalized question bank**: 20 questions per generation, tailored to the user's job title, experience, skills, and goals — with explanations, worked examples, and technical-term glossaries
+-   **Live AI mock interviews**: the interviewer generates each next question from the user's real profile and previous answers, evaluates every response 1-5 with feedback and suggestions, and produces a full end-of-interview report
+-   **Reliable JSON**: every AI call uses Gemini schema-constrained output (`gemini-2.5-flash`) validated with Zod — no fragile text parsing
+-   **Rate limited**: per-user limits on AI endpoints backed by Supabase
 
-### What's Implemented:
+### Product
 
--   ✅ Complete UI/UX design and components
--   ✅ Responsive design with dark/light theme support
--   ✅ User authentication UI (login/register modals)
--   ✅ Dashboard with statistics and analytics
--   ✅ Practice interview interface
--   ✅ Question bank and feedback history
--   ✅ Profile and settings pages
--   ✅ Landing page with features showcase
-
-### What's In Progress:
-
--   🔄 Backend API integration
--   🔄 Real authentication system
--   🔄 Database connectivity
--   🔄 AI-powered interview feedback
--   🔄 Real-time data processing
+-   **Auth**: NextAuth v5 with Google OAuth + credentials (bcrypt), central middleware guard for all dashboard pages and APIs, ownership checks on every session-scoped API
+-   **Dashboard**: live stats — weekly sessions, success-rate chart, practice-day calendar, hours practiced — computed from real interview data, with empty states for new accounts
+-   **Performance analytics**: rating trends, difficulty success rates, category breakdowns
+-   **Feedback history**: searchable, filterable archive of past interview reports
+-   **Profile & settings**: profile editing, password change, persisted language and data-sharing preferences
+-   **Issue reporting**: in-app report modal writes to the database
 
 ## 🛠️ Tech Stack
 
 ### Frontend
 
--   **Framework**: Next.js 14.2.5 (App Router)
--   **Language**: TypeScript
--   **Styling**: Tailwind CSS
--   **UI Components**: Custom component library
--   **Icons**: React Icons (IoIosStar, IoIosStarOutline, etc.)
--   **Animations**: Framer Motion
--   **Forms**: Formik + Yup validation
+-   **Framework**: Next.js 14 (App Router)
+-   **Language**: TypeScript (strict build gates on)
+-   **Styling**: Tailwind CSS with dark/light themes
+-   **Forms**: Formik + Yup, Zod on the server
 -   **Charts**: Recharts
 -   **State Management**: Zustand
 
 ### Backend & Database
 
--   **Authentication**: NextAuth.js v5 (beta)
--   **Database**: Supabase (configured but not fully integrated)
--   **API**: Next.js API routes
+-   **Authentication**: NextAuth.js v5 (Google OAuth + credentials)
+-   **Database**: Supabase (Postgres) — schema in `database_setup.sql`
+-   **AI**: Google Gemini via `@google/genai`, JSON-schema structured output
+-   **API**: Next.js API routes with session + ownership checks
 
 ### Development Tools
 
@@ -162,19 +153,29 @@ ace_the_ai/
     Add your configuration:
 
     ```env
-    NEXTAUTH_SECRET=your-secret-key
+    AUTH_SECRET=your-auth-secret
+    NEXTAUTH_SECRET=your-nextauth-secret
     NEXTAUTH_URL=http://localhost:3000
-    SUPABASE_URL=your-supabase-url
-    SUPABASE_ANON_KEY=your-supabase-anon-key
+    NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+    GOOGLE_CLIENT_ID=your-google-client-id
+    GOOGLE_CLIENT_SECRET=your-google-client-secret
+    GOOGLE_GEMINI_API_KEY=your-gemini-api-key
     ```
 
-4. **Run the development server**
+4. **Set up the database**
+
+    Run `database_setup.sql` in the Supabase SQL editor. The file is
+    idempotent — re-run it after pulling updates to apply new migrations
+    (it includes the tables, indexes, and the `check_rate_limit` function).
+
+5. **Run the development server**
 
     ```bash
     npm run dev
     ```
 
-5. **Open your browser**
+6. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
 ### Available Scripts
@@ -245,29 +246,23 @@ The application supports both light and dark themes with:
 -   Persistent theme preference
 -   Consistent color schemes
 
-## 🔐 Authentication
+## 🔐 Authentication & Security
 
-Currently using NextAuth.js with:
-
--   Email/password authentication
--   Session management
--   Protected routes
--   User profile management
+-   Google OAuth + email/password (bcrypt) via NextAuth v5
+-   Central `middleware.ts` guard: unauthenticated users are redirected from
+    `/dashboard/*` and get 401s from `/api/*`
+-   Every API derives the user from the session and scopes reads/writes to
+    rows the user owns
+-   Supabase-backed fixed-window rate limiting on AI endpoints
 
 ## 📊 Data Management
 
-### Current State
-
--   Mock data in `src/lib/data.tsx`
--   Local state management with Zustand
--   Form state with Formik
-
-### Planned Integration
-
--   Supabase database
--   Real-time data sync
--   User data persistence
--   Analytics tracking
+-   All dashboard, performance, question-bank, and feedback data is loaded
+    live from Supabase (`src/lib/*-operations.ts`)
+-   User settings (language, data sharing) persist to the `users` table via
+    server actions
+-   AI responses are schema-constrained and Zod-validated before they touch
+    the database
 
 ## 🤝 Contributing
 
