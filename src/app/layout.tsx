@@ -6,7 +6,6 @@ import ThemeProvider from "@/components/providers/ThemeProvider";
 import { LoadingProvider } from "@/components/providers/LoadingProvider";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
-import SessionDebug from "@/components/small/SessionDebug/SessionDebug";
 import { Toaster } from "react-hot-toast";
 
 const inter = Inter({
@@ -36,7 +35,6 @@ export default async function RootLayout({
                     <ThemeProvider>
                         <LoadingProvider>
                             {children}
-                            <SessionDebug />
                             <Toaster
                                 position="top-right"
                                 toastOptions={{

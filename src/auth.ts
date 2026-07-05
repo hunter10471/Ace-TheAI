@@ -3,10 +3,10 @@ import { verifyPassword } from "./lib/auth-server";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { createClient } from "@/lib/supabase/server";
+import { authConfig } from "./auth.config";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-    secret: process.env.NEXTAUTH_SECRET,
-    basePath: "/api/auth",
+    ...authConfig,
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -77,11 +77,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             },
         }),
     ],
-    pages: {
-        signIn: "/",
-        error: "/",
-    },
     callbacks: {
+        ...authConfig.callbacks,
         async signIn({ user, account, profile }) {
             if (account?.provider === "google") {
                 try {
@@ -104,7 +101,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     }
 
                     if (!existingUser) {
-                        // Create new user with proper error handling
                         const { error: insertError } = await supabase
                             .from("users")
                             .insert([
@@ -115,15 +111,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                                     password: null,
                                     provider: "google",
                                     provider_id: profile?.sub,
-                                    job_title: "Software Developer", // Default values
-                                    years_of_experience: "1-3 years",
-                                    key_skills: [
-                                        "JavaScript",
-                                        "React",
-                                        "Node.js",
-                                    ],
-                                    professional_goal:
-                                        "To become a senior developer",
+                                    image: user.image ?? null,
                                 },
                             ]);
 
@@ -132,17 +120,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                                 "Error creating Google user:",
                                 insertError
                             );
-                            // Don't fail the sign-in, just log the error
-                            // The user can still sign in and complete their profile later
+                            // A session without a matching users row breaks
+                            // every downstream query, so fail the sign-in.
+                            return false;
                         }
                     } else {
-                        // Update existing user with latest info from Google
+                        // Keep the JWT id in sync with the existing DB row
+                        // (the user may have registered with credentials first)
+                        user.id = existingUser.id;
+
                         const { error: updateError } = await supabase
                             .from("users")
                             .update({
                                 name: user.name || existingUser.name,
                                 provider_id:
                                     profile?.sub || existingUser.provider_id,
+                                image: user.image || existingUser.image,
                             })
                             .eq("id", existingUser.id);
 
@@ -152,7 +145,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     }
                 } catch (error) {
                     console.error("Error in signIn callback:", error);
-                    // Don't fail the sign-in, just log the error
+                    return false;
                 }
             }
             return true;
@@ -196,10 +189,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             return session;
         },
     },
-    debug: process.env.NODE_ENV === "development",
-    session: {
-        strategy: "jwt",
-    },
-    useSecureCookies: process.env.NODE_ENV === "production",
-    trustHost: true,
+    debug: false,
 });

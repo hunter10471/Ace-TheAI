@@ -140,3 +140,57 @@ SELECT
 FROM information_schema.columns
 WHERE table_name = 'users'
 ORDER BY ordinal_position; 
+-- ============================================================
+-- Migration 2026-07: portfolio-grade upgrade
+-- Run this whole section in the Supabase SQL editor (idempotent)
+-- ============================================================
+
+-- Google avatar + persisted user settings
+ALTER TABLE users ADD COLUMN IF NOT EXISTS image TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS preferred_language VARCHAR(10) DEFAULT 'en';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS data_sharing JSONB DEFAULT '{}'::jsonb;
+
+-- Issue reports submitted via the in-app "Report an issue" modal
+CREATE TABLE IF NOT EXISTS feedback_reports (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    email TEXT NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Fixed-window API rate limiting
+CREATE TABLE IF NOT EXISTS api_rate_limits (
+    user_id UUID NOT NULL,
+    route TEXT NOT NULL,
+    window_start TIMESTAMP WITH TIME ZONE NOT NULL,
+    count INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (user_id, route, window_start)
+);
+
+CREATE OR REPLACE FUNCTION check_rate_limit(
+    p_user_id UUID,
+    p_route TEXT,
+    p_limit INTEGER,
+    p_window_seconds INTEGER
+) RETURNS BOOLEAN AS $$
+DECLARE
+    v_window_start TIMESTAMP WITH TIME ZONE;
+    v_count INTEGER;
+BEGIN
+    v_window_start := to_timestamp(
+        floor(extract(epoch FROM now()) / p_window_seconds) * p_window_seconds
+    );
+
+    INSERT INTO api_rate_limits (user_id, route, window_start, count)
+    VALUES (p_user_id, p_route, v_window_start, 1)
+    ON CONFLICT (user_id, route, window_start)
+    DO UPDATE SET count = api_rate_limits.count + 1
+    RETURNING count INTO v_count;
+
+    -- Opportunistic cleanup of stale windows
+    DELETE FROM api_rate_limits WHERE window_start < now() - interval '1 day';
+
+    RETURN v_count <= p_limit;
+END;
+$$ LANGUAGE plpgsql;

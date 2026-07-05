@@ -4,12 +4,12 @@ import { generatePersonalizedQuestions } from "@/lib/gemini";
 import {
     saveQuestionsToDatabase,
     getUserProfile,
-    checkDailyGenerationStatus,
     cleanupDuplicateQuestions,
     createGenerationJob,
     updateGenerationJobStatus,
     getLatestGenerationJob,
 } from "@/lib/question-operations";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
     try {
@@ -18,6 +18,19 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(
                 { error: "Unauthorized" },
                 { status: 401 }
+            );
+        }
+
+        const allowed = await checkRateLimit(
+            session.user.id,
+            "questions-generate",
+            5,
+            3600
+        );
+        if (!allowed) {
+            return NextResponse.json(
+                { error: "Generation limit reached, try again later." },
+                { status: 429 }
             );
         }
 

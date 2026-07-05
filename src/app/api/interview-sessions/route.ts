@@ -35,10 +35,15 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
     try {
+        const user = await getCurrentUser();
         const body = await request.json();
         const { sessionId, updates } = body;
 
-        const session = await updateInterviewSession(sessionId, updates);
+        const session = await updateInterviewSession(
+            sessionId,
+            updates,
+            user.id
+        );
 
         return NextResponse.json({
             success: true,

@@ -454,13 +454,13 @@ export async function getUserProfile(userId: string): Promise<{
         return null;
     }
 
-    // Return default values if profile is incomplete
+    // Fall back to neutral values so prompts never claim skills the
+    // user doesn't have
     return {
-        job_title: data.job_title || "Software Developer",
-        years_of_experience: data.years_of_experience || "1-3 years",
-        key_skills: data.key_skills || ["JavaScript", "React", "Node.js"],
-        professional_goal:
-            data.professional_goal || "To become a senior developer",
+        job_title: data.job_title || "Professional",
+        years_of_experience: data.years_of_experience || "unspecified",
+        key_skills: data.key_skills || [],
+        professional_goal: data.professional_goal || "",
     };
 }
 

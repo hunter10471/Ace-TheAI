@@ -47,7 +47,7 @@ export async function getInterviewSessionById(sessionId: string) {
 }
 
 export async function createInterviewSession(
-    sessionData: Omit<InterviewSession, "id" | "created_at">
+    sessionData: Omit<InterviewSession, "id" | "created_at" | "updated_at">
 ) {
     const supabase = await createClient();
 
@@ -67,16 +67,21 @@ export async function createInterviewSession(
 
 export async function updateInterviewSession(
     sessionId: string,
-    updates: Partial<InterviewSession>
+    updates: Partial<InterviewSession>,
+    userId?: string
 ) {
     const supabase = await createClient();
 
-    const { data, error } = await supabase
+    let query = supabase
         .from("interview_sessions")
         .update(updates)
-        .eq("id", sessionId)
-        .select()
-        .single();
+        .eq("id", sessionId);
+
+    if (userId) {
+        query = query.eq("user_id", userId);
+    }
+
+    const { data, error } = await query.select().single();
 
     if (error) {
         console.error("Error updating interview session:", error);

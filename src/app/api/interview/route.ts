@@ -12,23 +12,42 @@ import {
     generateInterviewFeedback,
     InterviewContext,
     InterviewFeedback as GeminiFeedback,
+    UserProfile,
 } from "@/lib/gemini";
+import { getUserProfile } from "@/lib/question-operations";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
     try {
         const user = await getCurrentUser();
+
+        const allowed = await checkRateLimit(user.id, "interview", 30, 60);
+        if (!allowed) {
+            return NextResponse.json(
+                { success: false, error: "Too many requests, slow down." },
+                { status: 429 }
+            );
+        }
+
         const body = await request.json();
         const { action, ...data } = body;
 
+        const profile = (await getUserProfile(user.id)) ?? {
+            job_title: "",
+            years_of_experience: "",
+            key_skills: [],
+            professional_goal: "",
+        };
+
         switch (action) {
             case "start":
-                return await handleStartInterview(user.id, data);
+                return await handleStartInterview(user.id, profile, data);
             case "next_question":
-                return await handleNextQuestion(user.id, data);
+                return await handleNextQuestion(user.id, profile, data);
             case "evaluate_response":
-                return await handleEvaluateResponse(user.id, data);
+                return await handleEvaluateResponse(user.id, profile, data);
             case "complete":
-                return await handleCompleteInterview(user.id, data);
+                return await handleCompleteInterview(user.id, profile, data);
             default:
                 return NextResponse.json(
                     { success: false, error: "Invalid action" },
@@ -44,7 +63,11 @@ export async function POST(request: NextRequest) {
     }
 }
 
-async function handleStartInterview(userId: string, data: any) {
+async function handleStartInterview(
+    userId: string,
+    profile: UserProfile,
+    data: any
+) {
     const { interviewType, difficulty, duration, jobTitle } = data;
 
     // Create interview session
@@ -67,12 +90,7 @@ async function handleStartInterview(userId: string, data: any) {
 
     // Generate first question
     const context: InterviewContext = {
-        userProfile: {
-            job_title: jobTitle,
-            years_of_experience: "2-5 years", // Default, could be fetched from user profile
-            key_skills: [],
-            professional_goal: "",
-        },
+        userProfile: { ...profile, job_title: jobTitle || profile.job_title },
         interviewType,
         difficulty,
         duration,
@@ -93,7 +111,11 @@ async function handleStartInterview(userId: string, data: any) {
     });
 }
 
-async function handleNextQuestion(userId: string, data: any) {
+async function handleNextQuestion(
+    userId: string,
+    profile: UserProfile,
+    data: any
+) {
     const {
         sessionId,
         currentQuestion,
@@ -107,14 +129,18 @@ async function handleNextQuestion(userId: string, data: any) {
         rating,
     } = data;
 
-    // Update session with current response
-    const session = await updateInterviewSession(sessionId, {
-        current_question_index: currentQuestionIndex + 1,
-        questions_asked: [...questionsAsked, currentQuestion],
-        user_responses: [...userResponses, userResponse],
-        question_ratings: [...questionRatings, rating],
-        response_times: [...responseTimes, responseTime],
-    });
+    // Update session with current response (scoped to the caller's sessions)
+    const session = await updateInterviewSession(
+        sessionId,
+        {
+            current_question_index: currentQuestionIndex + 1,
+            questions_asked: [...questionsAsked, currentQuestion],
+            user_responses: [...userResponses, userResponse],
+            question_ratings: [...questionRatings, rating],
+            response_times: [...responseTimes, responseTime],
+        },
+        userId
+    );
 
     // Check if we've reached the maximum questions for the duration
     const maxQuestions = Math.ceil(session.duration / 2); // Roughly 2 minutes per question
@@ -129,10 +155,8 @@ async function handleNextQuestion(userId: string, data: any) {
     // Generate next question
     const context: InterviewContext = {
         userProfile: {
-            job_title: session.job_title,
-            years_of_experience: "2-5 years",
-            key_skills: [],
-            professional_goal: "",
+            ...profile,
+            job_title: session.job_title || profile.job_title,
         },
         interviewType: session.interview_type,
         difficulty: session.difficulty,
@@ -189,20 +213,26 @@ async function handleNextQuestion(userId: string, data: any) {
     });
 }
 
-async function handleEvaluateResponse(userId: string, data: any) {
+async function handleEvaluateResponse(
+    userId: string,
+    profile: UserProfile,
+    data: any
+) {
     const { question, userResponse, sessionId, currentQuestionIndex } = data;
 
     // Get session data
-    const session = await updateInterviewSession(sessionId, {
-        current_question_index: currentQuestionIndex,
-    });
+    const session = await updateInterviewSession(
+        sessionId,
+        {
+            current_question_index: currentQuestionIndex,
+        },
+        userId
+    );
 
     const context: InterviewContext = {
         userProfile: {
-            job_title: session.job_title,
-            years_of_experience: "2-5 years",
-            key_skills: [],
-            professional_goal: "",
+            ...profile,
+            job_title: session.job_title || profile.job_title,
         },
         interviewType: session.interview_type,
         difficulty: session.difficulty,
@@ -220,24 +250,30 @@ async function handleEvaluateResponse(userId: string, data: any) {
     });
 }
 
-async function handleCompleteInterview(userId: string, data: any) {
+async function handleCompleteInterview(
+    userId: string,
+    profile: UserProfile,
+    data: any
+) {
     const { sessionId, questionRatings, responseTimes } = data;
 
     // Get session data
-    const session = await updateInterviewSession(sessionId, {
-        status: "completed",
-        completed_at: new Date().toISOString(),
-        question_ratings: questionRatings,
-        response_times: responseTimes,
-    });
+    const session = await updateInterviewSession(
+        sessionId,
+        {
+            status: "completed",
+            completed_at: new Date().toISOString(),
+            question_ratings: questionRatings,
+            response_times: responseTimes,
+        },
+        userId
+    );
 
     // Generate comprehensive feedback
     const context: InterviewContext = {
         userProfile: {
-            job_title: session.job_title,
-            years_of_experience: "2-5 years",
-            key_skills: [],
-            professional_goal: "",
+            ...profile,
+            job_title: session.job_title || profile.job_title,
         },
         interviewType: session.interview_type,
         difficulty: session.difficulty,
