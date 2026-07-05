@@ -1,6 +1,14 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI, Type, Schema } from "@google/genai";
+import { z } from "zod";
+import {
+    GeneratedQuestionsSchema,
+    EvaluationSchema,
+    InterviewFeedbackSchema,
+} from "./gemini-schemas";
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY!);
+const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_GEMINI_API_KEY });
+
+const MODEL = "gemini-2.5-flash";
 
 export interface TechnicalTerm {
     term: string;
@@ -44,12 +52,123 @@ export interface InterviewFeedback {
     suggestions: string[];
 }
 
+/**
+ * Runs a prompt with Gemini structured output and validates the JSON
+ * against a Zod schema. Retries once — with schema-constrained output a
+ * parse failure is rare, but the retry is cheap insurance.
+ */
+async function generateStructured<T>(
+    prompt: string,
+    responseSchema: Schema,
+    zodSchema: z.ZodType<T>
+): Promise<T> {
+    let lastError: unknown;
+
+    for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+            const response = await ai.models.generateContent({
+                model: MODEL,
+                contents: prompt,
+                config: {
+                    responseMimeType: "application/json",
+                    responseSchema,
+                },
+            });
+
+            return zodSchema.parse(JSON.parse(response.text ?? ""));
+        } catch (error) {
+            lastError = error;
+            console.error(
+                `Gemini structured generation failed (attempt ${attempt + 1}):`,
+                error
+            );
+        }
+    }
+
+    throw lastError instanceof Error
+        ? lastError
+        : new Error("Gemini structured generation failed");
+}
+
+const technicalTermSchema: Schema = {
+    type: Type.OBJECT,
+    properties: {
+        term: { type: Type.STRING },
+        definition: { type: Type.STRING },
+    },
+    required: ["term", "definition"],
+};
+
+const generatedQuestionsSchema: Schema = {
+    type: Type.ARRAY,
+    items: {
+        type: Type.OBJECT,
+        properties: {
+            text: { type: Type.STRING },
+            category: {
+                type: Type.STRING,
+                enum: ["Technical", "Behavioral", "Situational"],
+            },
+            difficulty: {
+                type: Type.STRING,
+                enum: ["Novice", "Advanced", "Hard"],
+            },
+            explanation: { type: Type.STRING },
+            example: { type: Type.STRING },
+            technical_terms: {
+                type: Type.ARRAY,
+                items: technicalTermSchema,
+            },
+        },
+        required: [
+            "text",
+            "category",
+            "difficulty",
+            "explanation",
+            "example",
+            "technical_terms",
+        ],
+    },
+};
+
+const evaluationSchema: Schema = {
+    type: Type.OBJECT,
+    properties: {
+        rating: { type: Type.INTEGER },
+        feedback: { type: Type.STRING },
+        suggestions: { type: Type.ARRAY, items: { type: Type.STRING } },
+    },
+    required: ["rating", "feedback", "suggestions"],
+};
+
+const interviewFeedbackSchema: Schema = {
+    type: Type.OBJECT,
+    properties: {
+        overallRating: { type: Type.INTEGER },
+        score: { type: Type.INTEGER },
+        maxScore: { type: Type.INTEGER },
+        avgResponseTime: { type: Type.INTEGER },
+        strengths: { type: Type.ARRAY, items: { type: Type.STRING } },
+        weaknesses: { type: Type.ARRAY, items: { type: Type.STRING } },
+        detailedFeedback: { type: Type.STRING },
+        suggestions: { type: Type.ARRAY, items: { type: Type.STRING } },
+    },
+    required: [
+        "overallRating",
+        "score",
+        "maxScore",
+        "avgResponseTime",
+        "strengths",
+        "weaknesses",
+        "detailedFeedback",
+        "suggestions",
+    ],
+};
+
 export async function generatePersonalizedQuestions(
     userProfile: UserProfile,
     count: number = 20
 ): Promise<GeneratedQuestion[]> {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
     const prompt = `Generate ${count} personalized interview questions for a user with the following profile:
 
 Job Title: ${userProfile.job_title}
@@ -63,55 +182,24 @@ Requirements:
 - Each question should be relevant to their job title and experience level
 - Provide detailed, educational answers that teach users how to ace their interviews
 
-Return ONLY a valid JSON array with this exact structure:
-[
-  {
-    "text": "Question text here",
-    "category": "Technical|Behavioral|Situational",
-    "difficulty": "Novice|Advanced|Hard",
-    "explanation": "A comprehensive, step-by-step guide on how to answer this question. Include specific phrases to use, structure your response, and what to emphasize. Make it educational and actionable.",
-    "example": "A detailed real-world example showing exactly how to apply the answer, including specific details and outcomes",
-    "technical_terms": [
-      {
-        "term": "technical term used in explanation/example",
-        "definition": "Simple definition of the technical term"
-      }
-    ]
-  }
-]
+For each question:
+- In "explanation": Provide a comprehensive, step-by-step guide on how to answer the question. Include specific phrases to use, how to structure the response, and what to emphasize. Make it educational and actionable.
+- In "example": Give a detailed real-world example showing exactly how to apply the answer, including specific details and outcomes.
+- In "technical_terms": Include any technical terms, jargon, or concepts mentioned in the explanation or example, with simple definitions.
+- Structure answers clearly with steps or bullet points when helpful.`;
 
-Important: 
-- In "explanation": Provide a detailed, educational guide on how to answer the question
-- In "example": Give a comprehensive example with specific details
-- Make answers descriptive and actionable - users should learn exactly what to say
-- In "technical_terms": Include any technical terms, jargon, or concepts mentioned in the explanation or example
-- Keep technical term definitions simple and easy to understand
-- Structure answers clearly with steps or bullet points when helpful`;
-
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
-    // Extract JSON from the response
-    const jsonMatch = text.match(/\[[\s\S]*\]/);
-    if (!jsonMatch) {
-        throw new Error("No valid JSON found in response");
-    }
-
-    const questions = JSON.parse(jsonMatch[0]);
-    const validatedQuestions = questions.filter(
-        (q: any) =>
-            q.text && q.category && q.difficulty && q.explanation && q.example
+    const questions = await generateStructured(
+        prompt,
+        generatedQuestionsSchema,
+        GeneratedQuestionsSchema
     );
 
-    return validatedQuestions.slice(0, count);
+    return questions.slice(0, count);
 }
 
 export async function generateNextQuestion(
     context: InterviewContext
 ): Promise<string> {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
     const prompt = `You are a senior ${
         context.userProfile.job_title
     } with 15+ years of experience conducting a ${
@@ -169,9 +257,12 @@ Generate ONE specific, realistic question that:
 
 Return ONLY the question text, nothing else. Make it sound natural and professional.`;
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    return response.text().trim();
+    const response = await ai.models.generateContent({
+        model: MODEL,
+        contents: prompt,
+    });
+
+    return (response.text ?? "").trim();
 }
 
 export async function evaluateResponse(
@@ -183,8 +274,6 @@ export async function evaluateResponse(
     feedback: string;
     suggestions: string[];
 }> {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
     const prompt = `You are a senior ${context.userProfile.job_title} evaluating a candidate's response in a ${context.difficulty} level ${context.interviewType} interview.
 
 Question: "${question}"
@@ -200,33 +289,18 @@ Evaluate this response on a scale of 1-5 where:
 Provide:
 1. A numerical rating (1-5)
 2. Detailed feedback explaining the rating
-3. 2-3 specific suggestions for improvement
+3. 2-3 specific suggestions for improvement`;
 
-Return ONLY a valid JSON object with this exact structure:
-{
-  "rating": 3,
-  "feedback": "Your response shows understanding of the basic concepts...",
-  "suggestions": ["Be more specific with examples", "Structure your response better"]
-}`;
+    const evaluation = await generateStructured(
+        prompt,
+        evaluationSchema,
+        EvaluationSchema
+    );
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
-    // Extract JSON from the response
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-        throw new Error("No valid JSON found in response");
-    }
-
-    const evaluation = JSON.parse(jsonMatch[0]);
     return {
-        rating: Math.max(1, Math.min(5, evaluation.rating || 3)),
-        feedback: evaluation.feedback || "Good response, keep practicing!",
-        suggestions: evaluation.suggestions || [
-            "Provide more specific examples",
-            "Structure your response better",
-        ],
+        rating: Math.max(1, Math.min(5, Math.round(evaluation.rating))),
+        feedback: evaluation.feedback,
+        suggestions: evaluation.suggestions,
     };
 }
 
@@ -235,8 +309,6 @@ export async function generateInterviewFeedback(
     questionRatings: number[],
     responseTimes: number[]
 ): Promise<InterviewFeedback> {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
     const prompt = `You are a senior ${
         context.userProfile.job_title
     } providing comprehensive feedback for a ${context.difficulty} level ${
@@ -249,10 +321,12 @@ Interview Summary:
 - Difficulty: ${context.difficulty}
 - Questions Asked: ${context.previousQuestions.length}
 - Average Rating: ${(
-        questionRatings.reduce((a, b) => a + b, 0) / questionRatings.length
+        questionRatings.reduce((a, b) => a + b, 0) /
+        Math.max(1, questionRatings.length)
     ).toFixed(1)}/5
 - Average Response Time: ${(
-        responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
+        responseTimes.reduce((a, b) => a + b, 0) /
+        Math.max(1, responseTimes.length)
     ).toFixed(0)} seconds
 
 Questions and Responses:
@@ -262,53 +336,30 @@ ${context.userResponses.map((r, i) => `A${i + 1}: ${r}`).join("\n")}
 
 Provide comprehensive feedback including:
 1. Overall rating (1-5)
-2. Score calculation (rating * 4, max 20)
-3. Average response time
+2. Score calculation (rating * 4, max 20) with maxScore always 20
+3. Average response time in seconds
 4. 3-4 key strengths
-5. 3-4 areas for improvement
+5. 3-4 areas for improvement (weaknesses)
 6. Detailed feedback with specific examples
-7. 4-5 actionable suggestions for future interviews
+7. 4-5 actionable suggestions for future interviews`;
 
-Return ONLY a valid JSON object with this exact structure:
-{
-  "overallRating": 3,
-  "score": 12,
-  "maxScore": 20,
-  "avgResponseTime": 45,
-  "strengths": ["Good technical knowledge", "Clear communication"],
-  "weaknesses": ["Could provide more examples", "Response structure needs work"],
-  "detailedFeedback": "Overall, you demonstrated solid understanding...",
-  "suggestions": ["Practice the STAR method", "Prepare more specific examples"]
-}`;
+    const feedback = await generateStructured(
+        prompt,
+        interviewFeedbackSchema,
+        InterviewFeedbackSchema
+    );
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
-    // Extract JSON from the response
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-        throw new Error("No valid JSON found in response");
-    }
-
-    const feedback = JSON.parse(jsonMatch[0]);
     return {
-        overallRating: Math.max(1, Math.min(5, feedback.overallRating || 3)),
-        score: Math.max(0, Math.min(20, feedback.score || 12)),
+        overallRating: Math.max(
+            1,
+            Math.min(5, Math.round(feedback.overallRating))
+        ),
+        score: Math.max(0, Math.min(20, Math.round(feedback.score))),
         maxScore: 20,
-        avgResponseTime: Math.max(0, feedback.avgResponseTime || 45),
-        strengths: feedback.strengths || [
-            "Good understanding of core concepts",
-        ],
-        weaknesses: feedback.weaknesses || [
-            "Could provide more specific examples",
-        ],
-        detailedFeedback:
-            feedback.detailedFeedback ||
-            "Overall good performance with room for improvement.",
-        suggestions: feedback.suggestions || [
-            "Practice providing specific examples",
-            "Work on structuring responses",
-        ],
+        avgResponseTime: Math.max(0, Math.round(feedback.avgResponseTime)),
+        strengths: feedback.strengths,
+        weaknesses: feedback.weaknesses,
+        detailedFeedback: feedback.detailedFeedback,
+        suggestions: feedback.suggestions,
     };
 }
